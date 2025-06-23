@@ -1,0 +1,41 @@
+package com.hit.leaning_connect.domain.entity;
+
+import com.hit.leaning_connect.domain.model.SubmissionStatus;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = "contest_submissions")
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class ContestSubmission {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "submission_id")
+    private Long submissionId;
+
+    @ManyToOne
+    @JoinColumn(name = "problem_id", nullable = false)
+    private ContestProblem problem;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @Column(name = "code", nullable = false)
+    private String code;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private SubmissionStatus status = SubmissionStatus.PENDING;
+
+    @Column(name = "submitted_at", nullable = false)
+    private LocalDateTime submittedAt = LocalDateTime.now();
+}
