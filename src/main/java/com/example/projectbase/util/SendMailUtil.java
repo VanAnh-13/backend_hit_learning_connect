@@ -2,6 +2,7 @@ package com.example.projectbase.util;
 
 import com.example.projectbase.domain.dto.common.DataMailDto;
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Component;
@@ -21,6 +22,30 @@ public class SendMailUtil {
   private final JavaMailSender mailSender;
 
   private final TemplateEngine templateEngine;
+
+
+
+
+
+  public void sendMail(DataMailDto mail) {
+
+    String rawTo = mail.getTo();
+    if (rawTo == null || rawTo.isBlank()) {
+      throw new IllegalArgumentException("Email không được để trống");
+    }
+    String cleanTo = rawTo.replaceAll("[\\r\\n]", "").trim();
+    try {
+      new jakarta.mail.internet.InternetAddress(cleanTo).validate();
+    } catch (jakarta.mail.internet.AddressException ex) {
+      throw new IllegalArgumentException("Invalid Email: " + cleanTo, ex);
+    }
+
+    SimpleMailMessage message = new SimpleMailMessage();
+    message.setTo(mail.getTo());
+    message.setSubject(mail.getSubject());
+    message.setText(mail.getContent());
+    mailSender.send(message);
+  }
 
   /**
    * Gửi mail với file html
