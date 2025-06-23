@@ -7,6 +7,7 @@ import com.example.projectbase.service.CustomUserDetailsService;
 import com.example.projectbase.exception.NotFoundException;
 import com.example.projectbase.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -32,6 +33,7 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService, CustomU
 
   @Override
   @Transactional
+
   public UserDetails loadUserById(String id) {
 
     User user = userRepository.findById(id)

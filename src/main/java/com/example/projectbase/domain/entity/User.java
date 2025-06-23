@@ -42,7 +42,7 @@ public class User extends DateAuditing {
   @Column(nullable = false)
   private String lastName;
 
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   private String email;
 
   @Column(nullable = false)

@@ -34,11 +34,13 @@ public class UserServiceImpl implements UserService {
 
   private final PasswordEncoder passwordEncoder;
 
+
   @Override
-  @Cacheable(value = "user", key = "#userId")
+  @Cacheable(value = "userDto", key = "#userId")
   public UserDto getUserById(String userId) {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID, new String[]{userId}));
+    System.out.println(user);
     return userMapper.toUserDto(user);
   }
 

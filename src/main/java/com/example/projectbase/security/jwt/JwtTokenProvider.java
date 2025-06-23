@@ -80,7 +80,6 @@ public class JwtTokenProvider {
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
         UserPrincipal principal = (UserPrincipal) customUserDetailsService.loadUserById(claims.getSubject());
-
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
