@@ -4,6 +4,7 @@ import com.example.projectbase.base.RestApiV1;
 import com.example.projectbase.base.VsResponseUtil;
 import com.example.projectbase.constant.UrlConstant;
 import com.example.projectbase.domain.dto.request.LoginRequestDto;
+import com.example.projectbase.domain.dto.request.TokenRefreshRequestDto;
 import com.example.projectbase.service.AuthService;
 import com.example.projectbase.validator.annotation.ValidFileImage;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,10 +30,14 @@ public class AuthController {
     return VsResponseUtil.success(authService.login(request));
   }
 
-  @Operation(summary = "API test")
-  @PostMapping("auth/test")
-  public String login(@ValidFileImage MultipartFile multipartFile) {
-    return multipartFile.getContentType();
+//  @Operation(summary = "API test")
+//  @PostMapping("auth/test")
+//  public String login(@ValidFileImage MultipartFile multipartFile) {
+//    return multipartFile.getContentType();
+//  }
+  @Operation(summary = "API Refresh Token")
+  @PostMapping(UrlConstant.Auth.refreshToken)
+  public ResponseEntity<?> refreshToken(@Valid @RequestBody TokenRefreshRequestDto request) {
+    return VsResponseUtil.success(authService.refresh(request));
   }
-
 }

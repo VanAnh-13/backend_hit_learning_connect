@@ -4,10 +4,9 @@ public class UrlConstant {
 
   public static class Auth {
     private static final String PRE_FIX = "/auth";
-
     public static final String LOGIN = PRE_FIX + "/login";
     public static final String LOGOUT = PRE_FIX + "/logout";
-
+    public static final String refreshToken = PRE_FIX + "/refreshToken";
     private Auth() {
     }
   }

@@ -33,6 +33,7 @@ public class AuthServiceImpl implements AuthService {
           new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
       SecurityContextHolder.getContext().setAuthentication(authentication);
       UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+      System.out.println(userPrincipal.getId());
       String accessToken = jwtTokenProvider.generateToken(userPrincipal, Boolean.FALSE);
       String refreshToken = jwtTokenProvider.generateToken(userPrincipal, Boolean.TRUE);
       return new LoginResponseDto(accessToken, refreshToken, userPrincipal.getId(), authentication.getAuthorities());
@@ -45,7 +46,13 @@ public class AuthServiceImpl implements AuthService {
 
   @Override
   public TokenRefreshResponseDto refresh(TokenRefreshRequestDto request) {
-    return null;
+    Authentication authentication = jwtTokenProvider.getAuthenticationByRefreshToken(request.getRefreshToken());
+    SecurityContextHolder.getContext().setAuthentication(authentication);
+    UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+    System.out.println(userPrincipal.getId());
+    String accessToken = jwtTokenProvider.generateToken(userPrincipal, Boolean.FALSE);
+    System.out.println(userPrincipal.getId() + "hello");
+    return new TokenRefreshResponseDto(accessToken, request.getRefreshToken());
   }
 
   @Override

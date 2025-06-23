@@ -82,7 +82,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                         ex -> ex.authenticationEntryPoint(jwtAuthenticationEntryPoint)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/login", "/api/v1/auth/register").anonymous()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/login", "/api/v1/auth/register", "/api/v1/auth/refreshToken").anonymous()
                         .requestMatchers("/ws-chat/**").permitAll()
                         .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/login", "/swagger-ui/index.html").permitAll()
                         .requestMatchers("/api/v1/admin/**").hasRole("ADMIN")
