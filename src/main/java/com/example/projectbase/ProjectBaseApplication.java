@@ -23,6 +23,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 @EnableConfigurationProperties({AdminInfoProperties.class})
 @SpringBootApplication
+@EnableCaching
 public class ProjectBaseApplication {
 
     private final UserRepository userRepository;

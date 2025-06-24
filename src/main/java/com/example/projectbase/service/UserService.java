@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
-  @Cacheable(value = "user", key = "#userId")
+
   UserDto getUserById(String userId);
 
   List<UserDto> getUsers(Pageable pageable);
