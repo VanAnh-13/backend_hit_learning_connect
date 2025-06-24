@@ -31,4 +31,7 @@ public class UserCreateDto {
   @NotBlank(message = ErrorMessage.NOT_BLANK_FIELD)
   private String lastName;
 
+//  @NotBlank(message = ErrorMessage.NOT_BLANK_FIELD)
+//  private String fullname;
+
 }

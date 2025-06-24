@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UserService {
-  @Cacheable(value = "user", key = "#userId")
+
   UserDto getUserById(String userId);
 
   List<UserDto> getUsers(Pageable pageable);
@@ -29,7 +29,7 @@ public interface UserService {
   List<User> getAllUsers();
   Optional<User> getUsersById(String id);
   Optional<User> getUserByUsername(String username);
-  User updateUser(String id, User updatedUser);
+  User updateUser(String id, UserUpdateDto userUpdateDto);
   void deleteUser(String id);
 
 }

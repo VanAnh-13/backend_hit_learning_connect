@@ -1,8 +1,6 @@
 package com.example.projectbase.domain.dto.common;
 
-import com.example.projectbase.util.SendMailUtil;
 import lombok.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Map;
 

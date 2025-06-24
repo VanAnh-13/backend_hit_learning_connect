@@ -2,19 +2,12 @@ package com.example.projectbase.security;
 
 import com.example.projectbase.domain.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.*;
 
-@NoArgsConstructor(force = true)
-@Getter
-@Setter
 public class UserPrincipal implements UserDetails {
 
   private final String id;
