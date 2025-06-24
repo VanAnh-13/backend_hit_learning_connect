@@ -13,6 +13,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface UserService {
   @Cacheable(value = "user", key = "#userId")
@@ -23,4 +24,12 @@ public interface UserService {
   UserDto getCurrentUser(UserPrincipal principal);
 
   void changePassword(@Valid ChangePassFirstTimeRequest changePassFirstTimeRequest, UserPrincipal principal);
+
+  User createUser(User user);
+  List<User> getAllUsers();
+  Optional<User> getUsersById(String id);
+  Optional<User> getUserByUsername(String username);
+  User updateUser(String id, User updatedUser);
+  void deleteUser(String id);
+
 }

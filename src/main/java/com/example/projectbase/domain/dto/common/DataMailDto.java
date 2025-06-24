@@ -1,8 +1,9 @@
 package com.example.projectbase.domain.dto.common;
 
-import com.example.projectbase.util.SendMailUtil;
-import lombok.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Map;
 
@@ -10,7 +11,6 @@ import java.util.Map;
 @NoArgsConstructor
 @Setter
 @Getter
-@Builder
 public class DataMailDto {
 
   private String to;

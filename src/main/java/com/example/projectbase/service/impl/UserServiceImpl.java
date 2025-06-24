@@ -23,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -34,13 +35,11 @@ public class UserServiceImpl implements UserService {
 
   private final PasswordEncoder passwordEncoder;
 
-
   @Override
-  @Cacheable(value = "userDto", key = "#userId")
+  @Cacheable(value = "user", key = "#userId")
   public UserDto getUserById(String userId) {
     User user = userRepository.findById(userId)
         .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID, new String[]{userId}));
-    System.out.println(user);
     return userMapper.toUserDto(user);
   }
 
@@ -71,6 +70,46 @@ public class UserServiceImpl implements UserService {
     user.setLastLogin(LocalDateTime.now());
 
     userRepository.save(user);
+  }
+
+  @Override
+  public User createUser(User user) {
+    user.setPassword(passwordEncoder.encode(user.getPassword()));
+    return userRepository.save(user);
+  }
+
+  @Override
+  public List<User> getAllUsers() {
+    return userRepository.findAll();
+  }
+
+  @Override
+  public Optional<User> getUsersById(String id) {
+    return userRepository.findById(id);
+  }
+
+  @Override
+  public Optional<User> getUserByUsername(String username) {
+    return userRepository.findByUsername(username);
+  }
+
+  @Override
+  public User updateUser(String id, User updatedUser) {
+    return userRepository.findById(id).map(user -> {
+//      user.setFullname(updatedUser.getFullname());
+      user.setEmail(updatedUser.getEmail());
+      user.setUsername(updatedUser.getUsername());
+      user.setPassword(updatedUser.getPassword());
+      return userRepository.save(user);
+    }).orElseThrow(() -> new RuntimeException(ErrorMessage.User.ERR_USER_NOT_FOUND));
+  }
+
+  @Override
+  public void deleteUser(String id) {
+    if (!userRepository.existsById(id)) {
+      throw new RuntimeException(ErrorMessage.User.ERR_USER_NOT_FOUND);
+    }
+    userRepository.deleteById(id);
   }
 
 }
