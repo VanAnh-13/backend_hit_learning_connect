@@ -36,7 +36,6 @@ public class UserController {
     private final MailService mailService;
 
 //    CRUD user
-
     @Tag(name = "admin-controller")
     @Operation(summary = "API get user by id")
     @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
