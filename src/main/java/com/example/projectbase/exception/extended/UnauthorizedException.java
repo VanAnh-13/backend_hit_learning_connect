@@ -1,4 +1,4 @@
-package com.example.projectbase.exception;
+package com.example.projectbase.exception.extended;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,7 +6,7 @@ import org.springframework.http.HttpStatus;
 
 @Getter
 @Setter
-public class UploadFileException extends RuntimeException {
+public class UnauthorizedException extends RuntimeException {
 
   private String message;
 
@@ -14,26 +14,26 @@ public class UploadFileException extends RuntimeException {
 
   private String[] params;
 
-  public UploadFileException(String message) {
+  public UnauthorizedException(String message) {
     super(message);
-    this.status = HttpStatus.BAD_GATEWAY;
+    this.status = HttpStatus.UNAUTHORIZED;
     this.message = message;
   }
 
-  public UploadFileException(HttpStatus status, String message) {
+  public UnauthorizedException(HttpStatus status, String message) {
     super(message);
     this.status = status;
     this.message = message;
   }
 
-  public UploadFileException(String message, String[] params) {
+  public UnauthorizedException(String message, String[] params) {
     super(message);
-    this.status = HttpStatus.BAD_GATEWAY;
+    this.status = HttpStatus.UNAUTHORIZED;
     this.message = message;
     this.params = params;
   }
 
-  public UploadFileException(HttpStatus status, String message, String[] params) {
+  public UnauthorizedException(HttpStatus status, String message, String[] params) {
     super(message);
     this.status = status;
     this.message = message;

@@ -1,6 +1,8 @@
 package com.example.projectbase.domain.dto.request;
 
 import com.example.projectbase.constant.ErrorMessage;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,10 +16,14 @@ import jakarta.validation.constraints.NotBlank;
 @Setter
 public class UserUpdateDto {
 
-  @NotBlank(message = ErrorMessage.NOT_BLANK_FIELD)
-  private String firstName;
+  private String username;
 
-  @NotBlank(message = ErrorMessage.NOT_BLANK_FIELD)
-  private String lastName;
+  private String fullname;
+
+  private String email;
+
+  private String Role;
+
+  private String avatarUrl;
 
 }

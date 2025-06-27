@@ -22,10 +22,9 @@ import java.util.Date;
 public class User extends DateAuditing {
 
   @Id
-  @GeneratedValue(generator = "uuid2")
-  @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
-  @Column(insertable = false, updatable = false, nullable = false, columnDefinition = "CHAR(36)")
-  private String id;
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  @Column(insertable = false, updatable = false, nullable = false)
+  private Long id;
 
   @Column(nullable = false, unique = true)
   private String username;
@@ -34,18 +33,18 @@ public class User extends DateAuditing {
   private String password;
 
   @Nationalized
-  @Column(nullable = false)
-  private String firstName;
+  @Column(name = "full_name")
+  private String fullName;
 
-  @Nationalized
-  @Column(nullable = false)
-  private String lastName;
+  @Column(name = "avatar_url")
+  private String avatarUrl;
 
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   private String email;
 
   @Column(nullable = false)
   private LocalDateTime lastLogin;
+
   //Link to table Role
   @ManyToOne
   @JoinColumn(name = "role_id", foreignKey = @ForeignKey(name = "FK_USER_ROLE"))

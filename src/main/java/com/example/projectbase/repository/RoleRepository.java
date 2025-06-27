@@ -10,12 +10,9 @@ import java.util.Optional;
 
 @Repository
 public interface RoleRepository extends JpaRepository<Role, Long> {
-  @Cacheable(value = "roles", key = "#id")
   @Query("SELECT r FROM Role r WHERE r.id = ?1")
   Optional<Role> findById(Long id);
 
-  @Cacheable(value = "roles", key = "#roleName")
-  @Query("SELECT r FROM Role r WHERE r.name = ?1")
+  @Query("SELECT r FROM Role r WHERE r.name LIKE CONCAT('%', :roleName, '%')")
   Role findByRoleName(String roleName);
-
 }

@@ -3,11 +3,10 @@ package com.example.projectbase.controller;
 import com.example.projectbase.base.RestApiV1;
 import com.example.projectbase.base.VsResponseUtil;
 import com.example.projectbase.constant.UrlConstant;
-import com.example.projectbase.domain.dto.pagination.PaginationFullRequestDto;
-import com.example.projectbase.domain.dto.request.ChangePassFirstTimeRequest;
-import com.example.projectbase.domain.dto.request.GetEmailDto;
-import com.example.projectbase.domain.dto.request.VerifyCodeDto;
+import com.example.projectbase.domain.dto.request.*;
+import com.example.projectbase.domain.dto.response.UserResponseDto;
 import com.example.projectbase.domain.entity.User;
+import com.example.projectbase.exception.extended.InvalidException;
 import com.example.projectbase.security.CurrentUser;
 import com.example.projectbase.security.UserPrincipal;
 import com.example.projectbase.service.MailService;
@@ -24,22 +23,27 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 
 @RequiredArgsConstructor
 @RestApiV1
+@Validated
 public class UserController {
 
     private final UserService userService;
 
     private final MailService mailService;
 
+//    CRUD user
+
     @Tag(name = "admin-controller")
-    @Operation(summary = "API get user")
+    @Operation(summary = "API get user by id")
+    @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
     @GetMapping(UrlConstant.User.GET_USER)
-    public ResponseEntity<?> getUserById(@PathVariable String userId) {
+    public ResponseEntity<?> getUserById(@PathVariable Long userId) {
         return VsResponseUtil.success(userService.getUserById(userId));
     }
 
@@ -47,23 +51,23 @@ public class UserController {
     @Operation(summary = "API create user")
     @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
     @PostMapping(UrlConstant.User.CREATE_USER)
-    public ResponseEntity<?> createUser(@RequestBody @Valid User user) {
+    public ResponseEntity<?> createUser(@RequestBody @Valid UserCreateDto user) throws InvalidException {
         return VsResponseUtil.success(userService.createUser(user));
     }
 
     @Tag(name = "admin-controller")
-    @Operation(summary = "API update user")
+    @Operation(summary = "API update user by id")
     @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
     @PutMapping(UrlConstant.User.UPDATE_USER)
-    public ResponseEntity<?> updateUser(@PathVariable String userId, @RequestBody @Valid User user) {
+    public ResponseEntity<?> updateUser(@PathVariable Long userId, @RequestBody @Valid UserUpdateDto user) {
         return VsResponseUtil.success(userService.updateUser(userId, user));
     }
 
     @Tag(name = "admin-controller")
-    @Operation(summary = "API delete user")
+    @Operation(summary = "API delete user by id")
     @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
     @DeleteMapping(UrlConstant.User.DELETE_USER)
-    public ResponseEntity<?> deleteUser(@PathVariable String userId) {
+    public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
         userService.deleteUser(userId);
         return VsResponseUtil.success("User deleted");
     }
@@ -85,13 +89,15 @@ public class UserController {
         return VsResponseUtil.success(userService.getUsers(pageable));
     }
 
+
+    //change password
     @Tag(name = "user-controller")
     @Operation(summary = "API change password for first time login (only first time)")
     @PostMapping(UrlConstant.User.PASSWORD_CHANGE_FIRST_TIME)
     public ResponseEntity<?> changePass(@Parameter(name = "principal", hidden = true)
                                         @CurrentUser UserPrincipal principal,
                                         @Valid ChangePassFirstTimeRequest changePassFirstTimeRequest) {
-        userService.changePassword(changePassFirstTimeRequest, principal);
+        userService.changePasswordFirstTime(changePassFirstTimeRequest, principal);
         return VsResponseUtil.success("Successfully changed password");
     }
 
@@ -100,7 +106,8 @@ public class UserController {
     @PutMapping(UrlConstant.User.UPDATE_CURRENT_USER)
     public ResponseEntity<?> updateCurrentUser(@Parameter(name = "principal", hidden = true)
                                                @CurrentUser UserPrincipal principal,
-                                               @RequestBody @Valid User userUpdate) {
+                                               @RequestBody @Valid UserUpdateDto userUpdate) {
+        userUpdate.setRole("");
         return VsResponseUtil.success(userService.updateUser(principal.getId(), userUpdate));
     }
 
@@ -116,6 +123,17 @@ public class UserController {
     @PostMapping(UrlConstant.User.VERIFY_CODE)
     public ResponseEntity<?> verifyCode(@RequestBody VerifyCodeDto verifyCodeDto) throws BadRequestException {
         return VsResponseUtil.success(mailService.verifyEmail(verifyCodeDto));
+    }
+
+    @Tag(name = "user-controller")
+    @Operation(summary = "API change password inside account")
+    @PostMapping(UrlConstant.User.PASSWORD_CHANGE)
+    public ResponseEntity<?> changePassword(
+            @Parameter(name = "principal", hidden = true)
+            @CurrentUser UserPrincipal principal,
+            @RequestBody @Valid ChangePassRequest changePassRequest
+    ) {
+        return VsResponseUtil.success(userService.changePassword(changePassRequest, principal));
     }
 
 }

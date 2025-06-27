@@ -1,4 +1,4 @@
-package com.example.projectbase.exception;
+package com.example.projectbase.exception.extended;
 
 import lombok.Getter;
 import lombok.Setter;

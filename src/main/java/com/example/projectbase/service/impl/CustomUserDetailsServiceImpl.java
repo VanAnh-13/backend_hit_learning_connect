@@ -4,7 +4,7 @@ import com.example.projectbase.constant.ErrorMessage;
 import com.example.projectbase.domain.entity.User;
 import com.example.projectbase.security.UserPrincipal;
 import com.example.projectbase.service.CustomUserDetailsService;
-import com.example.projectbase.exception.NotFoundException;
+import com.example.projectbase.exception.extended.NotFoundException;
 import com.example.projectbase.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,9 +32,9 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService, CustomU
 
   @Override
   @Transactional
-  public UserDetails loadUserById(String id) {
+  public UserDetails loadUserById(Long id) {
     User user = userRepository.findById(id)
-        .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID, new String[]{id}));
+        .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID, new String[]{id.toString()}));
     return UserPrincipal.create(user);
   }
 

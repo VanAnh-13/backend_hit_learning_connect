@@ -60,15 +60,14 @@ public class ProjectBaseApplication {
             if (userRepository.count() == 0) {
                 User admin = User.builder().username(userInfo.getUsername())
                         .password(passwordEncoder.encode(userInfo.getPassword()))
-                        .firstName(userInfo.getFirstName()).lastName(userInfo.getLastName())
+                        .fullName(userInfo.getFullName())
                         .role(roleRepository.findByRoleName(RoleConstant.ADMIN))
                         .lastLogin(LocalDateTime.now())
                         .email(userInfo.getEmail())
                         .build();
                 User user = User.builder().username("DinhvuongUser")
                         .password(passwordEncoder.encode("User"))
-                        .firstName("Dinh")
-                        .lastName("Vuong")
+                        .fullName("Dinh Van Vuong")
                         .role(roleRepository.findByRoleName(RoleConstant.USER))
                         .lastLogin(LocalDateTime.now())
                         .email("Vuongdz20k5@gmail.com")

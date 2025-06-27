@@ -16,16 +16,16 @@ import java.util.Optional;
 public class AuditingConfig {
 
   @Bean
-  public AuditorAware<String> auditorProvider() {
+  public AuditorAware<Long> auditorProvider() {
     return new AuditorAwareImpl();
   }
 
 }
 
-class AuditorAwareImpl implements AuditorAware<String> {
+class AuditorAwareImpl implements AuditorAware<Long> {
 
   @Override
-  public Optional<String> getCurrentAuditor() {
+  public Optional<Long> getCurrentAuditor() {
     Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
     if (authentication == null || !authentication.isAuthenticated() || authentication instanceof AnonymousAuthenticationToken) {
       return Optional.empty();

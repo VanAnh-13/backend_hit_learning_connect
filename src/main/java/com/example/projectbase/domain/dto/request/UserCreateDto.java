@@ -1,13 +1,12 @@
 package com.example.projectbase.domain.dto.request;
 
 import com.example.projectbase.constant.ErrorMessage;
+
+import com.example.projectbase.domain.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.web.multipart.MultipartFile;
-
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -26,12 +25,12 @@ public class UserCreateDto {
   private String password;
 
   @NotBlank(message = ErrorMessage.NOT_BLANK_FIELD)
-  private String firstName;
+  private String fullName;
 
   @NotBlank(message = ErrorMessage.NOT_BLANK_FIELD)
-  private String lastName;
+  private String email;
 
-//  @NotBlank(message = ErrorMessage.NOT_BLANK_FIELD)
-//  private String fullname;
+  @NotBlank(message = ErrorMessage.NOT_BLANK_FIELD)
+  private String Role;
 
 }

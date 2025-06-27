@@ -2,7 +2,7 @@ package com.example.projectbase.security.jwt;
 
 import com.example.projectbase.constant.ErrorMessage;
 import com.example.projectbase.security.UserPrincipal;
-import com.example.projectbase.exception.InvalidException;
+import com.example.projectbase.exception.extended.InvalidException;
 import com.example.projectbase.service.CustomUserDetailsService;
 import io.jsonwebtoken.*;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +13,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
@@ -53,7 +52,7 @@ public class JwtTokenProvider {
 
             return Jwts.builder()
                     .setClaims(claim)
-                    .setSubject(userPrincipal.getId())
+                    .setSubject(userPrincipal.getId().toString())
                     .setIssuedAt(new Date(System.currentTimeMillis()))
                     .setExpiration(new Date(System.currentTimeMillis() + (EXPIRATION_TIME_REFRESH_TOKEN * 60 * 1000L)))
                     .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
@@ -61,7 +60,7 @@ public class JwtTokenProvider {
         }
         return Jwts.builder()
                 .setClaims(claim)
-                .setSubject(userPrincipal.getId())
+                .setSubject(userPrincipal.getId().toString())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + (EXPIRATION_TIME_ACCESS_TOKEN * 60 * 1000L)))
                 .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
@@ -79,7 +78,7 @@ public class JwtTokenProvider {
                 Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
                         .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
-        UserPrincipal principal = (UserPrincipal) customUserDetailsService.loadUserById(claims.getSubject());
+        UserPrincipal principal = (UserPrincipal) customUserDetailsService.loadUserById(Long.valueOf(claims.getSubject()));
 
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }

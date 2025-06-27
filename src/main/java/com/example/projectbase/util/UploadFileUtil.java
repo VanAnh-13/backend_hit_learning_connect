@@ -2,7 +2,7 @@ package com.example.projectbase.util;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
-import com.example.projectbase.exception.UploadFileException;
+import com.example.projectbase.exception.extended.UploadFileException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;

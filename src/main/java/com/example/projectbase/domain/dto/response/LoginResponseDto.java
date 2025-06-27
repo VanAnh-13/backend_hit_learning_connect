@@ -19,11 +19,11 @@ public class LoginResponseDto {
 
   private String refreshToken;
 
-  private String id;
+  private Long id;
 
   private Collection<? extends GrantedAuthority> authorities;
 
-  public LoginResponseDto(String accessToken, String refreshToken, String id, Collection<? extends GrantedAuthority> authorities) {
+  public LoginResponseDto(String accessToken, String refreshToken, Long id, Collection<? extends GrantedAuthority> authorities) {
     this.accessToken = accessToken;
     this.refreshToken = refreshToken;
     this.id = id;

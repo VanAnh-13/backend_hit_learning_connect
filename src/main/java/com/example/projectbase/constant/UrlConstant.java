@@ -19,6 +19,7 @@ public class UrlConstant {
     public static final String DELETE_USER = BASE + "/{userId}";
     public static final String GET_USERS = BASE;
     public static final String GET_CURRENT_USER = BASE + "/profile";
+    public static final String PASSWORD_CHANGE = BASE + "/password/change";
     public static final String PASSWORD_CHANGE_FIRST_TIME = BASE + "/change-password-first-time";
     public static final String UPDATE_CURRENT_USER = BASE + "/profile/update";
     public static final String SEND_CODE = BASE + "/sendCode";
