@@ -55,7 +55,7 @@ public class ClassServiceImpl implements ClassService {
 
     @Override
     public void deleteClass(Long idClass) {
-
+        classRepository.deleteById(idClass);
     }
 
     @Override
