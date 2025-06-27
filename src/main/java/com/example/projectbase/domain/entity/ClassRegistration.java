@@ -23,7 +23,7 @@ public class ClassRegistration {
 
     @ManyToOne
     @JoinColumn(name = "class_id", nullable = false)
-    private Class classEntity;
+    private ClassRoom classEntity;
 
     @ManyToOne
     @JoinColumn(name = "student_id", nullable = false)
