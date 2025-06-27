@@ -1,4 +1,4 @@
-package com.example.projectbase.domain.dto.request;
+package com.example.projectbase.domain.dto.request.auth;
 
 import com.example.projectbase.constant.ErrorMessage;
 import lombok.AllArgsConstructor;

@@ -25,4 +25,12 @@ public class UrlConstant {
     public static final String SEND_CODE = BASE + "/sendCode";
     public static final String VERIFY_CODE = BASE + "/verifyCode";
   }
+
+  public static class Class {
+    public static final String BASE = "/classes";
+    public static final String GET_CLASS = BASE + "/{classId}";
+    public static final String CREATE_CLASS = BASE;
+    public static final String UPDATE_CLASS = BASE + "/{classId}";
+    public static final String DELETE_CLASS = BASE + "/{classId}";
+  }
 }

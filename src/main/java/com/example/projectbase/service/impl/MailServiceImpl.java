@@ -2,8 +2,8 @@ package com.example.projectbase.service.impl;
 
 import com.example.projectbase.constant.ErrorMessage;
 import com.example.projectbase.domain.dto.common.DataMailDto;
-import com.example.projectbase.domain.dto.request.GetEmailDto;
-import com.example.projectbase.domain.dto.request.VerifyCodeDto;
+import com.example.projectbase.domain.dto.request.user.GetEmailDto;
+import com.example.projectbase.domain.dto.request.user.VerifyCodeDto;
 import com.example.projectbase.domain.entity.User;
 import com.example.projectbase.exception.extended.NotFoundException;
 import com.example.projectbase.repository.UserRepository;

@@ -1,8 +1,7 @@
-package com.example.projectbase.domain.dto.request;
+package com.example.projectbase.domain.dto.request.user;
 
 import com.example.projectbase.constant.ErrorMessage;
 
-import com.example.projectbase.domain.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

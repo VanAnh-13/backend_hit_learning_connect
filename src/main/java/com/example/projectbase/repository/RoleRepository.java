@@ -1,7 +1,6 @@
 package com.example.projectbase.repository;
 
-import com.example.projectbase.domain.entity.Role;
-import org.springframework.cache.annotation.Cacheable;
+import com.example.projectbase.domain.model.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;

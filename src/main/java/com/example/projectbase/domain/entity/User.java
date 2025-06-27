@@ -1,16 +1,13 @@
 package com.example.projectbase.domain.entity;
 
 import com.example.projectbase.domain.entity.common.DateAuditing;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.sun.jna.platform.win32.Sspi;
+import com.example.projectbase.domain.model.Role;
 import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Nationalized;
 
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @AllArgsConstructor
 @NoArgsConstructor

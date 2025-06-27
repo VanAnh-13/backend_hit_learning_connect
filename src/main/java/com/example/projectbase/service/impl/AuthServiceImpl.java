@@ -1,11 +1,11 @@
 package com.example.projectbase.service.impl;
 
 import com.example.projectbase.constant.ErrorMessage;
-import com.example.projectbase.domain.dto.request.LoginRequestDto;
-import com.example.projectbase.domain.dto.request.TokenRefreshRequestDto;
+import com.example.projectbase.domain.dto.request.auth.LoginRequestDto;
+import com.example.projectbase.domain.dto.request.auth.TokenRefreshRequestDto;
 import com.example.projectbase.domain.dto.response.CommonResponseDto;
-import com.example.projectbase.domain.dto.response.LoginResponseDto;
-import com.example.projectbase.domain.dto.response.TokenRefreshResponseDto;
+import com.example.projectbase.domain.dto.response.auth.LoginResponseDto;
+import com.example.projectbase.domain.dto.response.auth.TokenRefreshResponseDto;
 import com.example.projectbase.exception.extended.UnauthorizedException;
 import com.example.projectbase.security.UserPrincipal;
 import com.example.projectbase.security.jwt.JwtTokenProvider;

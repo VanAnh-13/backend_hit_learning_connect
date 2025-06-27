@@ -2,7 +2,7 @@ package com.example.projectbase;
 
 import com.example.projectbase.config.properties.AdminInfoProperties;
 import com.example.projectbase.constant.RoleConstant;
-import com.example.projectbase.domain.entity.Role;
+import com.example.projectbase.domain.model.Role;
 import com.example.projectbase.domain.entity.User;
 import com.example.projectbase.repository.RoleRepository;
 import com.example.projectbase.repository.UserRepository;

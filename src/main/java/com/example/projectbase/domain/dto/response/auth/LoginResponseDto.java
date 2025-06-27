@@ -1,4 +1,4 @@
-package com.example.projectbase.domain.dto.response;
+package com.example.projectbase.domain.dto.response.auth;
 
 import com.example.projectbase.constant.CommonConstant;
 import lombok.Getter;

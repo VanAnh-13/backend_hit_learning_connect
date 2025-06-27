@@ -1,5 +1,6 @@
-package com.example.projectbase.domain.entity;
+package com.example.projectbase.domain.model;
 
+import com.example.projectbase.domain.entity.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 

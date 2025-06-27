@@ -1,5 +1,4 @@
-package com.example.projectbase.domain.dto.request;
-
+package com.example.projectbase.domain.dto.request.user;
 
 import com.example.projectbase.constant.ErrorMessage;
 import jakarta.validation.constraints.NotNull;
@@ -12,10 +11,11 @@ import lombok.experimental.FieldDefaults;
 @Getter
 @Setter
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class ChangePassRequest {
-    String oldPassword;
-
+public class ChangePassFirstTimeRequest {
     @NotNull(message = ErrorMessage.INVALID_SOME_THING_FIELD_IS_REQUIRED)
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=\\S+$).{8,}$", message = ErrorMessage.INVALID_FORMAT_PASSWORD)
     String newPassword;
+
+    @NotNull(message = ErrorMessage.INVALID_SOME_THING_FIELD_IS_REQUIRED)
+    String confirmPassword;
 }

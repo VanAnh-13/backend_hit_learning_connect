@@ -1,12 +1,12 @@
 package com.example.projectbase.service.impl;
 
 import com.example.projectbase.constant.ErrorMessage;
-import com.example.projectbase.domain.dto.request.ChangePassFirstTimeRequest;
-import com.example.projectbase.domain.dto.request.ChangePassRequest;
-import com.example.projectbase.domain.dto.request.UserCreateDto;
-import com.example.projectbase.domain.dto.request.UserUpdateDto;
-import com.example.projectbase.domain.dto.response.UserResponseDto;
-import com.example.projectbase.domain.entity.Role;
+import com.example.projectbase.domain.dto.request.user.ChangePassFirstTimeRequest;
+import com.example.projectbase.domain.dto.request.user.ChangePassRequest;
+import com.example.projectbase.domain.dto.request.user.UserCreateDto;
+import com.example.projectbase.domain.dto.request.user.UserUpdateDto;
+import com.example.projectbase.domain.dto.response.user.UserResponseDto;
+import com.example.projectbase.domain.model.Role;
 import com.example.projectbase.domain.entity.User;
 import com.example.projectbase.domain.mapper.UserMapper;
 import com.example.projectbase.exception.extended.InvalidException;
