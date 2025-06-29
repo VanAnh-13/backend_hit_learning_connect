@@ -15,5 +15,5 @@ public interface ClassRegistrationMapper {
                 .studentEmail(reg.getStudent().getEmail())
                 .build();
     }
-    
 }
+

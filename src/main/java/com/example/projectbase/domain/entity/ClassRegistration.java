@@ -1,4 +1,5 @@
 package com.example.projectbase.domain.entity;
+import com.example.projectbase.domain.model.SubmissionStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,6 +33,9 @@ public class ClassRegistration {
 
     @Column(name = "registered_at", nullable = false)
     private LocalDateTime registeredAt = LocalDateTime.now();
+
+    @Enumerated(EnumType.STRING)
+    private SubmissionStatus status;
 
     @Column(name = "pending", nullable = false)
     private boolean pending = true;

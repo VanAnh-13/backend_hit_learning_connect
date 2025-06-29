@@ -43,4 +43,10 @@ public class ErrorMessage {
     public static final String ERR_NOT_FOUND_ROLE = "exception.user.not.found.role";
   }
 
+  public static class ClassRegistration{
+    public static final String CLASS_NOT_FOUND="exception.class-registration.not.found";
+    public static final String REGISTRATION_NOT_FOUND="exception.registration.not.found";
+    public static final String UNAUTHORIZED = "You do not have the right to take this action.";
+    public static final String ALREADY_REGISTERED="You have already registered for this class.";
+  }
 }

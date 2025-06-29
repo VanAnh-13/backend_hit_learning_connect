@@ -33,4 +33,10 @@ public class UrlConstant {
     public static final String UPDATE_CLASS = BASE + "/{classId}";
     public static final String DELETE_CLASS = BASE + "/{classId}";
   }
+
+  public static class ClassRegistration {
+    public static final String CLASS_REGISTRATION = "/api/v1/registration";
+
+  }
+
 }
