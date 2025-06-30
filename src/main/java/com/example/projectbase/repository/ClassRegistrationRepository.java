@@ -3,7 +3,11 @@ package com.example.projectbase.repository;
 import com.example.projectbase.domain.entity.ClassRegistration;
 import com.example.projectbase.domain.entity.ClassRoom;
 import com.example.projectbase.domain.entity.User;
+import io.lettuce.core.dynamic.annotation.Param;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -16,4 +20,13 @@ public interface ClassRegistrationRepository extends JpaRepository<ClassRegistra
     List<ClassRegistration> findByStudent(User student);
     List<ClassRegistration> findByClassEntity(ClassRoom classRoom);
     boolean existsByClassEntityAndStudent(ClassRoom classRoom, User student);
+    Page<ClassRegistration> findByStudent(User student, Pageable pageable);
+
+    @Query("SELECT r FROM Registration r WHERE " +
+            "(:classId IS NULL OR r.classEntity.id = :classId) AND " +
+            "(:email IS NULL OR LOWER(r.student.email) LIKE LOWER(CONCAT('%', :email, '%')))")
+    Page<ClassRegistration> filterRegistrations(@Param("classId") Long classId,
+                                           @Param("email") String email,
+                                           Pageable pageable);
+
 }
