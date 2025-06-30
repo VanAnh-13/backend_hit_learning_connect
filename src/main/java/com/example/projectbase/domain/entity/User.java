@@ -1,6 +1,7 @@
 package com.example.projectbase.domain.entity;
 
 import com.example.projectbase.domain.entity.common.DateAuditing;
+
 import com.example.projectbase.domain.model.Role;
 import lombok.*;
 import org.hibernate.annotations.Nationalized;

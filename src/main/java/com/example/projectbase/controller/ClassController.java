@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @Validated
+@RestController
 @RestApiV1
 public class ClassController {
 

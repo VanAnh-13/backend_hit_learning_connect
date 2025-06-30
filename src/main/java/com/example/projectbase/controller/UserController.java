@@ -27,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
 @RequiredArgsConstructor
+@RestController
 @RestApiV1
 @Validated
 public class UserController {
