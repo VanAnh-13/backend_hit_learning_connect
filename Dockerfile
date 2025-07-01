@@ -1,11 +1,17 @@
-# Use OpenJDK 17
-FROM openjdk:17-jdk-slim
+#stage 1: build
+FROM maven:3.9.10-amazoncorretto-17 AS build
 
-# Set working directory
 WORKDIR /app
+COPY pom.xml .
+COPY src ./src
 
-# Copy JAR file into container
-COPY target/*.jar app.jar
+RUN mvn package -DskipTests
 
-# Command to run the JAR
+#stage 2: create image
+FROM amazoncorretto:17.0.15
+
+WORKDIR /app
+COPY --from=build /app/target/*.jar app.jar
+
 ENTRYPOINT ["java", "-jar", "app.jar"]
+

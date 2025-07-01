@@ -2,8 +2,6 @@ package com.example.projectbase.controller;
 
 import com.example.projectbase.base.RestApiV1;
 import com.example.projectbase.base.VsResponseUtil;
-import com.example.projectbase.constant.ErrorMessage;
-import com.example.projectbase.constant.ResponseMessage;
 import com.example.projectbase.constant.UrlConstant;
 import com.example.projectbase.domain.dto.request.user.*;
 import com.example.projectbase.exception.extended.InvalidException;
@@ -29,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 
 @RequiredArgsConstructor
+@RestController
 @RestApiV1
 @Validated
 public class UserController {
@@ -68,7 +67,7 @@ public class UserController {
     @DeleteMapping(UrlConstant.User.DELETE_USER)
     public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
         userService.deleteUser(userId);
-        return VsResponseUtil.success(ResponseMessage.DELETE_SUCCESS);
+        return VsResponseUtil.success("User deleted");
     }
 
     @Tags({@Tag(name = "admin-controller"), @Tag(name = "user-controller")})
@@ -97,7 +96,7 @@ public class UserController {
                                         @CurrentUser UserPrincipal principal,
                                         @Valid ChangePassFirstTimeRequest changePassFirstTimeRequest) {
         userService.changePasswordFirstTime(changePassFirstTimeRequest, principal);
-        return VsResponseUtil.success(ResponseMessage.CHANGE_PASSWORD_SUCCESS);
+        return VsResponseUtil.success("Successfully changed password");
     }
 
     @Tag(name = "user-controller")

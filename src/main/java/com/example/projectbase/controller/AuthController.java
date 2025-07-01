@@ -6,6 +6,7 @@ import com.example.projectbase.constant.UrlConstant;
 import com.example.projectbase.domain.dto.request.auth.LoginRequestDto;
 import com.example.projectbase.domain.dto.request.auth.TokenRefreshRequestDto;
 import com.example.projectbase.service.AuthService;
+import com.example.projectbase.validator.annotation.ValidFileImage;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +15,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
 import jakarta.validation.Valid;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RequiredArgsConstructor
 @Validated
 @RestApiV1
+@RestController
 public class AuthController {
 
   private final AuthService authService;

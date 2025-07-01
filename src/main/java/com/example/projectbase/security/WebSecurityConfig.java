@@ -62,7 +62,7 @@ public class WebSecurityConfig implements WebMvcConfigurer {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/login", "/api/v1/auth/register", "/api/v1/auth/refreshToken").anonymous()
-                        .requestMatchers("/ws-chat/**").permitAll()
+                        .requestMatchers("/api/v1/storage/download/**").permitAll()
                         .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**", "/login", "/swagger-ui/index.html").permitAll()
                         .requestMatchers("/api/v1/admin/**").hasAnyRole("ADMIN", "LEADER")
                         .requestMatchers("/api/v1/member/**").hasRole("MEMBER")
