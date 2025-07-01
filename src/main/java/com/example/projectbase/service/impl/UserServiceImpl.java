@@ -39,7 +39,6 @@ public class UserServiceImpl implements UserService {
 
     private final RoleRepository roleRepository;
 
-
     //------------------------CRUD User------------------------
     @Override
     @Cacheable(value = "userDto", key = "#id")
