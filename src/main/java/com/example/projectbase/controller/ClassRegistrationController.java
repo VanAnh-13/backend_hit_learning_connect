@@ -47,7 +47,7 @@ public class ClassRegistrationController {
 
     @Operation(summary = "Approve or deny the application", description = "ADMIN/LEADER")
     @PostMapping("/approve")
-    @PreAuthorize("hasAnyRole('ADMIN', 'LEAGER')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
     public ResponseEntity<?> approverOrReject(@RequestBody ApproveOrRejectRequest request,
                                               @Parameter(hidden = true) @CurrentUser UserPrincipal admin){
         classRegistrationService.approveOrReject(admin.getId(), request);

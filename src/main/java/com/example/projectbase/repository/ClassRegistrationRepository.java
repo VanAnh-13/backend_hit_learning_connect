@@ -16,13 +16,13 @@ import java.util.Optional;
 @Repository
 public interface ClassRegistrationRepository extends JpaRepository<ClassRegistration, Long> {
 
-    Optional<ClassRegistration> findByClassEntityAndStident(ClassRoom classRoom, User student);
+    Optional<ClassRegistration> findByClassEntityAndStudent(ClassRoom classRoom, User student);
     List<ClassRegistration> findByStudent(User student);
     List<ClassRegistration> findByClassEntity(ClassRoom classRoom);
     boolean existsByClassEntityAndStudent(ClassRoom classRoom, User student);
     Page<ClassRegistration> findByStudent(User student, Pageable pageable);
 
-    @Query("SELECT r FROM Registration r WHERE " +
+    @Query("SELECT r FROM ClassRegistration r WHERE " +
             "(:classId IS NULL OR r.classEntity.id = :classId) AND " +
             "(:email IS NULL OR LOWER(r.student.email) LIKE LOWER(CONCAT('%', :email, '%')))")
     Page<ClassRegistration> filterRegistrations(@Param("classId") Long classId,

@@ -81,7 +81,7 @@ public class ClassRegistrationImpl implements ClassRegistrationService {
          ClassRoom classRoom= classRepository.findById(classId).
                  orElseThrow(()-> new NotFoundException(ErrorMessage.ClassRegistration.CLASS_NOT_FOUND));
 
-         ClassRegistration classRegistration= classRegistrationRepository.findByClassEntityAndStident(classRoom, user).
+         ClassRegistration classRegistration= classRegistrationRepository.findByClassEntityAndStudent(classRoom, user).
                  orElseThrow(()-> new NotFoundException(ErrorMessage.ClassRegistration.REGISTRATION_NOT_FOUND));
          classRegistrationRepository.delete(classRegistration);
     }
