@@ -33,4 +33,18 @@ public class UrlConstant {
     public static final String UPDATE_CLASS = BASE + "/{classId}";
     public static final String DELETE_CLASS = BASE + "/{classId}";
   }
+
+  public static class Document {
+    public static final String BASE = "/documents";
+    public static final String GET_DOCUMENT = BASE + "/{documentId}";
+    public static final String CREATE_DOCUMENT = BASE;
+    public static final String UPDATE_DOCUMENT = BASE + "/{documentId}";
+    public static final String DELETE_DOCUMENT = BASE + "/{documentId}";
+  }
+
+  public static class Storage {
+    public static final String BASE = "/storage";
+    public static final String UPLOAD_FILE = BASE + "/upload";
+    public static final String DOWNLOAD_FILE = BASE + "/download/**";
+  }
 }

@@ -1,5 +1,6 @@
 package com.example.projectbase;
 
+import com.example.projectbase.config.StorageProperties;
 import com.example.projectbase.config.properties.AdminInfoProperties;
 import com.example.projectbase.constant.RoleConstant;
 import com.example.projectbase.domain.model.Role;
@@ -21,7 +22,7 @@ import java.time.LocalDateTime;
 
 @Slf4j
 @RequiredArgsConstructor
-@EnableConfigurationProperties({AdminInfoProperties.class})
+@EnableConfigurationProperties({AdminInfoProperties.class, StorageProperties.class})
 @SpringBootApplication
 @EnableCaching
 public class ProjectBaseApplication {
