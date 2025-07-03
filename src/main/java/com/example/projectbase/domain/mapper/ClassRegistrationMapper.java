@@ -12,7 +12,7 @@ public interface ClassRegistrationMapper {
                 .classTitle(reg.getClassEntity().getTitle())
                 .registeredAt(reg.getRegisteredAt())
                 .pending(reg.isPending())
-                .studentEmail(reg.getStudent().getEmail())
+                . studentEmail(reg.getStudent().getEmail())
                 .build();
     }
 }

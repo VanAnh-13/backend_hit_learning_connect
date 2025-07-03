@@ -77,7 +77,7 @@ public class ClassRegistrationController {
         }
     }
 
-   @Operation(summary = "Filter registrations by class and email")
+    @Operation(summary = "Filter registrations by class and email")
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/filter")
     public ResponseEntity<?> filterRegistrations(@RequestBody FilterRegistrationRequest request, @ParameterObject Pageable pageable){
