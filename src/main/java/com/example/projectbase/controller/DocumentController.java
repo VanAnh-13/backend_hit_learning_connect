@@ -84,7 +84,7 @@ public class DocumentController {
     }
 
     @Tag(name = "document-controller")
-    @Operation(summary = "API delete document by id test ci cd")
+    @Operation(summary = "API delete document by id")
     @DeleteMapping(UrlConstant.Document.DELETE_DOCUMENT)
     public ResponseEntity<?> deleteDocument(@PathVariable Long documentId) {
         return VsResponseUtil.success(documentService.deleteDocument(documentId));
