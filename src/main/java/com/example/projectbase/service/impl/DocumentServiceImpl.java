@@ -46,7 +46,7 @@ public class DocumentServiceImpl implements DocumentService {
         return DocumentResponseDto.builder()
                 .id(String.valueOf(document1.getDocId()))
                 .createdAt(document1.getUploadedAt().toString())
-                .creator(userService.getUserById(userPrincipal.getId()))
+                .uploader(userService.getUserById(userPrincipal.getId()))
                 .title(document1.getTitle())
                 .description(document1.getDescription())
                 .fileUrl(document1.getFileUrl())
@@ -62,8 +62,8 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public List<DocumentResponseDto> getAllDocuments(Pageable pageable) {
-        return documentMapper.toDtoList(documentRepository.findAll(pageable).getContent());
+    public List<DocumentResponseDto> getAllDocuments(Pageable pageable, String keyword) {
+        return documentMapper.toDtoList(documentRepository.searchByKeyword(keyword, pageable).getContent());
     }
 
     @Override

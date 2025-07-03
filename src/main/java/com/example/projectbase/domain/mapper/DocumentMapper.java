@@ -12,7 +12,6 @@ import java.util.List;
 public interface DocumentMapper {
     @Mapping(source = "docId", target = "id")
     @Mapping(source = "uploadedAt", target = "createdAt")
-    @Mapping(source = "uploader", target = "creator")
     DocumentResponseDto toDto(Document document);
 
     List<DocumentResponseDto> toDtoList(List<Document> documents);

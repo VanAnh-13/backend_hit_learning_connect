@@ -2,6 +2,7 @@ package com.example.projectbase.repository;
 
 import com.example.projectbase.domain.entity.Document;
 import com.example.projectbase.domain.entity.User;
+import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -17,4 +18,16 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
 
     @Query("SELECT u FROM Document u")
     Page<Document> findAll(Pageable pageable);
+
+    @Query("""
+        SELECT d
+        FROM Document d
+        JOIN d.uploader c
+        WHERE LOWER(d.title)    LIKE LOWER(CONCAT('%', :keyword, '%'))
+           OR LOWER(c.fullName) LIKE LOWER(CONCAT('%', :keyword, '%'))
+    """)
+    Page<Document> searchByKeyword(
+            String keyword,
+            Pageable pageable
+    );
 }
