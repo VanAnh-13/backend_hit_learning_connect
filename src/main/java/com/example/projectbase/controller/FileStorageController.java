@@ -3,6 +3,7 @@ package com.example.projectbase.controller;
 import com.example.projectbase.base.RestApiV1;
 import com.example.projectbase.base.VsResponseUtil;
 import com.example.projectbase.constant.UrlConstant;
+import com.example.projectbase.domain.dto.request.storage.DeleteFileRequestDto;
 import com.example.projectbase.security.CurrentUser;
 import com.example.projectbase.security.UserPrincipal;
 import com.example.projectbase.service.StorageService;
@@ -48,32 +49,11 @@ public class FileStorageController {
         return VsResponseUtil.success(storageService.uploadFile(file, principal));
     }
 
+
     @Tag(name = "storage-controller")
-    @Operation(summary = "API để download tệp đính kèm")
-    @GetMapping(UrlConstant.Storage.DOWNLOAD_FILE)
-    public ResponseEntity<?> downloadDocument(HttpServletRequest request) {
-        String pathWithinApp = (String) request.getAttribute(
-                HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
-        String bestPattern = (String) request.getAttribute(
-                HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
-
-        String relativePath = new AntPathMatcher()
-                .extractPathWithinPattern(bestPattern, pathWithinApp);
-
-        Resource resource = storageService.loadFileAsResource(relativePath);
-
-        String contentType;
-        try {
-            contentType = request.getServletContext()
-                    .getMimeType(resource.getFile().getAbsolutePath());
-        } catch (IOException ex) {
-            contentType = "application/octet-stream";
-        }
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(contentType))
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\"" + resource.getFilename() + "\"")
-                .body(resource);
+    @Operation(summary = "API để xóa tệp đính kèm ")
+    @PostMapping(value = UrlConstant.Storage.DELETE_FILE)
+    public ResponseEntity<?> deleteFile(DeleteFileRequestDto deleteFileRequestDto) {
+        return VsResponseUtil.success(storageService.deleteFileFromCloudinary(deleteFileRequestDto.getUrl()));
     }
 }
