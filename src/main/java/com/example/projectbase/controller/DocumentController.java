@@ -43,8 +43,6 @@ import static com.mysql.cj.conf.PropertyKey.logger;
 @Slf4j
 public class DocumentController {
 
-    private static final Logger logger = LoggerFactory.getLogger(DocumentController.class);
-
     @Autowired
     private final DocumentService documentService;
 
@@ -69,9 +67,13 @@ public class DocumentController {
     @Tag(name = "document-controller")
     @Operation(summary = "API get all documents")
     @GetMapping(UrlConstant.Document.BASE)
-    public ResponseEntity<?> getAllDocuments(@ParameterObject @PageableDefault(page = 0, size = 100, sort = "timestamp", direction = Sort.Direction.ASC)
-                                                 Pageable pageable) {
-        return VsResponseUtil.success(documentService.getAllDocuments(pageable));
+    public ResponseEntity<?> getAllDocuments(
+            @ParameterObject @PageableDefault(page = 0, size = 100, sort = "timestamp", direction = Sort.Direction.ASC)
+                                                 Pageable pageable,
+            @Parameter(description = "Từ khoá tìm kiếm theo tên tài liệu hoặc người tạo", required = false)
+            @RequestParam(value = "keyword", required = false) String keyword
+    ) {
+        return VsResponseUtil.success(documentService.getAllDocuments(pageable, keyword));
     }
 
     @Tag(name = "document-controller")
