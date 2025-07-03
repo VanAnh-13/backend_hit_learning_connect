@@ -166,6 +166,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CacheEvict(cacheNames = {"userDto", "users"}, key = "#userPrincipal.id")
     public String changePassword(ChangePassRequest changePassRequest, UserPrincipal userPrincipal) {
         User user = userRepository.findById(userPrincipal.getId()).orElseThrow(
                 () -> new RuntimeException(ErrorMessage.User.ERR_USER_NOT_FOUND)
