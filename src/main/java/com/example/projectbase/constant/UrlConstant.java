@@ -47,5 +47,6 @@ public class UrlConstant {
     public static final String BASE = "/storage";
     public static final String UPLOAD_FILE = BASE + "/upload";
     public static final String DOWNLOAD_FILE = BASE + "/download/**";
+    public static final String DELETE_FILE = BASE + "/delete";
   }
 }

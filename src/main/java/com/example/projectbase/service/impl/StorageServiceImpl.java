@@ -1,13 +1,19 @@
 package com.example.projectbase.service.impl;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.example.projectbase.config.StorageProperties;
 
 import com.example.projectbase.domain.dto.response.storage.UploadFileResponseDto;
 import com.example.projectbase.exception.extended.FileStorageException;
 import com.example.projectbase.exception.extended.NotFoundException;
+import com.example.projectbase.exception.extended.UploadFileException;
 import com.example.projectbase.security.UserPrincipal;
 import com.example.projectbase.service.StorageService;
+import com.example.projectbase.util.UploadFileUtil;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -16,28 +22,36 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.time.LocalDate;
+import java.util.Map;
 import java.util.UUID;
 
 
 @Service
 @RequiredArgsConstructor
 @Transactional
+
 public class StorageServiceImpl implements StorageService {
 
     private final Path rootLocation;
 
+    private final Cloudinary cloudinary;
 
+    private final Logger logger = LoggerFactory.getLogger(StorageServiceImpl.class);
 
     @Autowired
-    public StorageServiceImpl(StorageProperties storageProperties) {
+    public StorageServiceImpl(StorageProperties storageProperties, Cloudinary cloudinary) {
         this.rootLocation = Paths.get(storageProperties.getUploadDir())
                 .toAbsolutePath().normalize();
+        this.cloudinary = cloudinary;
 
         try {
             Files.createDirectories(this.rootLocation);
@@ -47,65 +61,83 @@ public class StorageServiceImpl implements StorageService {
     }
 
     public UploadFileResponseDto uploadFile(MultipartFile file, UserPrincipal userPrincipal) {
-        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
-
+        String originalFilename = StringUtils.cleanPath(file.getOriginalFilename());
         try {
-            if (fileName.contains("..")) {
-                throw new FileStorageException("Sorry! Filename contains invalid path sequence.");
+            if (originalFilename.contains("..")) {
+                throw new FileStorageException("Invalid path sequence in filename.");
             }
 
             LocalDate today = LocalDate.now();
-            String year  = String.valueOf(today.getYear());
-            String month = String.format("%02d", today.getMonthValue());
-            String day   = String.format("%02d", today.getDayOfMonth());
+            String folder = String.format("%s/%d/%02d/%02d",
+                    userPrincipal.getId(),
+                    today.getYear(),
+                    today.getMonthValue(),
+                    today.getDayOfMonth());
 
-            Path dateDir = this.rootLocation
-                    .resolve(String.valueOf(userPrincipal.getId()))
-                    .resolve(year)
-                    .resolve(month)
-                    .resolve(day);
-            Files.createDirectories(dateDir);
+            String publicId = folder + "/" + originalFilename;
 
-            String ext = "";
-            int   idx = fileName.lastIndexOf('.');
-            if (idx > 0) {
-                ext = fileName.substring(idx);
-            }
-            String newFilename = UUID.randomUUID().toString() + ext;
-
-            String newPath = String.valueOf(userPrincipal.getId()) + '/' + year + '/' + month + '/' + day + '/' + newFilename;
-
-            Path targetLocation = dateDir.resolve(newFilename);
-            Files.copy(
-                    file.getInputStream(),
-                    targetLocation,
-                    StandardCopyOption.REPLACE_EXISTING
+            Map<?, ?> uploadResult = cloudinary.uploader().upload(
+                    file.getBytes(),
+                    ObjectUtils.asMap(
+                            "resource_type", "raw",
+                            "public_id", publicId,
+                            "overwrite", true
+                    )
             );
 
+            String downloadUrl = (String) uploadResult.get("secure_url");
+            long size = ((Number) uploadResult.get("bytes")).longValue();
+
             return UploadFileResponseDto.builder()
-                    .fileName(newFilename)
-                    .fileSize(file.getSize()+'B')
-                    .filePath(newPath.toString())
-                    .fileType(file.getContentType())
+                    .fileName(originalFilename)
+                    .filePath(downloadUrl)
+                    .fileSize(size)
+                    .fileType(StringUtils.getFilenameExtension(originalFilename))
                     .build();
 
-        } catch (Exception ex) {
-            throw new FileStorageException("Could not upload file.");
+        } catch (IOException e) {
+            throw new FileStorageException("Could not upload file to Cloudinary.");
         }
     }
 
-    public Resource loadFileAsResource(String relativePath) {
+    @Override
+    public Resource loadFileAsResource(String fileName) {
+        return null;
+    }
+
+    public String deleteFileFromCloudinary(String url) {
         try {
-            Path file = rootLocation
-                    .resolve(relativePath)
-                    .normalize();
-            UrlResource resource = new UrlResource(file.toUri());
-            if (resource.exists() && resource.isReadable()) {
-                return resource;
+            String publicId = extractPublicIdFromUrl(url);
+
+            Map<?, ?> deleteResult = cloudinary.uploader().destroy(publicId,
+                    ObjectUtils.asMap("resource_type", "raw"));
+
+            String result = (String) deleteResult.get("result");
+            if (!"ok".equals(result)) {
+                throw new FileStorageException("Failed to delete file from Cloudinary: " + publicId);
             }
-            throw new NotFoundException("Không thể đọc file: " + relativePath);
-        } catch (MalformedURLException ex) {
-            throw new NotFoundException("File không hợp lệ: " + relativePath);
+        } catch (IOException e) {
+            throw new FileStorageException("Could not delete file from Cloudinary.");
+        }
+
+        return "Delete Success";
+    }
+
+    public String extractPublicIdFromUrl(String url) {
+        try {
+            String[] parts = url.split("/upload/");
+            if (parts.length < 2) {
+                throw new IllegalArgumentException("Invalid Cloudinary URL");
+            }
+
+            String pathWithVersion = parts[1];
+
+            String path = pathWithVersion.replaceFirst("v\\d+/", "");
+
+            return URLDecoder.decode(path, StandardCharsets.UTF_8);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("Failed to extract public_id from URL", e);
         }
     }
+
 }

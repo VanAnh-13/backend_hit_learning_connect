@@ -68,8 +68,6 @@ public class UserController {
         return VsResponseUtil.success("User deleted");
     }
 
-
-
     @Tag(name = "admin-controller")
     @Operation(summary = "API get all customer")
     @PreAuthorize("hasRole('ADMIN')")
