@@ -10,7 +10,7 @@ import java.util.List;
 public interface DocumentService {
     DocumentResponseDto createDocument(DocumentRequestDto documentRequestDto, UserPrincipal userPrincipal);
     DocumentResponseDto getDocumentById(Long id);
-    List<DocumentResponseDto> getAllDocuments(Pageable pageable);
+    List<DocumentResponseDto> getAllDocuments(Pageable pageable, String keyword);
     DocumentResponseDto updateDocument(Long id, DocumentRequestDto documentRequestDto);
     String deleteDocument(Long id);
 }

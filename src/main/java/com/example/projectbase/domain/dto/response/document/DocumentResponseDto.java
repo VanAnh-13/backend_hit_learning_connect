@@ -11,7 +11,7 @@ import lombok.*;
 public class DocumentResponseDto {
     private String id;
     private String title;
-    private UserResponseDto creator;
+    private UserResponseDto uploader;
     private String createdAt;
     private String fileUrl;
     private String description;

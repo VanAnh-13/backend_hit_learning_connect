@@ -9,4 +9,5 @@ import org.springframework.web.multipart.MultipartFile;
 public interface StorageService {
     UploadFileResponseDto uploadFile(MultipartFile file, UserPrincipal userPrincipal);
     Resource loadFileAsResource(String fileName);
+    String deleteFileFromCloudinary(String url);
 }
