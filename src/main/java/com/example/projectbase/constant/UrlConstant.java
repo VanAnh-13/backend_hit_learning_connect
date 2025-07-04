@@ -7,6 +7,10 @@ public class UrlConstant {
     public static final String LOGIN = PRE_FIX + "/login";
     public static final String LOGOUT = PRE_FIX + "/logout";
     public static final String refreshToken = PRE_FIX + "/refreshToken";
+    public static final String SEND_CODE = PRE_FIX + "/send-code";
+    public static final String VERIFY_CODE = PRE_FIX + "/verify-code";
+    public static final String PASSWORD_CHANGE = PRE_FIX + "/password/change";
+    public static final String PASSWORD_CHANGE_FIRST_TIME = PRE_FIX + "/change-password-first-time";
     private Auth() {
     }
   }
@@ -47,11 +51,12 @@ public class UrlConstant {
         public static final String DELETE_DOCUMENT = BASE + "/{documentId}";
     }
 
-    public static class Storage {
-        public static final String BASE = "/storage";
-        public static final String UPLOAD_FILE = BASE + "/upload";
-        public static final String DOWNLOAD_FILE = BASE + "/download/**";
-    }
 
 
+  public static class Storage {
+    public static final String BASE = "/storage";
+    public static final String UPLOAD_FILE = BASE + "/upload";
+    public static final String DOWNLOAD_FILE = BASE + "/download/**";
+    public static final String DELETE_FILE = BASE + "/delete";
+  }
 }
