@@ -3,6 +3,8 @@ package com.example.projectbase.controller;
 
 import com.example.projectbase.base.RestApiV1;
 import com.example.projectbase.base.VsResponseUtil;
+import com.example.projectbase.constant.ErrorMessage;
+import com.example.projectbase.constant.ResponseMessage;
 import com.example.projectbase.constant.UrlConstant;
 import com.example.projectbase.domain.dto.request.classes.ClassRequestDto;
 import com.example.projectbase.service.ClassService;
@@ -16,7 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @Validated
-@RestController
 @RestApiV1
 public class ClassController {
 
@@ -49,7 +50,7 @@ public class ClassController {
     @DeleteMapping(UrlConstant.Class.DELETE_CLASS)
     public ResponseEntity<?> deleteClass(@PathVariable Long classId) {
         classService.deleteClass(classId);
-        return VsResponseUtil.success("Class deleted");
+        return VsResponseUtil.success(ResponseMessage.DELETE_SUCCESS);
     }
 
     @Tag(name = "class-controller")

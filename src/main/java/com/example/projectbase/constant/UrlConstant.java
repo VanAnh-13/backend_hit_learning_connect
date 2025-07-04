@@ -23,8 +23,11 @@ public class UrlConstant {
     public static final String DELETE_USER = BASE + "/{userId}";
     public static final String GET_USERS = BASE;
     public static final String GET_CURRENT_USER = BASE + "/profile";
+    public static final String PASSWORD_CHANGE = BASE + "/password/change";
+    public static final String PASSWORD_CHANGE_FIRST_TIME = BASE + "/change-password-first-time";
     public static final String UPDATE_CURRENT_USER = BASE + "/profile/update";
-
+    public static final String SEND_CODE = BASE + "/sendCode";
+    public static final String VERIFY_CODE = BASE + "/verifyCode";
   }
 
   public static class Class {
@@ -35,13 +38,20 @@ public class UrlConstant {
     public static final String DELETE_CLASS = BASE + "/{classId}";
   }
 
-  public static class Document {
-    public static final String BASE = "/documents";
-    public static final String GET_DOCUMENT = BASE + "/{documentId}";
-    public static final String CREATE_DOCUMENT = BASE;
-    public static final String UPDATE_DOCUMENT = BASE + "/{documentId}";
-    public static final String DELETE_DOCUMENT = BASE + "/{documentId}";
-  }
+    public static class ClassRegistration {
+        public static final String CLASS_REGISTRATION = "/api/v1/registration";
+
+    }
+
+    public static class Document {
+        public static final String BASE = "/documents";
+        public static final String GET_DOCUMENT = BASE + "/{documentId}";
+        public static final String CREATE_DOCUMENT = BASE;
+        public static final String UPDATE_DOCUMENT = BASE + "/{documentId}";
+        public static final String DELETE_DOCUMENT = BASE + "/{documentId}";
+    }
+
+
 
   public static class Storage {
     public static final String BASE = "/storage";

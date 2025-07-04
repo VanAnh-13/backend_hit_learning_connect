@@ -1,9 +1,7 @@
 package com.example.projectbase.domain.entity;
+import com.example.projectbase.domain.model.SubmissionStatus;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -15,6 +13,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Getter
+@Setter
+
 public class ClassRegistration {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +24,7 @@ public class ClassRegistration {
 
     @ManyToOne
     @JoinColumn(name = "class_id", nullable = false)
-    private Class classEntity;
+    private ClassRoom classEntity;
 
     @ManyToOne
     @JoinColumn(name = "student_id", nullable = false)
@@ -31,6 +32,9 @@ public class ClassRegistration {
 
     @Column(name = "registered_at", nullable = false)
     private LocalDateTime registeredAt = LocalDateTime.now();
+
+    @Enumerated(EnumType.STRING)
+    private SubmissionStatus status;
 
     @Column(name = "pending", nullable = false)
     private boolean pending = true;

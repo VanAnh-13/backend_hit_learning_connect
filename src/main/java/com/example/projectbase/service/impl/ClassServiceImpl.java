@@ -2,7 +2,7 @@ package com.example.projectbase.service.impl;
 
 import com.example.projectbase.domain.dto.request.classes.ClassRequestDto;
 import com.example.projectbase.domain.dto.response.classes.ClassResponseDto;
-import com.example.projectbase.domain.entity.Class;
+import com.example.projectbase.domain.entity.ClassRoom;
 import com.example.projectbase.domain.entity.User;
 import com.example.projectbase.domain.mapper.ClassMapper;
 import com.example.projectbase.exception.extended.NotFoundException;
@@ -32,15 +32,15 @@ public class ClassServiceImpl implements ClassService {
 
     @Override
     public ClassResponseDto addNewClass(ClassRequestDto classRequestDto) {
-        Class classAdd = classMapper.toEntity(classRequestDto);
-        Class addSuccess = classRepository.save(classAdd);
+        ClassRoom classAdd = classMapper.toEntity(classRequestDto);
+        ClassRoom addSuccess = classRepository.save(classAdd);
 
         return classMapper.toDTO(addSuccess);
     }
 
     @Override
     public ClassResponseDto editClass(Long idClass, ClassRequestDto classRequestDto) {
-        Class classExist = classRepository.findById(idClass)
+        ClassRoom classExist = classRepository.findById(idClass)
                 .orElseThrow(() -> new NotFoundException("Class not found", new String[]{idClass.toString()}));
 
         classExist.setDescription(classRequestDto.description());
