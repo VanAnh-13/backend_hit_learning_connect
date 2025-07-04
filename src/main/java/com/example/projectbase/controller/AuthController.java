@@ -43,7 +43,7 @@ public class AuthController {
 
   private final MailService mailService;
 
-  @Operation(summary = "API Login")
+  @Operation(summary = "API Login Test ci/cd")
   @PostMapping(UrlConstant.Auth.LOGIN)
   public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDto request) {
     return VsResponseUtil.success(authService.login(request));
