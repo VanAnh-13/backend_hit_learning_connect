@@ -171,6 +171,7 @@ public class MailServiceImpl implements MailService {
                     verifyCode.getEmail(),
                     passwordEncoder.encode(verifyCode.getNewPassword())
             );
+
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not update password");
         }

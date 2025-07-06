@@ -60,6 +60,14 @@ public class AuthController {
     return VsResponseUtil.success("Successfully changed password");
   }
 
+  @Operation(summary = "API check if first time login", description = "Authenticated")
+  @PostMapping(UrlConstant.Auth.FIRST_TIME_LOGIN)
+  public ResponseEntity<?> firstTimeLogin(@Parameter(name = "principal", hidden = true)
+                                            @CurrentUser UserPrincipal principal) {
+    return VsResponseUtil.success(userService.checkFirstLogin(principal));
+  }
+
+
 //  @Tag(name = "user-controller")
   @Operation(summary = "API request code to email, get code too much then ban ip for 20 minute", description = "permitAll")
   @PostMapping(UrlConstant.Auth.SEND_CODE)

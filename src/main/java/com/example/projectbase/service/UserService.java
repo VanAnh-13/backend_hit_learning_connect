@@ -30,4 +30,5 @@ public interface UserService {
 
   String changePassword(ChangePassRequest changePassRequest, UserPrincipal userPrincipal);
 
+  Boolean checkFirstLogin(UserPrincipal userPrincipal);
 }
