@@ -17,6 +17,7 @@ public class ErrorMessage {
   public static final String INVALID_DATE = "invalid.date-format";
   public static final String INVALID_DATE_FEATURE = "invalid.date-future";
   public static final String INVALID_DATETIME = "invalid.datetime-format";
+  public static final String FORBIDDEN_VIEW_USER_REGISTRATION = "Bạn không có quyền xem thông tin đăng ký của người dùng này";
 
   public static class Auth {
     public static final String ERR_CHANGE_PASSWORD_FIST_TIME_LOGIN = "error.user.first-time-login";
@@ -37,10 +38,21 @@ public class ErrorMessage {
     public static final String ERR_DELETE_FAIL = "Delete user fail";
     public static final String ERR_USER_NOT_FOUND = "exception.user.not.found";
     public static final String ERR_CREATE_FAIL = "Create user fail";
+    public static final String ERR_NOT_FOUND="user not found";
   }
 
   public static class Role {
     public static final String ERR_NOT_FOUND_ROLE = "exception.user.not.found.role";
   }
 
+  public static class ClassRegistration{
+    public static final String CLASS_NOT_FOUND="exception.class-registration.not.found";
+    public static final String REGISTRATION_NOT_FOUND="exception.registration.not.found";
+    public static final String UNAUTHORIZED = "You do not have the right to take this action.";
+    public static final String ALREADY_REGISTERED="You have already registered for this class.";
+    public static final String GET_MY_REGISTRATIONS_FAILED = "Cannot retrieve the list of registered classes";
+    public static final String GET_ALL_REGISTRATIONS_FAILED = "Cannot retrieve the list of all registrations.";
+    public static final String FILTER_REGISTRATIONS_FAILED = "Cannot filter the registration list.";
+
+  }
 }

@@ -1,5 +1,6 @@
 package com.example.projectbase.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -7,6 +8,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "classes")
@@ -14,7 +17,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class Class {
+public class ClassRoom {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "class_id")
@@ -35,6 +38,14 @@ public class Class {
 
     @Column(name = "end_date")
     private LocalDate endDate;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "classRoom")
+    @JsonIgnore
+    private Set<User> users = new HashSet<>();
+
+    @OneToMany(mappedBy = "classEntity", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<ClassRegistration> registrations = new HashSet<>();
 
     @PrePersist
     protected void onCreate() {
