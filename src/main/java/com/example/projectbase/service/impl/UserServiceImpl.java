@@ -184,5 +184,11 @@ public class UserServiceImpl implements UserService {
         return "CHANGE PASSWORD SUCCESS";
     }
 
+    @Override
+    public Boolean checkFirstLogin(UserPrincipal userPrincipal) {
+        User user = getUser(userPrincipal);
+
+        return (user.getLastLogin().equals(user.getCreatedDate()));
+    }
 
 }
