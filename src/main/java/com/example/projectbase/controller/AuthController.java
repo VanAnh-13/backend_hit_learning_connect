@@ -37,18 +37,13 @@ public class AuthController {
 
   private final MailService mailService;
 
-  @Operation(summary = "API Login")
+  @Operation(summary = "API Login", description = "Anonymous")
   @PostMapping(UrlConstant.Auth.LOGIN)
   public ResponseEntity<?> login(@Valid @RequestBody LoginRequestDto request) {
     return VsResponseUtil.success(authService.login(request));
   }
 
-//  @Operation(summary = "API test")
-//  @PostMapping("auth/test")
-//  public String login(@ValidFileImage MultipartFile multipartFile) {
-//    return multipartFile.getContentType();
-//  }
-  @Operation(summary = "API Refresh Token")
+  @Operation(summary = "API get Access Token from Refresh Token", description = "Anonymous")
   @PostMapping(UrlConstant.Auth.refreshToken)
   public ResponseEntity<?> refreshToken(@Valid @RequestBody TokenRefreshRequestDto request) {
     return VsResponseUtil.success(authService.refresh(request));
@@ -56,7 +51,7 @@ public class AuthController {
 
   //change password
 //  @Tag(name = "user-controller")
-  @Operation(summary = "API change password for first time login (only first time)")
+  @Operation(summary = "API change password for first time login (only first time)", description = "Authenticated")
   @PostMapping(UrlConstant.Auth.PASSWORD_CHANGE_FIRST_TIME)
   public ResponseEntity<?> changePass(@Parameter(name = "principal", hidden = true)
                                       @CurrentUser UserPrincipal principal,
@@ -66,21 +61,21 @@ public class AuthController {
   }
 
 //  @Tag(name = "user-controller")
-  @Operation(summary = "API request code to email, get code too much then ban ip for 20 minute")
+  @Operation(summary = "API request code to email, get code too much then ban ip for 20 minute", description = "permitAll")
   @PostMapping(UrlConstant.Auth.SEND_CODE)
   public ResponseEntity<?> sendCode(@Parameter(name = "email") @RequestBody GetEmailDto email) throws Exception {
     return VsResponseUtil.success(mailService.sendMail(email));
   }
 
 //  @Tag(name = "user-controller")
-  @Operation(summary = "API verify code to change password")
+  @Operation(summary = "API verify code to change password", description = "permitAll")
   @PostMapping(UrlConstant.Auth.VERIFY_CODE)
   public ResponseEntity<?> verifyCode(@RequestBody VerifyCodeDto verifyCodeDto) throws BadRequestException {
     return VsResponseUtil.success(mailService.verifyEmail(verifyCodeDto));
   }
 
 //  @Tag(name = "user-controller")
-  @Operation(summary = "API change password inside account")
+  @Operation(summary = "API change password inside account", description = "Authenticated")
   @PostMapping(UrlConstant.Auth.PASSWORD_CHANGE)
   public ResponseEntity<?> changePassword(
           @Parameter(name = "principal", hidden = true)
