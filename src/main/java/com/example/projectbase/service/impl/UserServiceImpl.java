@@ -16,6 +16,7 @@ import com.example.projectbase.repository.RoleRepository;
 import com.example.projectbase.repository.UserRepository;
 import com.example.projectbase.security.UserPrincipal;
 import com.example.projectbase.service.UserService;
+import com.nimbusds.openid.connect.sdk.claims.Gender;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
@@ -24,6 +25,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -117,6 +119,18 @@ public class UserServiceImpl implements UserService {
 
                     if (!updatedUser.getAvatarUrl().equals("")) {
                         user.setAvatarUrl(updatedUser.getAvatarUrl());
+                    }
+
+                    if (!updatedUser.getBirthday().equals("")) {
+                        user.setBirthday(LocalDate.parse(updatedUser.getBirthday()));
+                    }
+
+                    if (updatedUser.getGender().equals("MALE")) {
+                        user.setGender("MALE");
+                    }
+
+                    if (updatedUser.getGender().equals("FEMALE")) {
+                        user.setGender("FEMALE");
                     }
 
                     return userRepository.save(user);

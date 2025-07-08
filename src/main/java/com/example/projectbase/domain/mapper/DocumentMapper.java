@@ -3,6 +3,7 @@ package com.example.projectbase.domain.mapper;
 import com.example.projectbase.domain.dto.response.document.DocumentResponseDto;
 import com.example.projectbase.domain.entity.Document;
 
+import com.nimbusds.openid.connect.sdk.claims.Gender;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

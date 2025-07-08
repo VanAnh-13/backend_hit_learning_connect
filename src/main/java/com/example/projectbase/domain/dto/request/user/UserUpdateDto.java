@@ -19,6 +19,10 @@ public class UserUpdateDto {
 
   private String Role;
 
+  private String gender;
+
+  private String birthday;
+
   private String avatarUrl;
 
 }
