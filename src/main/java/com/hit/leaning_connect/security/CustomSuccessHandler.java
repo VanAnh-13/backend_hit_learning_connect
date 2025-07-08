@@ -1,7 +1,6 @@
 package com.hit.leaning_connect.security;
 
-import com.hit.leaning_connect.domain.model.Role;
-import jakarta.servlet.FilterChain;
+import com.hit.leaning_connect.constant.Role;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;

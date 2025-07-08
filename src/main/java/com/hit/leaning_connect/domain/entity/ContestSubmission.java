@@ -1,6 +1,6 @@
 package com.hit.leaning_connect.domain.entity;
 
-import com.hit.leaning_connect.domain.model.SubmissionStatus;
+import com.hit.leaning_connect.constant.SubmissionStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

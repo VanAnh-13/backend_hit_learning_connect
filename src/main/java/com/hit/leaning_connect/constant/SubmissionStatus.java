@@ -1,4 +1,4 @@
-package com.hit.leaning_connect.domain.model;
+package com.hit.leaning_connect.constant;
 
 public enum SubmissionStatus {
     PENDING,

@@ -2,7 +2,7 @@ package com.hit.leaning_connect.domain.entity;
 
 import com.hit.leaning_connect.domain.annotation.ValidEmail;
 import com.hit.leaning_connect.domain.annotation.ValidPassword;
-import com.hit.leaning_connect.domain.model.Role;
+import com.hit.leaning_connect.constant.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

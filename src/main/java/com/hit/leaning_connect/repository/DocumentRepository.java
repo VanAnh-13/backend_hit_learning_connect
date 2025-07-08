@@ -1,11 +1,9 @@
 package com.hit.leaning_connect.repository;
 
-import com.hit.leaning_connect.domain.entity.Class;
+import com.hit.leaning_connect.domain.entity.Document;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
-
 @Repository
-public interface ClassRepository extends JpaRepository<Class, Long> {
+public interface DocumentRepository extends JpaRepository<Document, Long> {
 }
