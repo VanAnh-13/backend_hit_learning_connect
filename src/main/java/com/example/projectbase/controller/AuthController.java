@@ -55,7 +55,7 @@ public class AuthController {
   @PostMapping(UrlConstant.Auth.PASSWORD_CHANGE_FIRST_TIME)
   public ResponseEntity<?> changePass(@Parameter(name = "principal", hidden = true)
                                       @CurrentUser UserPrincipal principal,
-                                      @Valid ChangePassFirstTimeRequest changePassFirstTimeRequest) {
+                                      @RequestBody @Valid ChangePassFirstTimeRequest changePassFirstTimeRequest) {
     userService.changePasswordFirstTime(changePassFirstTimeRequest, principal);
     return VsResponseUtil.success("Successfully changed password");
   }
