@@ -97,11 +97,11 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserResponseDto(
                 userRepository.findById(id).map(user -> {
 
-                    if (userRepository.findByEmail(updatedUser.getEmail()).isPresent()) {
+                    if (userRepository.findByEmail(updatedUser.getEmail()).isPresent() && !user.getEmail().equals(updatedUser.getEmail())) {
                         throw new InvalidException(ErrorMessage.User.ERR_EMAIL_EXISTED, new String[]{updatedUser.getEmail()});
                     }
 
-                    if (userRepository.findByUsername(updatedUser.getUsername()).isPresent()) {
+                    if (userRepository.findByUsername(updatedUser.getUsername()).isPresent() && !user.getUsername().equals(updatedUser.getUsername())) {
                         throw new InvalidException(ErrorMessage.User.ERR_USER_NAME_EXISTED, new String[]{updatedUser.getUsername()});
                     }
 
