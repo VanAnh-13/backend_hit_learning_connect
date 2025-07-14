@@ -105,34 +105,35 @@ public class UserServiceImpl implements UserService {
                         throw new InvalidException(ErrorMessage.User.ERR_USER_NAME_EXISTED, new String[]{updatedUser.getUsername()});
                     }
 
-                    if (!updatedUser.getEmail().equals("")) {
+                    if (updatedUser.getEmail() != null && !updatedUser.getEmail().isEmpty()) {
                         user.setEmail(updatedUser.getEmail());
                     }
 
-                    if (!updatedUser.getFullname().equals("")) {
+                    if (updatedUser.getFullname() != null && !updatedUser.getFullname().isEmpty()) {
                         user.setFullName(updatedUser.getFullname());
                     }
 
-                    if (!updatedUser.getUsername().equals("")) {
+                    if (updatedUser.getUsername() != null && !updatedUser.getUsername().isEmpty()) {
                         user.setUsername(updatedUser.getUsername());
                     }
 
-                    if (!updatedUser.getAvatarUrl().equals("")) {
+                    if (updatedUser.getAvatarUrl() != null && !updatedUser.getAvatarUrl().isEmpty()) {
                         user.setAvatarUrl(updatedUser.getAvatarUrl());
                     }
 
-                    if (!updatedUser.getBirthday().equals("")) {
+                    if (updatedUser.getBirthday() != null && !updatedUser.getBirthday().isEmpty()) {
                         user.setBirthday(LocalDate.parse(updatedUser.getBirthday()));
                     }
 
-                    if (updatedUser.getGender().equals("MALE")) {
-                        user.setGender("MALE");
-                    }
+                    if (updatedUser.getGender() != null) {
+                        if (updatedUser.getGender().equals("MALE")) {
+                            user.setGender("MALE");
+                        }
 
-                    if (updatedUser.getGender().equals("FEMALE")) {
-                        user.setGender("FEMALE");
+                        if (updatedUser.getGender().equals("FEMALE")) {
+                            user.setGender("FEMALE");
+                        }
                     }
-
                     return userRepository.save(user);
                 }).orElseThrow(() -> new RuntimeException(ErrorMessage.User.ERR_USER_NOT_FOUND))
         );
