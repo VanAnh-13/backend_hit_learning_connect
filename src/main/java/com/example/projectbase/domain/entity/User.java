@@ -7,6 +7,8 @@ import lombok.*;
 import org.hibernate.annotations.Nationalized;
 
 import jakarta.persistence.*;
+
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -30,6 +32,7 @@ public class User extends DateAuditing {
   private String username;
 
   @Column(nullable = false)
+  @JsonIgnore
   private String password;
 
   @Nationalized
@@ -41,6 +44,12 @@ public class User extends DateAuditing {
 
   @Column(nullable = false, unique = true)
   private String email;
+
+  @Column(name="gender")
+  private String gender;
+
+  @Column(name="birthday")
+  private LocalDate birthday;
 
   @Column(nullable = false)
   private LocalDateTime lastLogin;

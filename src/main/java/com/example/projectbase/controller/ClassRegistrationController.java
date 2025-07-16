@@ -96,7 +96,7 @@ public class ClassRegistrationController {
         return VsResponseUtil.success(ResponseMessage.DELETE_SUCCESS);
    }
 
-  @Operation(summary = "Cancel the class registration", description = "MEMBER")
+    @Operation(summary = "Cancel the class registration", description = "MEMBER")
     @PreAuthorize("hasRole('MEMBER')")
     @DeleteMapping("/cancel/{classId}")
     public ResponseEntity<?> cancel(@PathVariable Long classId, @Parameter(hidden = true) @CurrentUser UserPrincipal user){

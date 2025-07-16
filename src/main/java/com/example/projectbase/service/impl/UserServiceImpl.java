@@ -17,6 +17,7 @@ import com.example.projectbase.repository.UserRepository;
 import com.example.projectbase.security.UserPrincipal;
 import com.example.projectbase.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.sql.Update;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
@@ -117,6 +118,18 @@ public class UserServiceImpl implements UserService {
 
                     if (!updatedUser.getAvatarUrl().equals("")) {
                         user.setAvatarUrl(updatedUser.getAvatarUrl());
+                    }
+
+                    if(!updatedUser.getBirthday().equals("")){
+                        user.setBirthday(updatedUser.getBirthday());
+                    }
+
+                    if(!updatedUser.getGender().equals("MALE")){
+                        user.setGender("MALE");
+                    }
+
+                    if(!updatedUser.getGender().equals("FEMALE")){
+                        user.setGender("FEMALE");
                     }
 
                     return userRepository.save(user);

@@ -32,6 +32,9 @@ public class Contest {
     @Column(name = "end_time", nullable = false)
     private LocalDateTime endTime;
 
+    @Column(name = "file_url", nullable = false)
+    private String fileUrl;
+
     @ManyToOne
     @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;
