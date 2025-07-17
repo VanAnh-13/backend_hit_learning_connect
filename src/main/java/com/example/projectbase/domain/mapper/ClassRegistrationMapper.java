@@ -2,8 +2,11 @@ package com.example.projectbase.domain.mapper;
 
 import com.example.projectbase.domain.entity.ClassRegistration;
 import com.example.projectbase.domain.dto.response.classes.ClassRegistrationResponse;
+import org.mapstruct.Mapper;
 
 import java.time.LocalDateTime;
+
+@Mapper(componentModel = "spring")
 
 public interface ClassRegistrationMapper {
     public static ClassRegistrationResponse toReponse(ClassRegistration reg){

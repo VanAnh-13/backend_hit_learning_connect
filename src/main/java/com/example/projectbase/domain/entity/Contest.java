@@ -23,7 +23,7 @@ public class Contest {
     @Column(name = "title", length = 200, nullable = false)
     private String title;
 
-    @Column(name = "description")
+    @Column(name = "description", length = 1000)
     private String description;
 
     @Column(name = "start_time", nullable = false)
