@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+
 public class Contest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,6 +35,15 @@ public class Contest {
 
     @Column(name = "file_url", nullable = false)
     private String fileUrl;
+
+    @Column(name="highestScore")
+    private double highestScore;
+
+    @Column(name="result_Summary", length = 1000)
+    private String resultSummary;
+
+    @Column(name = "ranking")
+    private String ranking;
 
     @ManyToOne
     @JoinColumn(name = "created_by", nullable = false)

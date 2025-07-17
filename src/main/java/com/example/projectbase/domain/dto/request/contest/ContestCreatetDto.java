@@ -28,4 +28,5 @@ public class ContestCreatetDto {
 
     @NotBlank(message = ErrorMessage.NOT_BLANK_FIELD)
     private String fileUrl;
+
 }

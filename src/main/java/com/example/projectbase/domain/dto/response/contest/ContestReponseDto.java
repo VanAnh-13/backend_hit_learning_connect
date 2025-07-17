@@ -1,5 +1,6 @@
 package com.example.projectbase.domain.dto.response.contest;
 
+import jakarta.persistence.Column;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -23,4 +24,11 @@ public class ContestReponseDto {
     private LocalDateTime endTime;
 
     private String fileUrl;
+
+    private double highestScore;
+
+    private String resultSummary;
+
+    private String ranking;
+
 }

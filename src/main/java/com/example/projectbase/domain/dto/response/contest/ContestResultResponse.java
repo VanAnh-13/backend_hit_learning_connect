@@ -1,25 +1,22 @@
-package com.example.projectbase.domain.dto.request.contest;
+package com.example.projectbase.domain.dto.response.contest;
 
-import jakarta.persistence.Column;
 import lombok.*;
 
 import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Builder
 
-public class ContestUpdateDto {
+public class ContestResultResponse {
+
+    private String contestId;
 
     private String title;
 
     private String description;
-
-    private LocalDateTime startTime;
-
-    private LocalDateTime endTime;
 
     private String fileUrl;
 
@@ -28,5 +25,4 @@ public class ContestUpdateDto {
     private String resultSummary;
 
     private String ranking;
-
 }
