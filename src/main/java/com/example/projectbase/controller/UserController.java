@@ -69,16 +69,13 @@ public class UserController {
     }
 
     @Tag(name = "admin-controller")
-    @Operation(summary = "API get all customer", description = "Admin / Leader")
+    @Operation(summary = "API get all users", description = "Admin / Leader")
     @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
     @GetMapping(UrlConstant.User.GET_USERS)
     public ResponseEntity<?> getUsers(@ParameterObject @PageableDefault(page = 0, size = 100, sort = "timestamp", direction = Sort.Direction.ASC)
                                       Pageable pageable) {
         return VsResponseUtil.success(userService.getUsers(pageable));
     }
-
-
-
 
     @Tag(name = "user-controller")
     @Operation(summary = "API update current user's profile", description = "Authenticated")

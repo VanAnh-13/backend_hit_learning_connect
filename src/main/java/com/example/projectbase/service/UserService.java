@@ -4,6 +4,7 @@ import com.example.projectbase.domain.dto.request.user.ChangePassFirstTimeReques
 import com.example.projectbase.domain.dto.request.user.ChangePassRequest;
 import com.example.projectbase.domain.dto.request.user.UserCreateDto;
 import com.example.projectbase.domain.dto.request.user.UserUpdateDto;
+import com.example.projectbase.domain.dto.response.user.ListUserResponseDto;
 import com.example.projectbase.domain.dto.response.user.UserResponseDto;
 import com.example.projectbase.exception.extended.InvalidException;
 import com.example.projectbase.security.UserPrincipal;
@@ -16,7 +17,7 @@ public interface UserService {
 
   UserResponseDto getUserById(Long userId);
 
-  List<UserResponseDto> getUsers(Pageable pageable);
+  ListUserResponseDto getUsers(Pageable pageable);
 
   UserResponseDto getCurrentUser(UserPrincipal principal);
 
