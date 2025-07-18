@@ -5,6 +5,7 @@ import com.example.projectbase.domain.dto.request.user.ChangePassFirstTimeReques
 import com.example.projectbase.domain.dto.request.user.ChangePassRequest;
 import com.example.projectbase.domain.dto.request.user.UserCreateDto;
 import com.example.projectbase.domain.dto.request.user.UserUpdateDto;
+import com.example.projectbase.domain.dto.response.user.ListUserResponseDto;
 import com.example.projectbase.domain.dto.response.user.UserResponseDto;
 import com.example.projectbase.domain.model.Role;
 import com.example.projectbase.domain.entity.User;
@@ -52,8 +53,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserResponseDto> getUsers(Pageable pageable) {
-        return userMapper.toUserResponseDtos(userRepository.findAll(pageable).getContent());
+    public ListUserResponseDto getUsers(Pageable pageable) {
+        return ListUserResponseDto.builder()
+                .data(userMapper.toUserResponseDtos(userRepository.findAll(pageable).getContent()))
+                .amountOfAllUsers(userRepository.count())
+                .build();
     }
 
     @Override
