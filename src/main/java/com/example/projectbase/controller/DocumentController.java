@@ -40,7 +40,7 @@ public class DocumentController {
     public ResponseEntity<?> createDocument(
             @Parameter(name = "principal", hidden = true)
             @CurrentUser UserPrincipal principal,
-            DocumentRequestDto documentRequestDto
+            @RequestBody  DocumentRequestDto documentRequestDto
     ) {
         return VsResponseUtil.success(documentService.createDocument(documentRequestDto, principal));
     }
