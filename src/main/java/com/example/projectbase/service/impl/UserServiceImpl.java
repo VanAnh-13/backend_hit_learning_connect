@@ -5,6 +5,7 @@ import com.example.projectbase.domain.dto.request.user.ChangePassFirstTimeReques
 import com.example.projectbase.domain.dto.request.user.ChangePassRequest;
 import com.example.projectbase.domain.dto.request.user.UserCreateDto;
 import com.example.projectbase.domain.dto.request.user.UserUpdateDto;
+import com.example.projectbase.domain.dto.response.user.ListUserResponseDto;
 import com.example.projectbase.domain.dto.response.user.UserResponseDto;
 import com.example.projectbase.domain.model.Role;
 import com.example.projectbase.domain.entity.User;
@@ -16,6 +17,7 @@ import com.example.projectbase.repository.RoleRepository;
 import com.example.projectbase.repository.UserRepository;
 import com.example.projectbase.security.UserPrincipal;
 import com.example.projectbase.service.UserService;
+import com.nimbusds.openid.connect.sdk.claims.Gender;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.sql.Update;
 import org.springframework.cache.annotation.CacheEvict;
@@ -25,6 +27,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -51,8 +54,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserResponseDto> getUsers(Pageable pageable) {
-        return userMapper.toUserResponseDtos(userRepository.findAll(pageable).getContent());
+    public ListUserResponseDto getUsers(Pageable pageable) {
+        return ListUserResponseDto.builder()
+                .data(userMapper.toUserResponseDtos(userRepository.findAll(pageable).getContent()))
+                .amountOfAllUsers(userRepository.count())
+                .build();
     }
 
     @Override
@@ -96,42 +102,43 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserResponseDto(
                 userRepository.findById(id).map(user -> {
 
-                    if (userRepository.findByEmail(updatedUser.getEmail()).isPresent()) {
+                    if (userRepository.findByEmail(updatedUser.getEmail()).isPresent() && !user.getEmail().equals(updatedUser.getEmail())) {
                         throw new InvalidException(ErrorMessage.User.ERR_EMAIL_EXISTED, new String[]{updatedUser.getEmail()});
                     }
 
-                    if (userRepository.findByUsername(updatedUser.getUsername()).isPresent()) {
+                    if (userRepository.findByUsername(updatedUser.getUsername()).isPresent() && !user.getUsername().equals(updatedUser.getUsername())) {
                         throw new InvalidException(ErrorMessage.User.ERR_USER_NAME_EXISTED, new String[]{updatedUser.getUsername()});
                     }
 
-                    if (!updatedUser.getEmail().equals("")) {
+                    if (updatedUser.getEmail() != null && !updatedUser.getEmail().isEmpty()) {
                         user.setEmail(updatedUser.getEmail());
                     }
 
-                    if (!updatedUser.getFullname().equals("")) {
+                    if (updatedUser.getFullname() != null && !updatedUser.getFullname().isEmpty()) {
                         user.setFullName(updatedUser.getFullname());
                     }
 
-                    if (!updatedUser.getUsername().equals("")) {
+                    if (updatedUser.getUsername() != null && !updatedUser.getUsername().isEmpty()) {
                         user.setUsername(updatedUser.getUsername());
                     }
 
-                    if (!updatedUser.getAvatarUrl().equals("")) {
+                    if (updatedUser.getAvatarUrl() != null && !updatedUser.getAvatarUrl().isEmpty()) {
                         user.setAvatarUrl(updatedUser.getAvatarUrl());
                     }
 
-                    if(!updatedUser.getBirthday().equals("")){
-                        user.setBirthday(updatedUser.getBirthday());
+                    if (updatedUser.getBirthday() != null && !updatedUser.getBirthday().isEmpty()) {
+                        user.setBirthday(LocalDate.parse(updatedUser.getBirthday()));
                     }
 
-                    if(!updatedUser.getGender().equals("MALE")){
-                        user.setGender("MALE");
-                    }
+                    if (updatedUser.getGender() != null) {
+                        if (updatedUser.getGender().equals("MALE")) {
+                            user.setGender("MALE");
+                        }
 
-                    if(!updatedUser.getGender().equals("FEMALE")){
-                        user.setGender("FEMALE");
+                        if (updatedUser.getGender().equals("FEMALE")) {
+                            user.setGender("FEMALE");
+                        }
                     }
-
                     return userRepository.save(user);
                 }).orElseThrow(() -> new RuntimeException(ErrorMessage.User.ERR_USER_NOT_FOUND))
         );
@@ -179,6 +186,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @CacheEvict(cacheNames = {"userDto", "users"}, key = "#userPrincipal.id")
     public String changePassword(ChangePassRequest changePassRequest, UserPrincipal userPrincipal) {
         User user = userRepository.findById(userPrincipal.getId()).orElseThrow(
                 () -> new RuntimeException(ErrorMessage.User.ERR_USER_NOT_FOUND)
@@ -196,5 +204,11 @@ public class UserServiceImpl implements UserService {
         return "CHANGE PASSWORD SUCCESS";
     }
 
+    @Override
+    public Boolean checkFirstLogin(UserPrincipal userPrincipal) {
+        User user = getUser(userPrincipal);
+
+        return (user.getLastLogin().equals(user.getCreatedDate()));
+    }
 
 }

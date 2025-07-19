@@ -8,6 +8,7 @@ import com.example.projectbase.domain.entity.User;
 import com.example.projectbase.exception.extended.NotFoundException;
 import com.example.projectbase.repository.UserRepository;
 import com.example.projectbase.service.MailService;
+import com.example.projectbase.util.GmailUtil;
 import com.example.projectbase.util.SendMailUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.coyote.BadRequestException;
@@ -35,6 +36,9 @@ public class MailServiceImpl implements MailService {
 
     @Autowired
     private SendMailUtil sendMailUtil;
+
+    @Autowired
+    private GmailUtil gmailUtil;
 
     @Autowired
     private StringRedisTemplate redisTemplate;
@@ -104,7 +108,7 @@ public class MailServiceImpl implements MailService {
                 .build();
 
 
-        sendMailUtil.sendEmailWithHTML(data, "otp.html");
+        gmailUtil.sendTemplateEmail(data, "otp.html");
 
         //delete old code
         String codeKey = "mail:code:" + email.getEmail();
@@ -167,6 +171,7 @@ public class MailServiceImpl implements MailService {
                     verifyCode.getEmail(),
                     passwordEncoder.encode(verifyCode.getNewPassword())
             );
+
         } catch (Exception e) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Could not update password");
         }

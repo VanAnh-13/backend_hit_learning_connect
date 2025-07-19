@@ -1,5 +1,6 @@
 package com.example.projectbase.controller;
 
+import com.example.projectbase.base.RestApiV1;
 import com.example.projectbase.base.VsResponseUtil;
 import com.example.projectbase.constant.ErrorMessage;
 import com.example.projectbase.constant.ResponseMessage;
@@ -10,15 +11,13 @@ import com.example.projectbase.domain.dto.request.classes.RegisterClassRequest;
 import com.example.projectbase.security.CurrentUser;
 import com.example.projectbase.security.UserPrincipal;
 import com.example.projectbase.service.ClassRegistrationService;
-import com.example.projectbase.service.impl.CustomUserDetailsServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
-import lombok.Getter;
+
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.springdoc.api.annotations.ParameterObject;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,26 +26,24 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping(UrlConstant.ClassRegistration.CLASS_REGISTRATION)
 @RequiredArgsConstructor
-@SecurityRequirement(name="bearerAuth")
 @Validated
-
+@RestApiV1
 public class ClassRegistrationController {
 
     private final ClassRegistrationService classRegistrationService;
 
     @Operation(summary=" Register class", description = "Member")
-    @PostMapping
-    @PreAuthorize("hasRole('MEMBER')")
+    @PostMapping(UrlConstant.ClassRegistration.CREATE_REGISTRATION)
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> register(@RequestBody RegisterClassRequest request,
                                       @Parameter(hidden = true) @CurrentUser UserPrincipal user) throws BadRequestException {
         classRegistrationService.register(user.getId(), request);
         return VsResponseUtil.success(ResponseMessage.REGISTER_SUCCESS);
     }
 
-    @Operation(summary = "Approve or deny the application", description = "ADMIN/LEADER")
-    @PostMapping("/approve")
+    @Operation(summary = "Approve or deny the application", description = "Admin / Leader")
+    @PostMapping(UrlConstant.ClassRegistration.APPROVE_REGISTRATION)
     @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
     public ResponseEntity<?> approverOrReject(@RequestBody ApproveOrRejectRequest request,
                                               @Parameter(hidden = true) @CurrentUser UserPrincipal admin){
@@ -54,9 +51,9 @@ public class ClassRegistrationController {
         return VsResponseUtil.success(ResponseMessage.APPROVE_REJECT_SUCCESS);
     }
 
-    @Operation(summary = "View the registered classes", description = "MEMBER")
-    @GetMapping("/user")
-    @PreAuthorize("hasRole('MEMBER')")
+    @Operation(summary = "View the registered classes", description = "Member")
+    @GetMapping(UrlConstant.ClassRegistration.VIEW_REGISTRATION)
+    @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getMyRegistrations(@Parameter(hidden = true) @CurrentUser UserPrincipal user,
                                                 @ParameterObject Pageable pageable){
         try{
@@ -66,9 +63,9 @@ public class ClassRegistrationController {
         }
     }
 
-    @Operation(summary = "Get all registrations")
+    @Operation(summary = "Get all registrations", description = "Admin")
     @PreAuthorize("hasRole('ADMIN')")
-    @GetMapping
+    @GetMapping(UrlConstant.ClassRegistration.BASE)
     public ResponseEntity<?> getAllRegistrations(@ParameterObject Pageable pageable){
         try{
             return VsResponseUtil.success(classRegistrationService.getAllRegistrations(pageable));
@@ -77,9 +74,9 @@ public class ClassRegistrationController {
         }
     }
 
-    @Operation(summary = "Filter registrations by class and email")
+    @Operation(summary = "Filter registrations by class and email", description = "Admin")
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/filter")
+    @PostMapping(UrlConstant.ClassRegistration.FILTER_REGISTRATION)
     public ResponseEntity<?> filterRegistrations(@RequestBody FilterRegistrationRequest request, @ParameterObject Pageable pageable){
         try{
             return VsResponseUtil.success(classRegistrationService.filterRegistrations( request, pageable));
@@ -88,9 +85,9 @@ public class ClassRegistrationController {
         }
    }
 
-   @Operation(summary = "delete register", description = "ADMIN/LEADER")
+   @Operation(summary = "delete registration", description = "Admin / Leader")
    @PreAuthorize("hasAnyRole('ADMIN','LEADER')")
-   @DeleteMapping("/{id}")
+   @DeleteMapping(UrlConstant.ClassRegistration.DEL_REGISTRATION)
    public ResponseEntity<?> delete(@PathVariable Long id){
         classRegistrationService.deleteRegistration(id);
         return VsResponseUtil.success(ResponseMessage.DELETE_SUCCESS);

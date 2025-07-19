@@ -3,6 +3,7 @@ package com.example.projectbase.domain.entity;
 import com.example.projectbase.domain.entity.common.DateAuditing;
 import com.example.projectbase.domain.model.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.nimbusds.openid.connect.sdk.claims.Gender;
 import lombok.*;
 import org.hibernate.annotations.Nationalized;
 
@@ -45,10 +46,10 @@ public class User extends DateAuditing {
   @Column(nullable = false, unique = true)
   private String email;
 
-  @Column(name="gender")
+  @Column(name = "gender")
   private String gender;
 
-  @Column(name="birthday")
+  @Column(name = "birthday")
   private LocalDate birthday;
 
   @Column(nullable = false)
@@ -66,6 +67,4 @@ public class User extends DateAuditing {
   @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
   @JsonIgnore
   private Set<ClassRegistration> classRegistrations = new HashSet<>();
-
-
 }

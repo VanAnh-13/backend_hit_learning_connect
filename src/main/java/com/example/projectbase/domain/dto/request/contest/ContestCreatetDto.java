@@ -2,6 +2,7 @@ package com.example.projectbase.domain.dto.request.contest;
 
 import com.example.projectbase.constant.ErrorMessage;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -20,10 +21,10 @@ public class ContestCreatetDto {
     @NotBlank(message = ErrorMessage.NOT_BLANK_FIELD)
     private String description;
 
-    @NotBlank(message = ErrorMessage.NOT_BLANK_FIELD)
+    @NotNull
     private LocalDateTime startTime;
 
-    @NotBlank(message = ErrorMessage.NOT_BLANK_FIELD)
+    @NotNull
     private LocalDateTime endTime;
 
     @NotBlank(message = ErrorMessage.NOT_BLANK_FIELD)

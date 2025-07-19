@@ -21,10 +21,14 @@ public class UserUpdateDto {
 
   private String Role;
 
-  private String avatarUrl;
-
   private String gender;
 
-  private LocalDate birthday;
+  private String birthday;
+
+  private String avatarUrl;
+
+//  private String gender;
+//
+//  private LocalDate birthday;
 
 }

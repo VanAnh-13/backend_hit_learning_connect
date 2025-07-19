@@ -6,8 +6,10 @@ import com.example.projectbase.domain.dto.request.contest.ContestUpdateDto;
 import com.example.projectbase.domain.dto.response.contest.ContestReponseDto;
 import com.example.projectbase.domain.dto.response.contest.ContestResultResponse;
 import com.example.projectbase.domain.entity.Contest;
+import com.example.projectbase.domain.entity.User;
 import com.example.projectbase.domain.mapper.ContestMapper;
 import com.example.projectbase.repository.ContestRepository;
+import com.example.projectbase.repository.UserRepository;
 import com.example.projectbase.service.ContestService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +17,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,6 +28,7 @@ public class ContestServiceImpl implements ContestService {
 
     private final ContestRepository contestRepository;
     private final ContestMapper mapper;
+    private final UserRepository userRepository;
 
     @Override
     public Page<ContestReponseDto> getAllPaged(int page, int size) {
@@ -48,6 +53,18 @@ public class ContestServiceImpl implements ContestService {
     @Override
     public ContestReponseDto createContest(ContestCreatetDto request) {
         Contest contest= mapper.toEntity(request);
+
+        // 1. Lấy thông tin người dùng hiện tại từ SecurityContext
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+
+        // 2. Truy vấn User từ database
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // 3. Gán createdBy
+        contest.setCreatedBy(user);
+
         return mapper.toReponse(contestRepository.save(contest));
     }
 

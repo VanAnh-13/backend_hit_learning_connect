@@ -130,4 +130,5 @@ public class ContestController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorMessage.Contest.INTERNAL_SERVER_ERROR);
         }
    }
+
 }

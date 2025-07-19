@@ -34,11 +34,9 @@ public class UserController {
 
     private final UserService userService;
 
-    private final MailService mailService;
-
 //    CRUD user
     @Tag(name = "admin-controller")
-    @Operation(summary = "API get user by id")
+    @Operation(summary = "API get user by id", description = "Admin / Leader")
     @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
     @GetMapping(UrlConstant.User.GET_USER)
     public ResponseEntity<?> getUserById(@PathVariable Long userId) {
@@ -46,7 +44,7 @@ public class UserController {
     }
 
     @Tag(name = "admin-controller")
-    @Operation(summary = "API create user")
+    @Operation(summary = "API create user", description = "Admin / Leader")
     @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
     @PostMapping(UrlConstant.User.CREATE_USER)
     public ResponseEntity<?> createUser(@RequestBody @Valid UserCreateDto user) throws InvalidException {
@@ -54,7 +52,7 @@ public class UserController {
     }
 
     @Tag(name = "admin-controller")
-    @Operation(summary = "API update user by id")
+    @Operation(summary = "API update user by id", description = "Admin / Leader")
     @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
     @PutMapping(UrlConstant.User.UPDATE_USER)
     public ResponseEntity<?> updateUser(@PathVariable Long userId, @RequestBody @Valid UserUpdateDto user) {
@@ -62,7 +60,7 @@ public class UserController {
     }
 
     @Tag(name = "admin-controller")
-    @Operation(summary = "API delete user by id")
+    @Operation(summary = "API delete user by id", description = "Admin / Leader")
     @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
     @DeleteMapping(UrlConstant.User.DELETE_USER)
     public ResponseEntity<?> deleteUser(@PathVariable Long userId) {
@@ -70,37 +68,17 @@ public class UserController {
         return VsResponseUtil.success("User deleted");
     }
 
-    @Tags({@Tag(name = "admin-controller"), @Tag(name = "user-controller")})
-    @Operation(summary = "API get current user login")
-    @GetMapping(UrlConstant.User.GET_CURRENT_USER)
-    public ResponseEntity<?> getCurrentUser(@Parameter(name = "principal", hidden = true)
-                                            @CurrentUser UserPrincipal principal) {
-        return VsResponseUtil.success(userService.getCurrentUser(principal));
-    }
-
     @Tag(name = "admin-controller")
-    @Operation(summary = "API get all customer")
-    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "API get all users", description = "Admin / Leader")
+    @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
     @GetMapping(UrlConstant.User.GET_USERS)
     public ResponseEntity<?> getUsers(@ParameterObject @PageableDefault(page = 0, size = 100, sort = "timestamp", direction = Sort.Direction.ASC)
                                       Pageable pageable) {
         return VsResponseUtil.success(userService.getUsers(pageable));
     }
 
-
-    //change password
     @Tag(name = "user-controller")
-    @Operation(summary = "API change password for first time login (only first time)")
-    @PostMapping(UrlConstant.User.PASSWORD_CHANGE_FIRST_TIME)
-    public ResponseEntity<?> changePass(@Parameter(name = "principal", hidden = true)
-                                        @CurrentUser UserPrincipal principal,
-                                        @Valid ChangePassFirstTimeRequest changePassFirstTimeRequest) {
-        userService.changePasswordFirstTime(changePassFirstTimeRequest, principal);
-        return VsResponseUtil.success("Successfully changed password");
-    }
-
-    @Tag(name = "user-controller")
-    @Operation(summary = "API update current user's profile")
+    @Operation(summary = "API update current user's profile", description = "Authenticated")
     @PutMapping(UrlConstant.User.UPDATE_CURRENT_USER)
     public ResponseEntity<?> updateCurrentUser(@Parameter(name = "principal", hidden = true)
                                                @CurrentUser UserPrincipal principal,
@@ -109,29 +87,14 @@ public class UserController {
         return VsResponseUtil.success(userService.updateUser(principal.getId(), userUpdate));
     }
 
-    @Tag(name = "user-controller")
-    @Operation(summary = "API request code to email, get code too much then ban ip for 20 minute")
-    @PostMapping(UrlConstant.User.SEND_CODE)
-    public ResponseEntity<?> sendCode(@Parameter(name = "email") @RequestBody GetEmailDto email) throws Exception {
-        return VsResponseUtil.success(mailService.sendMail(email));
+    //  @Tags({@Tag(name = "admin-controller"), @Tag(name = "user-controller")})
+    @Operation(summary = "API get current user login", description = "Authenticated")
+    @GetMapping(UrlConstant.User.GET_CURRENT_USER)
+    public ResponseEntity<?> getCurrentUser(@Parameter(name = "principal", hidden = true)
+                                            @CurrentUser UserPrincipal principal) {
+        return VsResponseUtil.success(userService.getCurrentUser(principal));
     }
 
-    @Tag(name = "user-controller")
-    @Operation(summary = "API verify code to change password")
-    @PostMapping(UrlConstant.User.VERIFY_CODE)
-    public ResponseEntity<?> verifyCode(@RequestBody VerifyCodeDto verifyCodeDto) throws BadRequestException {
-        return VsResponseUtil.success(mailService.verifyEmail(verifyCodeDto));
-    }
 
-    @Tag(name = "user-controller")
-    @Operation(summary = "API change password inside account")
-    @PostMapping(UrlConstant.User.PASSWORD_CHANGE)
-    public ResponseEntity<?> changePassword(
-            @Parameter(name = "principal", hidden = true)
-            @CurrentUser UserPrincipal principal,
-            @RequestBody @Valid ChangePassRequest changePassRequest
-    ) {
-        return VsResponseUtil.success(userService.changePassword(changePassRequest, principal));
-    }
 
 }

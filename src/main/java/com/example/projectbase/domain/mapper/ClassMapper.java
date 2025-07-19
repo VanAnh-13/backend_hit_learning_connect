@@ -3,17 +3,41 @@ package com.example.projectbase.domain.mapper;
 import com.example.projectbase.domain.dto.request.classes.ClassRequestDto;
 import com.example.projectbase.domain.dto.response.classes.ClassResponseDto;
 import com.example.projectbase.domain.entity.ClassRoom;
-import org.mapstruct.Mapper;
+import com.example.projectbase.domain.entity.User;
+import com.example.projectbase.repository.UserRepository;
+import jakarta.persistence.EntityNotFoundException;
+import org.mapstruct.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
-public interface ClassMapper {
-    ClassResponseDto toDTO(ClassRoom entity);
+public abstract class ClassMapper {
+    @Autowired
+    protected UserRepository userRepository;
 
-    ClassRoom toEntity(ClassRequestDto dto);
+    @Mapping(source = "teacherId", target = "teacher", qualifiedByName = "idToUser")
+    public abstract ClassRoom toEntity(ClassRequestDto dto);
 
-    List<ClassResponseDto> toDTOList(List<ClassRoom> entities);
+    @Mapping(source = "teacher.id", target = "teacherId")
+    @Mapping(source = "teacher.fullName", target = "teacherFullName")
+    @Mapping(source = "teacher.username", target = "teacherUsername")
+    public abstract ClassResponseDto toDTO(ClassRoom entity);
 
-    List<ClassRoom> toEntityList(List<ClassRequestDto> classRequestDtos);
+    public List<ClassRoom> toEntityList(List<ClassRequestDto> dtos) {
+        return dtos.stream().map(this::toEntity).collect(Collectors.toList());
+    }
+
+    public List<ClassResponseDto> toDTOList(List<ClassRoom> entities) {
+        return entities.stream().map(this::toDTO).collect(Collectors.toList());
+    }
+
+
+    @Named("idToUser")
+    public User idToUser(Long id) {
+        if (id == null) return null;
+        return userRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("User không tồn tại với id=" + id));
+    }
 }

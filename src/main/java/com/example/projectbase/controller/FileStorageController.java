@@ -3,30 +3,24 @@ package com.example.projectbase.controller;
 import com.example.projectbase.base.RestApiV1;
 import com.example.projectbase.base.VsResponseUtil;
 import com.example.projectbase.constant.UrlConstant;
+import com.example.projectbase.domain.dto.request.storage.DeleteFileRequestDto;
 import com.example.projectbase.security.CurrentUser;
 import com.example.projectbase.security.UserPrincipal;
 import com.example.projectbase.service.StorageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.AntPathMatcher;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.HandlerMapping;
-
-import java.io.IOException;
 
 @RestController
 @Validated
@@ -38,8 +32,9 @@ public class FileStorageController {
     private StorageService storageService;
 
     @Tag(name = "storage-controller")
-    @Operation(summary = "API để upload tệp đính kèm")
+    @Operation(summary = "API để upload tệp đính kèm", description = "Admin / Leader")
     @PostMapping(value = UrlConstant.Storage.UPLOAD_FILE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasAnyRole('ADMIN','LEADER')")
     public ResponseEntity<?> uploadDocument(
             @Parameter(name = "principal", hidden = true)
             @CurrentUser UserPrincipal principal,
@@ -48,32 +43,12 @@ public class FileStorageController {
         return VsResponseUtil.success(storageService.uploadFile(file, principal));
     }
 
+
     @Tag(name = "storage-controller")
-    @Operation(summary = "API để download tệp đính kèm")
-    @GetMapping(UrlConstant.Storage.DOWNLOAD_FILE)
-    public ResponseEntity<?> downloadDocument(HttpServletRequest request) {
-        String pathWithinApp = (String) request.getAttribute(
-                HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
-        String bestPattern = (String) request.getAttribute(
-                HandlerMapping.BEST_MATCHING_PATTERN_ATTRIBUTE);
-
-        String relativePath = new AntPathMatcher()
-                .extractPathWithinPattern(bestPattern, pathWithinApp);
-
-        Resource resource = storageService.loadFileAsResource(relativePath);
-
-        String contentType;
-        try {
-            contentType = request.getServletContext()
-                    .getMimeType(resource.getFile().getAbsolutePath());
-        } catch (IOException ex) {
-            contentType = "application/octet-stream";
-        }
-
-        return ResponseEntity.ok()
-                .contentType(MediaType.parseMediaType(contentType))
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename=\"" + resource.getFilename() + "\"")
-                .body(resource);
+    @Operation(summary = "API để xóa tệp đính kèm", description = "Admin / Leader")
+    @PreAuthorize("hasAnyRole('ADMIN','LEADER')")
+    @PostMapping(value = UrlConstant.Storage.DELETE_FILE)
+    public ResponseEntity<?> deleteFile(DeleteFileRequestDto deleteFileRequestDto) {
+        return VsResponseUtil.success(storageService.deleteFileFromCloudinary(deleteFileRequestDto.getUrl()));
     }
 }
