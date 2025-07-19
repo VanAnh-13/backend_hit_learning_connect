@@ -3,7 +3,7 @@ package com.example.projectbase.domain.dto.response.classes;
 import java.time.LocalDate;
 
 public record ClassResponseDto(
-        Long id,
+        Long classId,
         String title,
         String description,
         Long teacherId,
