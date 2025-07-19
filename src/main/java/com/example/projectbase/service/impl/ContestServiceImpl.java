@@ -53,16 +53,12 @@ public class ContestServiceImpl implements ContestService {
     @Override
     public ContestReponseDto createContest(ContestCreatetDto request) {
         Contest contest= mapper.toEntity(request);
-
-        // 1. Lấy thông tin người dùng hiện tại từ SecurityContext
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
-        // 2. Truy vấn User từ database
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new RuntimeException(ErrorMessage.User.ERR_NOT_FOUND));
 
-        // 3. Gán createdBy
         contest.setCreatedBy(user);
 
         return mapper.toReponse(contestRepository.save(contest));
