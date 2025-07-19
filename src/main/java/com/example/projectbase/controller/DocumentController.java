@@ -68,7 +68,7 @@ public class DocumentController {
     @Operation(summary = "API update document by id", description = "Admin / Leader")
     @PutMapping(UrlConstant.Document.UPDATE_DOCUMENT)
     @PreAuthorize("hasAnyRole('ADMIN','LEADER')")
-    public ResponseEntity<?> updateDocument(@PathVariable Long documentId, @ParameterObject DocumentRequestDto documentRequestDto) {
+    public ResponseEntity<?> updateDocument(@PathVariable Long documentId, @RequestBody DocumentRequestDto documentRequestDto) {
         return VsResponseUtil.success(documentService.updateDocument(documentId, documentRequestDto));
     }
 
