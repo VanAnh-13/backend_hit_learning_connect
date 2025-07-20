@@ -68,16 +68,6 @@ public class ClassRegistrationImpl implements ClassRegistrationService {
             registration.setPending(false);
             registration.setStatus(RegistrationStatus.ACCEPTED);
 
-            ClassRoom cr = registration.getClassEntity();
-
-            User u = userRepository.findById(adminId).orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
-
-            u.setClassRoom(cr);
-
-            cr.getUsers().add(u);
-
-            userRepository.save(u);
-
         } else {
             registration.setPending(false);
             registration.setStatus(RegistrationStatus.REJECTED);
