@@ -8,7 +8,9 @@ import com.example.projectbase.domain.dto.response.classes.ClassRegistrationResp
 import com.example.projectbase.domain.entity.ClassRegistration;
 import com.example.projectbase.domain.entity.ClassRoom;
 import com.example.projectbase.domain.entity.User;
+import com.example.projectbase.domain.model.RegistrationStatus;
 import com.example.projectbase.domain.model.SubmissionStatus;
+import com.example.projectbase.exception.extended.BadRequestException;
 import com.example.projectbase.exception.extended.ForbiddenException;
 import com.example.projectbase.exception.extended.NotFoundException;
 import com.example.projectbase.repository.ClassRegistrationRepository;
@@ -17,12 +19,12 @@ import com.example.projectbase.repository.UserRepository;
 import com.example.projectbase.security.UserPrincipal;
 import com.example.projectbase.service.ClassRegistrationService;
 import lombok.AllArgsConstructor;
-import org.apache.coyote.BadRequestException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static java.util.Arrays.stream;
@@ -39,51 +41,70 @@ public class ClassRegistrationImpl implements ClassRegistrationService {
     @Override
     public void register(Long userId, RegisterClassRequest request) throws BadRequestException {
         ClassRoom classRoom = classRepository.findById(request.getClassId()).
-                orElseThrow(()-> new NotFoundException(ErrorMessage.ClassRegistration.CLASS_NOT_FOUND));
+                orElseThrow(() -> new NotFoundException(ErrorMessage.ClassRegistration.CLASS_NOT_FOUND));
 
-        User user = userRepository.findById(userId).orElseThrow(()->new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
-         if(classRegistrationRepository.existsByClassEntityAndStudent(classRoom, user)){
-             throw new BadRequestException(ErrorMessage.ClassRegistration.ALREADY_REGISTERED);
-         }
+        User user = userRepository.findById(userId).orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
 
-        ClassRegistration registration= ClassRegistration.builder()
+        if (classRegistrationRepository.existsByClassEntityAndStudent(classRoom, user)) {
+            throw new BadRequestException(ErrorMessage.ClassRegistration.ALREADY_REGISTERED);
+        }
+
+        ClassRegistration registration = ClassRegistration.builder()
                 .classEntity(classRoom)
                 .student(user)
-                .status(SubmissionStatus.PENDING)
+                .status(RegistrationStatus.PENDING)
                 .pending(true)
+                .registeredAt(LocalDateTime.now())
                 .build();
-         classRegistrationRepository.save(registration);
+        classRegistrationRepository.save(registration);
     }
 
     @Override
     public void approveOrReject(Long adminId, ApproveOrRejectRequest request) {
         ClassRegistration registration = classRegistrationRepository.findById(request.getRegistrationId())
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.ClassRegistration.REGISTRATION_NOT_FOUND));
-        registration.setStatus(request.isApproved() ? SubmissionStatus.ACCEPTED : SubmissionStatus.WRONG_ANSWER);
-        registration.setPending(false);
+
+        if (request.isApproved()) {
+            registration.setPending(false);
+            registration.setStatus(RegistrationStatus.ACCEPTED);
+
+            ClassRoom cr = registration.getClassEntity();
+
+            User u = userRepository.findById(adminId).orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
+
+            u.setClassRoom(cr);
+
+            cr.getUsers().add(u);
+
+            userRepository.save(u);
+
+        } else {
+            registration.setPending(false);
+            registration.setStatus(RegistrationStatus.REJECTED);
+        }
+
         classRegistrationRepository.save(registration);
     }
 
-
     @Override
     public void deleteRegistration(Long id) {
-       if(!classRegistrationRepository.existsById(id)){
-           throw new NotFoundException(ErrorMessage.ClassRegistration.REGISTRATION_NOT_FOUND);
-       }
-       classRegistrationRepository.deleteById(id);
+        if (!classRegistrationRepository.existsById(id)) {
+            throw new NotFoundException(ErrorMessage.ClassRegistration.REGISTRATION_NOT_FOUND);
+        }
+        classRegistrationRepository.deleteById(id);
     }
 
     @Override
     public void cancelRegistration(Long userId, Long classId) {
-         User user= userRepository.findById(userId).
-                 orElseThrow(()-> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
+        User user = userRepository.findById(userId).
+                orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
 
-         ClassRoom classRoom= classRepository.findById(classId).
-                 orElseThrow(()-> new NotFoundException(ErrorMessage.ClassRegistration.CLASS_NOT_FOUND));
+        ClassRoom classRoom = classRepository.findById(classId).
+                orElseThrow(() -> new NotFoundException(ErrorMessage.ClassRegistration.CLASS_NOT_FOUND));
 
-         ClassRegistration classRegistration= classRegistrationRepository.findByClassEntityAndStudent(classRoom, user).
-                 orElseThrow(()-> new NotFoundException(ErrorMessage.ClassRegistration.REGISTRATION_NOT_FOUND));
-         classRegistrationRepository.delete(classRegistration);
+        ClassRegistration classRegistration = classRegistrationRepository.findByClassEntityAndStudent(classRoom, user).
+                orElseThrow(() -> new NotFoundException(ErrorMessage.ClassRegistration.REGISTRATION_NOT_FOUND));
+        classRegistrationRepository.delete(classRegistration);
     }
 
     @Override
@@ -109,17 +130,18 @@ public class ClassRegistrationImpl implements ClassRegistrationService {
     @Override
     public Page<ClassRegistrationResponse> filterRegistrations(FilterRegistrationRequest request, Pageable pageable) {
         return classRegistrationRepository
-                .filterRegistrations(request.getClassId(), request.getStudentEmail(), pageable)
+                .filterRegistrations(request.getClassId(), pageable)
                 .map(this::toReponse);
     }
 
-        public ClassRegistrationResponse toReponse(ClassRegistration reg){
-            return ClassRegistrationResponse.builder()
-                    .registrationId(reg.getRegistrationId())
-                    .classTitle(reg.getClassEntity().getTitle())
-                    .registeredAt(reg.getRegisteredAt())
-                    .pending(reg.isPending())
-                    .studentEmail(reg.getStudent().getEmail())
-                    .build();
-        }
+    public ClassRegistrationResponse toReponse(ClassRegistration reg) {
+        return ClassRegistrationResponse.builder()
+                .registrationId(reg.getRegistrationId())
+                .classTitle(reg.getClassEntity().getTitle())
+                .registeredAt(reg.getRegisteredAt())
+                .pending(reg.isPending())
+                .studentEmail(reg.getStudent().getEmail())
+                .RegistrationStatus(reg.getStatus().name())
+                .build();
+    }
 }

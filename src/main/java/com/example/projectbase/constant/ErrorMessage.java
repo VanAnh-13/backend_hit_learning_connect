@@ -49,7 +49,7 @@ public class ErrorMessage {
     public static final String CLASS_NOT_FOUND="exception.class-registration.not.found";
     public static final String REGISTRATION_NOT_FOUND="exception.registration.not.found";
     public static final String UNAUTHORIZED = "You do not have the right to take this action.";
-    public static final String ALREADY_REGISTERED="You have already registered for this class.";
+    public static final String ALREADY_REGISTERED="exception.registration.already.registered";
     public static final String GET_MY_REGISTRATIONS_FAILED = "Cannot retrieve the list of registered classes";
     public static final String GET_ALL_REGISTRATIONS_FAILED = "Cannot retrieve the list of all registrations.";
     public static final String FILTER_REGISTRATIONS_FAILED = "Cannot filter the registration list.";
