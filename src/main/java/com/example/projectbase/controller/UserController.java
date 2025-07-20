@@ -77,6 +77,16 @@ public class UserController {
         return VsResponseUtil.success(userService.getUsers(pageable));
     }
 
+    @Tag(name = "admin-controller")
+    @Operation(summary = "API get all users by filter", description = "Admin / Leader")
+    @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
+    @GetMapping(UrlConstant.User.GET_USERS_BY_FILTER)
+    public ResponseEntity<?> getUsers(@ParameterObject @PageableDefault(page = 0, size = 100, sort = "timestamp", direction = Sort.Direction.ASC)
+                                      Pageable pageable,
+                                      @RequestParam(value = "keyword", required = false) String keyword) {
+        return VsResponseUtil.success(userService.getUsersByFilter(pageable, keyword));
+    }
+
     @Tag(name = "user-controller")
     @Operation(summary = "API update current user's profile", description = "Authenticated")
     @PutMapping(UrlConstant.User.UPDATE_CURRENT_USER)

@@ -210,4 +210,12 @@ public class UserServiceImpl implements UserService {
         return (user.getLastLogin().equals(user.getCreatedDate()));
     }
 
+    @Override
+    public ListUserResponseDto getUsersByFilter(Pageable pageable, String keyword) {
+        return ListUserResponseDto.builder()
+                .data(userMapper.toUserResponseDtos(userRepository.searchByKeyword(keyword, pageable).getContent()))
+                .amountOfAllUsers(userRepository.count())
+                .build();
+    }
+
 }
