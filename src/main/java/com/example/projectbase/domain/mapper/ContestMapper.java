@@ -4,6 +4,7 @@ import com.example.projectbase.domain.dto.request.contest.ContestCreatetDto;
 import com.example.projectbase.domain.dto.request.contest.ContestUpdateDto;
 import com.example.projectbase.domain.dto.response.contest.ContestReponseDto;
 import com.example.projectbase.domain.dto.response.contest.ContestResultResponse;
+import com.example.projectbase.domain.dto.response.contest.ContestUserResponseDto;
 import com.example.projectbase.domain.entity.Contest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -25,4 +26,6 @@ public interface ContestMapper {
    Contest toEntity(ContestCreatetDto request);
 
    void updateEntity(@MappingTarget Contest contest, ContestUpdateDto request);
+
+   ContestUserResponseDto toUserResponse(Contest contest);
 }

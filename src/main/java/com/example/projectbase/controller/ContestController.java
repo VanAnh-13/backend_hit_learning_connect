@@ -40,6 +40,17 @@ public class ContestController {
         }
     }
 
+    @Operation(summary = "Api get all contest for user")
+    @GetMapping("/page")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> getAllPagedUser( @RequestParam String username, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
+        try{
+            return ResponseEntity.ok(service.getAllPagedUser(username,page, size));
+        }catch (Exception e ){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorMessage.Contest.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @Operation(summary = "Api search contest")
    @GetMapping("/search")
    @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
@@ -112,7 +123,7 @@ public class ContestController {
 
    @Operation(summary = "Api result contest by id")
    @GetMapping("/{id}/result")
-   @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
+   @PreAuthorize("hasAnyRole('ADMIN', 'LEADER', 'USER')")
    public ResponseEntity<?> getResultByContestId(@PathVariable Long id){
         try{
             ContestResultResponse result=service.getResultByContestId(id);

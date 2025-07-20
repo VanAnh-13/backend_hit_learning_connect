@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "contests")
@@ -36,16 +37,11 @@ public class Contest {
     @Column(name = "file_url", nullable = false)
     private String fileUrl;
 
-    @Column(name="highestScore")
-    private double highestScore;
-
-    @Column(name="result_Summary", length = 1000)
-    private String resultSummary;
-
-    @Column(name = "ranking")
-    private String ranking;
-
     @ManyToOne
     @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;
+
+    @OneToMany(mappedBy = "contest",fetch = FetchType.LAZY)
+    private List<ContestSubmission> submissions;
+
 }
