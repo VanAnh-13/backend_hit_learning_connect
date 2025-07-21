@@ -33,6 +33,23 @@ public class ContestSubmission {
     @Column(name = "code", nullable = false)
     private String code;
 
+    @Column(name="highestScore")
+    private double highestScore;
+
+    @Column(name="result_Summary", length = 1000)
+    private String resultSummary;
+
+    @Column(name = "ranking")
+    private String ranking;
+
+    @ManyToOne
+    @JoinColumn(name = "contest_id")
+    private Contest contest;
+
+    @ManyToOne
+    @JoinColumn(name = "created_by")
+    private User createdBy;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
     private SubmissionStatus status = SubmissionStatus.PENDING;
