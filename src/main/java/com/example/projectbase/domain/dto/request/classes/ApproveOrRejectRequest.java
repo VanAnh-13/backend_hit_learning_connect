@@ -7,7 +7,6 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-
 public class ApproveOrRejectRequest {
     private Long registrationId;
     private boolean approved;

@@ -11,5 +11,4 @@ import lombok.*;
 
 public class FilterRegistrationRequest {
     private Long classId;
-    private String studentEmail;
 }

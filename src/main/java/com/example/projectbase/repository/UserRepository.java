@@ -1,5 +1,6 @@
 package com.example.projectbase.repository;
 
+import com.example.projectbase.domain.entity.Document;
 import com.example.projectbase.domain.entity.User;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.cache.annotation.CacheEvict;
@@ -42,5 +43,20 @@ public interface UserRepository extends JpaRepository<User, Long> {
   @Transactional
   @Query("UPDATE User u SET u.password = :newPassword WHERE u.id = :id")
   int updatePasswordById(@Param("id") Long id, @Param("newPassword") String newPassword);
+
+
+  @Query("""
+        SELECT u
+        FROM User u
+        WHERE LOWER(u.username)    LIKE LOWER(CONCAT('%', :keyword, '%'))
+           OR LOWER(u.fullName) LIKE LOWER(CONCAT('%', :keyword, '%'))
+           OR LOWER(u.email) LIKE LOWER(CONCAT('%', :keyword, '%'))   
+    """)
+  Page<User> searchByKeyword(
+          String keyword,
+          Pageable pageable
+  );
+
+
 
 }
