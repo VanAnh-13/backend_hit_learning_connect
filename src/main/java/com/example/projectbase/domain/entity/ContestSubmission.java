@@ -42,6 +42,13 @@ public class ContestSubmission {
     @Column(name = "ranking")
     private String ranking;
 
+    @Column(name = "file_name")
+    private String fileName;
+
+    @Lob
+    @Column(name = "file_data")
+    private byte[] fileData;
+
     @ManyToOne
     @JoinColumn(name = "contest_id")
     private Contest contest;

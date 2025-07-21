@@ -1,4 +1,4 @@
-package com.example.projectbase.controller;
+package com.example.projectbase.controller.contest;
 
 import com.example.projectbase.constant.ErrorMessage;
 import com.example.projectbase.domain.dto.request.contest.ContestCreatetDto;
@@ -13,9 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -23,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Validated
 
-public class ContestController {
+public class ContestAdminController {
 
     private final ContestService service;
 
@@ -37,17 +35,6 @@ public class ContestController {
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorMessage.Contest.INTERNAL_SERVER_ERROR);
 
-        }
-    }
-
-    @Operation(summary = "Api get all contest for user")
-    @GetMapping("/page")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> getAllPagedUser( @RequestParam String username, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size){
-        try{
-            return ResponseEntity.ok(service.getAllPagedUser(username,page, size));
-        }catch (Exception e ){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorMessage.Contest.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -123,7 +110,7 @@ public class ContestController {
 
    @Operation(summary = "Api result contest by id")
    @GetMapping("/{id}/result")
-   @PreAuthorize("hasAnyRole('ADMIN', 'LEADER', 'USER')")
+   @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
    public ResponseEntity<?> getResultByContestId(@PathVariable Long id){
         try{
             ContestResultResponse result=service.getResultByContestId(id);

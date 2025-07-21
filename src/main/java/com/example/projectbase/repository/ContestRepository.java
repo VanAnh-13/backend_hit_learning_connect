@@ -11,8 +11,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ContestRepository extends JpaRepository<Contest, Long> {
 
-    @Query("SELECT c FROM Contest c WHERE (c.createdBy.username = :username OR c.isPublic = true) AND c.endTime > CURRENT_TIMESTAMP")
-    Page<Contest> findAvailableForUser(@Param("username") String username, Pageable pageable);
+//    @Query("SELECT c FROM Contest c WHERE (c.createdBy.username = :username OR c.isPublic = true) AND c.endTime > CURRENT_TIMESTAMP")
+//    Page<Contest> findAvailableForUser(@Param("username") String username, Pageable pageable);
 
     Page<Contest> findByTitleContainingIgnoreCase(String keyword, Pageable pageable);
 

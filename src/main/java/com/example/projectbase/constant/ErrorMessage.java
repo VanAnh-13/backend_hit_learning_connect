@@ -70,6 +70,6 @@ public class ErrorMessage {
      public static final String FILE_TOO_LARGE = "The file size exceeds the allowed limit.";
      public static final String FILE_TYPE_NOT_SUPPORTED = "The file format is not supported.";
      public static final String USER_CONTEST_NOT_FOUND="User has not participated in this contest";
-
+     public static final String ALREADY_JOHN="Already joined";
   }
 }

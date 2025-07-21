@@ -13,7 +13,6 @@ import com.example.projectbase.security.UserPrincipal;
 import com.example.projectbase.service.ClassRegistrationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
