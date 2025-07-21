@@ -8,8 +8,10 @@ import com.example.projectbase.domain.dto.response.contest.ContestResultResponse
 import com.example.projectbase.domain.entity.Contest;
 import com.example.projectbase.domain.entity.User;
 import com.example.projectbase.domain.mapper.ContestMapper;
+import com.example.projectbase.exception.extended.InternalServerException;
 import com.example.projectbase.repository.ContestRepository;
 import com.example.projectbase.repository.UserRepository;
+import com.example.projectbase.security.UserPrincipal;
 import com.example.projectbase.service.ContestService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +22,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,28 +34,25 @@ public class ContestServiceImpl implements ContestService {
     private final UserRepository userRepository;
 
     @Override
-    public Page<ContestReponseDto> getAllPaged(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("startTime").descending());
+    public Page<ContestReponseDto> getAll(Pageable pageable) {
         return contestRepository.findAll(pageable).map(mapper::toReponse);
-
     }
 
     @Override
-    public Page<ContestReponseDto> search(String keyword, int page, int size) {
-      Pageable pageable=PageRequest.of(page, size, Sort.by("startTime").descending());
+    public Page<ContestReponseDto> search(String keyword, Pageable pageable) {
         return contestRepository.findByTitleContainingIgnoreCase(keyword, pageable).map(mapper::toReponse)
                 ;
     }
 
     @Override
     public ContestReponseDto getById(Long id) {
-        Contest contest= contestRepository.findById(id).orElseThrow(()->new RuntimeException(ErrorMessage.Contest.CONTEST_NOT_FOUND));
+        Contest contest = contestRepository.findById(id).orElseThrow(() -> new RuntimeException(ErrorMessage.Contest.CONTEST_NOT_FOUND));
         return mapper.toReponse(contest);
     }
 
     @Override
     public ContestReponseDto createContest(ContestCreatetDto request) {
-        Contest contest= mapper.toEntity(request);
+        Contest contest = mapper.toEntity(request);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
 
@@ -66,14 +66,14 @@ public class ContestServiceImpl implements ContestService {
 
     @Override
     public ContestReponseDto updateContest(Long id, ContestUpdateDto request) {
-     Contest contest= contestRepository.findById(id).orElseThrow(()->new RuntimeException(ErrorMessage.Contest.CONTEST_NOT_FOUND));
-     mapper.updateEntity(contest, request);
+        Contest contest = contestRepository.findById(id).orElseThrow(() -> new RuntimeException(ErrorMessage.Contest.CONTEST_NOT_FOUND));
+        mapper.updateEntity(contest, request);
         return mapper.toReponse(contestRepository.save(contest));
     }
 
     @Override
     public void deleteContest(Long id) {
-        if(!contestRepository.existsById(id)){
+        if (!contestRepository.existsById(id)) {
             throw new RuntimeException(ErrorMessage.Contest.CONTEST_NOT_FOUND);
         }
         contestRepository.deleteById(id);
@@ -81,11 +81,30 @@ public class ContestServiceImpl implements ContestService {
 
     @Override
     public ContestResultResponse getResultByContestId(Long contestId) {
-        Contest contest= contestRepository.findById(contestId).orElseThrow(()-> new EntityNotFoundException(ErrorMessage.Contest.CONTEST_NOT_FOUND));
+        Contest contest = contestRepository.findById(contestId).orElseThrow(() -> new EntityNotFoundException(ErrorMessage.Contest.CONTEST_NOT_FOUND));
 
-        if(contest.getStartTime() !=null && contest.getEndTime() != null && contest.getEndTime().isBefore(contest.getStartTime())){
+        if (contest.getStartTime() != null && contest.getEndTime() != null && contest.getEndTime().isBefore(contest.getStartTime())) {
             throw new IllegalStateException(ErrorMessage.Contest.CONTEST_TIME_INVALID);
         }
         return mapper.toResultResponse(contest);
+    }
+
+    @Override
+    @Transactional
+    public void joinContest(Long contestId, UserPrincipal userPrincipal) {
+        Contest contest = contestRepository.findById(contestId).orElseThrow(() -> new RuntimeException(ErrorMessage.Contest.CONTEST_NOT_FOUND));
+        User user = userRepository.findById(userPrincipal.getId()).orElseThrow(() -> new RuntimeException(ErrorMessage.User.ERR_NOT_FOUND));
+
+
+        for (User participant : contest.getParticipants()) {
+            System.out.println(participant);
+        }
+
+        if (!contestRepository.existsParticipant(contestId, user.getUsername())) {
+            contest.getParticipants().add(user);
+            contestRepository.save(contest);
+        } else {
+            throw new InternalServerException(ErrorMessage.Contest.ALREADY_JOIN_CONTEST);
+        }
     }
 }

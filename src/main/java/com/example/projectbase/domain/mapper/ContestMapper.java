@@ -14,15 +14,15 @@ import org.mapstruct.factory.Mappers;
 
 public interface ContestMapper {
 
-   ContestMapper INSTANCE = Mappers.getMapper(ContestMapper.class);
-   @Mapping(source = "contestId", target = "contestId")
-   @Mapping(source = "title", target = "title")
+    ContestMapper INSTANCE = Mappers.getMapper(ContestMapper.class);
+    @Mapping(source = "contestId", target = "contestId")
+    @Mapping(source = "title", target = "title")
 
-   ContestResultResponse toResultResponse(Contest contest);
+    ContestResultResponse toResultResponse(Contest contest);
 
-   ContestReponseDto toReponse(Contest contest);
+    ContestReponseDto toReponse(Contest contest);
 
-   Contest toEntity(ContestCreatetDto request);
+    Contest toEntity(ContestCreatetDto request);
 
-   void updateEntity(@MappingTarget Contest contest, ContestUpdateDto request);
+    void updateEntity(@MappingTarget Contest contest, ContestUpdateDto request);
 }

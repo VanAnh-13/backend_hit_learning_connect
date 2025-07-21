@@ -69,6 +69,7 @@ public class ErrorMessage {
      public static final String FILE_UPLOAD_FAILED = "Download file unsuccesfull!";
      public static final String FILE_TOO_LARGE = "The file size exceeds the allowed limit.";
      public static final String FILE_TYPE_NOT_SUPPORTED = "The file format is not supported.";
+     public static final String ALREADY_JOIN_CONTEST = "exception.contest.already.join.contest";
 
   }
 }
