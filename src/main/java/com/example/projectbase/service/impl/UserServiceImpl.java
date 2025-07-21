@@ -19,6 +19,7 @@ import com.example.projectbase.security.UserPrincipal;
 import com.example.projectbase.service.UserService;
 import com.nimbusds.openid.connect.sdk.claims.Gender;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.sql.Update;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;

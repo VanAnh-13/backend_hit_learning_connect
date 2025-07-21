@@ -31,7 +31,7 @@ public class ClassRegistration {
     @JoinColumn(name = "student_id", nullable = false)
     private User student;
 
-    @Column(name = "registered_at", nullable = false)
+    @Column(name = "registered_at", nullable =false )
     private LocalDateTime registeredAt = LocalDateTime.now();
 
     @Enumerated(EnumType.STRING)
@@ -39,4 +39,12 @@ public class ClassRegistration {
 
     @Column(name = "pending", nullable = false)
     private boolean pending = true;
+
+
+    @PrePersist
+    public void prePersist() {
+        if (this.registeredAt == null) {
+            this.registeredAt = LocalDateTime.now();
+        }
+    }
 }

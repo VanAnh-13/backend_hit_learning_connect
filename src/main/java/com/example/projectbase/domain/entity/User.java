@@ -33,6 +33,7 @@ public class User extends DateAuditing {
   private String username;
 
   @Column(nullable = false)
+  @JsonIgnore
   private String password;
 
   @Nationalized
@@ -66,4 +67,7 @@ public class User extends DateAuditing {
   @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
   @JsonIgnore
   private Set<ClassRegistration> classRegistrations = new HashSet<>();
+
+  @ManyToMany(mappedBy = "participants", fetch = FetchType.LAZY)
+  private Set<Contest> contests = new HashSet<>();
 }

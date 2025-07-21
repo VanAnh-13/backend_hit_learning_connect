@@ -15,5 +15,14 @@ public class ResponseMessage {
     public static final String CREATE_SUCCESS = "Successfully created.";
     public static final String ACTION_SUCCESS = "Operation successful.";
 
+    public static class Contest{
+
+        public static final String SUCCESS = "successfull!";
+        public static final String CREATE_SUCCESS = "create successfull";
+        public static final String UPDATE_SUCCESS = "update successfull";
+        public static final String DELETE_SUCCESS = "delete successfull";
+        public static final String FETCH_SUCCESS = "Data retrieved successfully.";
+
+    }
 
 }

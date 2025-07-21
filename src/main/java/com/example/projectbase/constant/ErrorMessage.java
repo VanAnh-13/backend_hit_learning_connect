@@ -55,4 +55,21 @@ public class ErrorMessage {
     public static final String FILTER_REGISTRATIONS_FAILED = "Cannot filter the registration list.";
 
   }
+
+  public static class Contest{
+     public static final String INTERNAL_SERVER_ERROR="System error, please try again later.";
+     public static final String VALIDATION_FAILED="The input data is invalid.";
+     public static final String MISSING_REQUIRED_FIELDS="missing required information";
+     public static final String CONTEST_NOT_FOUND="not found contest";
+     public static final String CONTEST_NAME_REQUIRED="The contest name cannot be left blank.";
+     public static final String CONTEST_TIME_INVALID = "invalid time";
+     public static final String CONTEST_DESCRIPTION_REQUIRED = "The contest description cannot be empty.";
+     public static final String CONTEST_DETAIL_NOT_FOUND = "Cannot view contest details.";
+     public static final String CONTEST_RESULT_NOT_AVAILABLE = "The contest results have not been announced yet.";
+     public static final String FILE_UPLOAD_FAILED = "Download file unsuccesfull!";
+     public static final String FILE_TOO_LARGE = "The file size exceeds the allowed limit.";
+     public static final String FILE_TYPE_NOT_SUPPORTED = "The file format is not supported.";
+     public static final String ALREADY_JOIN_CONTEST = "exception.contest.already.join.contest";
+
+  }
 }

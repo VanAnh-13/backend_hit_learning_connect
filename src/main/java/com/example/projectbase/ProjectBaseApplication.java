@@ -3,6 +3,7 @@ package com.example.projectbase;
 import com.example.projectbase.config.StorageProperties;
 import com.example.projectbase.config.properties.AdminInfoProperties;
 import com.example.projectbase.constant.RoleConstant;
+import com.example.projectbase.domain.entity.ClassRegistration;
 import com.example.projectbase.domain.model.Role;
 import com.example.projectbase.domain.entity.User;
 import com.example.projectbase.repository.RoleRepository;
@@ -19,6 +20,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
