@@ -38,7 +38,7 @@ public class ErrorMessage {
     public static final String ERR_DELETE_FAIL = "Delete user fail";
     public static final String ERR_USER_NOT_FOUND = "exception.user.not.found";
     public static final String ERR_CREATE_FAIL = "Create user fail";
-    public static final String ERR_NOT_FOUND="user not found";
+    public static final String ERR_NOT_FOUND="exception.user.not.found";
   }
 
   public static class Role {
@@ -50,9 +50,9 @@ public class ErrorMessage {
     public static final String REGISTRATION_NOT_FOUND="exception.registration.not.found";
     public static final String UNAUTHORIZED = "You do not have the right to take this action.";
     public static final String ALREADY_REGISTERED="exception.registration.already.registered";
-    public static final String GET_MY_REGISTRATIONS_FAILED = "Cannot retrieve the list of registered classes";
-    public static final String GET_ALL_REGISTRATIONS_FAILED = "Cannot retrieve the list of all registrations.";
-    public static final String FILTER_REGISTRATIONS_FAILED = "Cannot filter the registration list.";
+    public static final String GET_MY_REGISTRATIONS_FAILED = "exception.registration.failed.get";
+    public static final String GET_ALL_REGISTRATIONS_FAILED = "exception.registration.failed.get.all";
+    public static final String FILTER_REGISTRATIONS_FAILED = "exception.registration.failed.filter";
 
   }
 
@@ -70,6 +70,8 @@ public class ErrorMessage {
      public static final String FILE_TOO_LARGE = "The file size exceeds the allowed limit.";
      public static final String FILE_TYPE_NOT_SUPPORTED = "The file format is not supported.";
      public static final String ALREADY_JOIN_CONTEST = "exception.contest.already.join.contest";
-
+  }
+  public static class Class{
+      public static final String CLASS_NOT_FOUND="exception.class-registration.not.found";
   }
 }
