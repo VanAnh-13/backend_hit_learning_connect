@@ -58,11 +58,10 @@ public class ClassServiceImpl implements ClassService {
 
     @Override
     public void deleteClass(Long idClass) {
-        if (classRepository.findById(idClass).isPresent()) {
-            classRepository.deleteById(idClass);
-        } else {
-            throw new NotFoundException(ErrorMessage.Class.CLASS_NOT_FOUND, new String[]{idClass.toString()});
-        }
+        ClassRoom cls = classRepository.findById(idClass).orElseThrow(
+                () -> new NotFoundException(ErrorMessage.Class.CLASS_NOT_FOUND, new String[]{idClass.toString()})
+        );
+        classRepository.delete(cls);
     }
 
     @Override
