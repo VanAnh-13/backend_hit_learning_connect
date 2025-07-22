@@ -11,11 +11,14 @@ import com.example.projectbase.domain.entity.Contest;
 import com.example.projectbase.domain.entity.ContestSubmission;
 import com.example.projectbase.domain.entity.User;
 import com.example.projectbase.domain.mapper.ContestMapper;
+import com.example.projectbase.exception.extended.InternalServerException;
 import com.example.projectbase.repository.ContestRepository;
 import com.example.projectbase.repository.ContestSubmissionRepository;
 import com.example.projectbase.repository.UserRepository;
+import com.example.projectbase.security.UserPrincipal;
 import com.example.projectbase.service.ContestService;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +31,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -100,7 +104,7 @@ public class ContestServiceImpl implements ContestService {
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         String username= authentication.getName();
 
-        boolean isAdminOrLeader = authentication.getAuthorities().stream().anyMatch(role-> role.getAuthority().equals("ADMIN") || role.getAuthority().equals("LEADER"));
+        boolean isAdminOrLeader = authentication.getAuthorities().stream().anyMatch(role-> role.getAuthority().equals("ROLE_ADMIN") || role.getAuthority().equals("ROLE_LEADER"));
 
         Contest contest= contestRepository.findById(contestId).orElseThrow(()-> new EntityNotFoundException(ErrorMessage.Contest.CONTEST_NOT_FOUND));
 
@@ -122,34 +126,36 @@ public class ContestServiceImpl implements ContestService {
     }
 
     @Override
-    public void joinContest(Long contestId) {
-        String username= SecurityContextHolder.getContext().getAuthentication().getName();
-        User user= userRepository.findByUsername(username).
-                orElseThrow(()-> new EntityNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
-        Contest contest=contestRepository.findById(contestId).orElseThrow(()->new EntityNotFoundException(ErrorMessage.Contest.CONTEST_NOT_FOUND));
+    @Transactional
+    public void joinContest(Long contestId, UserPrincipal userPrincipal) {
+        Contest contest = contestRepository.findById(contestId).orElseThrow(() -> new RuntimeException(ErrorMessage.Contest.CONTEST_NOT_FOUND));
+        User user = userRepository.findById(userPrincipal.getId()).orElseThrow(() -> new RuntimeException(ErrorMessage.User.ERR_NOT_FOUND));
 
-        boolean alreadyJoined= submissionRepository.existsByContest_ContestIdAndCreatedBy_Username(contestId,username);
 
-        if(alreadyJoined){
-            throw new IllegalArgumentException(ErrorMessage.Contest.ALREADY_JOHN);
+        for (User participant : contest.getParticipants()) {
+            System.out.println(participant);
         }
-        ContestSubmission contestSubmission= ContestSubmission.builder()
-                .contest(contest)
-                .user(user)
-                .submittedAt(LocalDateTime.now())
-                .build();
-        submissionRepository.save(contestSubmission);
+
+        if (!contestRepository.existsParticipant(contestId, user.getUsername())) {
+            contest.getParticipants().add(user);
+            contestRepository.save(contest);
+        } else {
+            throw new InternalServerException(ErrorMessage.Contest.ALREADY_JOINED);
+        }
     }
 
     @Override
     public ContestReponseDto startContest(Long contestId) {
-        String username= SecurityContextHolder.getContext().getAuthentication().getName();
-        User user= userRepository.findByUsername(username).orElseThrow(()-> new EntityNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        ContestSubmission submission = submissionRepository.findByContest_ContestIdAndCreatedBy_Username(contestId, username)
-                .orElseThrow(() -> new EntityNotFoundException(ErrorMessage.Contest.USER_CONTEST_NOT_FOUND));
+        Contest contest = contestRepository.findById(contestId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorMessage.Contest.CONTEST_NOT_FOUND));
 
-        Contest contest = submission.getContest();
+        boolean isParticipant = contestRepository.existsParticipant(contestId, username);
+        if (!isParticipant) {
+            throw new EntityNotFoundException(ErrorMessage.Contest.USER_CONTEST_NOT_FOUND);
+        }
+
         if (LocalDateTime.now().isBefore(contest.getStartTime()) || LocalDateTime.now().isAfter(contest.getEndTime())) {
             throw new IllegalArgumentException(ErrorMessage.Contest.CONTEST_TIME_INVALID);
         }
@@ -157,17 +163,28 @@ public class ContestServiceImpl implements ContestService {
         return mapper.toReponse(contest);
     }
 
+
     @Override
     public void submitContest(ContestSubmissionRequest request, MultipartFile file) throws IOException {
-
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        User user= userRepository.findByUsername(username).orElseThrow(()->new EntityNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
 
-        ContestSubmission contestSubmission= submissionRepository.findByContest_ContestIdAndCreatedBy_Username(request.getContestId(), username).orElseThrow(()->new EntityNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
+        ContestSubmission contestSubmission = submissionRepository
+                .findByContest_ContestIdAndCreatedBy_Username(request.getContestId(), username)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
+
+        String uploadDir = "uploads/contest/";
+        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
+        File targetFile = new File(uploadDir + fileName);
+
+        targetFile.getParentFile().mkdirs();
+
+        file.transferTo(targetFile);
 
         contestSubmission.setFileName(file.getOriginalFilename());
-        contestSubmission.setFileData(file.getBytes());
+        contestSubmission.setFileUrl(targetFile.getAbsolutePath());
         contestSubmission.setSubmittedAt(LocalDateTime.now());
 
         submissionRepository.save(contestSubmission);

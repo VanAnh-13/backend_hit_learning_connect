@@ -16,4 +16,12 @@ public interface ContestRepository extends JpaRepository<Contest, Long> {
 
     Page<Contest> findByTitleContainingIgnoreCase(String keyword, Pageable pageable);
 
+
+    @Query("""
+           SELECT CASE WHEN COUNT(u) > 0 THEN TRUE ELSE FALSE END
+           FROM Contest c JOIN c.participants u
+           WHERE c.contestId = :contestId AND u.username = :username
+            """)
+    boolean existsParticipant(@Param("contestId") Long contestId,
+                              @Param("username") String username);
 }

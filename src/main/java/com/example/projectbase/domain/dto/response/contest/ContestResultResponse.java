@@ -12,6 +12,8 @@ import java.time.LocalDateTime;
 
 public class ContestResultResponse {
 
+    private String username;
+
     private String contestId;
 
     private String title;

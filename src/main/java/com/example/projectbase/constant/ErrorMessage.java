@@ -45,31 +45,30 @@ public class ErrorMessage {
     public static final String ERR_NOT_FOUND_ROLE = "exception.user.not.found.role";
   }
 
-  public static class ClassRegistration{
-    public static final String CLASS_NOT_FOUND="exception.class-registration.not.found";
-    public static final String REGISTRATION_NOT_FOUND="exception.registration.not.found";
-    public static final String UNAUTHORIZED = "You do not have the right to take this action.";
-    public static final String ALREADY_REGISTERED="You have already registered for this class.";
-    public static final String GET_MY_REGISTRATIONS_FAILED = "Cannot retrieve the list of registered classes";
-    public static final String GET_ALL_REGISTRATIONS_FAILED = "Cannot retrieve the list of all registrations.";
-    public static final String FILTER_REGISTRATIONS_FAILED = "Cannot filter the registration list.";
+    public static class ClassRegistration {
+        public static final String CLASS_NOT_FOUND = "exception.class-registration.not.found";
+        public static final String REGISTRATION_NOT_FOUND = "exception.registration.not.found";
+        public static final String UNAUTHORIZED = "exception.class-registration.unauthorized";
+        public static final String ALREADY_REGISTERED = "exception.class-registration.already_registered";
+        public static final String GET_MY_REGISTRATIONS_FAILED = "exception.class-registration.get_my_registrations_failed";
+        public static final String GET_ALL_REGISTRATIONS_FAILED = "exception.class-registration.get_all_registrations_failed";
+        public static final String FILTER_REGISTRATIONS_FAILED = "exception.class-registration.filter_failed";
+    }
 
-  }
-
-  public static class Contest{
-     public static final String INTERNAL_SERVER_ERROR="System error, please try again later.";
-     public static final String VALIDATION_FAILED="The input data is invalid.";
-     public static final String MISSING_REQUIRED_FIELDS="missing required information";
-     public static final String CONTEST_NOT_FOUND="not found contest";
-     public static final String CONTEST_NAME_REQUIRED="The contest name cannot be left blank.";
-     public static final String CONTEST_TIME_INVALID = "invalid time";
-     public static final String CONTEST_DESCRIPTION_REQUIRED = "The contest description cannot be empty.";
-     public static final String CONTEST_DETAIL_NOT_FOUND = "Cannot view contest details.";
-     public static final String CONTEST_RESULT_NOT_AVAILABLE = "The contest results have not been announced yet.";
-     public static final String FILE_UPLOAD_FAILED = "Download file unsuccesfull!";
-     public static final String FILE_TOO_LARGE = "The file size exceeds the allowed limit.";
-     public static final String FILE_TYPE_NOT_SUPPORTED = "The file format is not supported.";
-     public static final String USER_CONTEST_NOT_FOUND="User has not participated in this contest";
-     public static final String ALREADY_JOHN="Already joined";
-  }
+    public static class Contest {
+        public static final String INTERNAL_SERVER_ERROR = "exception.contest.internal_server_error";
+        public static final String VALIDATION_FAILED = "exception.contest.validation_failed";
+        public static final String MISSING_REQUIRED_FIELDS = "exception.contest.missing_required_fields";
+        public static final String CONTEST_NOT_FOUND = "exception.contest.not_found";
+        public static final String CONTEST_NAME_REQUIRED = "exception.contest.name_required";
+        public static final String CONTEST_TIME_INVALID = "exception.contest.time_invalid";
+        public static final String CONTEST_DESCRIPTION_REQUIRED = "exception.contest.description_required";
+        public static final String CONTEST_DETAIL_NOT_FOUND = "exception.contest.detail_not_found";
+        public static final String CONTEST_RESULT_NOT_AVAILABLE = "exception.contest.result_not_available";
+        public static final String FILE_UPLOAD_FAILED = "exception.contest.file_upload_failed";
+        public static final String FILE_TOO_LARGE = "exception.contest.file_too_large";
+        public static final String FILE_TYPE_NOT_SUPPORTED = "exception.contest.file_type_not_supported";
+        public static final String USER_CONTEST_NOT_FOUND = "exception.contest.user_contest_not_found";
+        public static final String ALREADY_JOINED = "exception.contest.already_joined";
+    }
 }

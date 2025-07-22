@@ -12,7 +12,7 @@ import lombok.*;
 
 public class ContestSubmissionDto {
 
-    private String code;
+//    private String code;
 
     private double highestScore;
 
@@ -22,6 +22,6 @@ public class ContestSubmissionDto {
 
     private String fileName;
 
-    private byte[] fileData;
+    private String fileUrl;
 
 }
