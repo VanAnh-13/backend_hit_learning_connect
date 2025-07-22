@@ -45,5 +45,5 @@ public class ClassRoom {
 
     @OneToMany(mappedBy = "classEntity", cascade = CascadeType.ALL)
     @JsonIgnore
-    private Set<ClassRegistration> registrations = new HashSet<>();
+    private Set<ClassRegistration> registrations = new HashSet<>(); 
 }
