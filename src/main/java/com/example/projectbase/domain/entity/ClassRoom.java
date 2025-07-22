@@ -46,10 +46,4 @@ public class ClassRoom {
     @OneToMany(mappedBy = "classEntity", cascade = CascadeType.ALL)
     @JsonIgnore
     private Set<ClassRegistration> registrations = new HashSet<>();
-
-    @PrePersist
-    protected void onCreate() {
-        startDate = LocalDate.now();
-        endDate = LocalDate.now().plusMonths(6);
-    }
 }
