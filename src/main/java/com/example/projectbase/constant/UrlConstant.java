@@ -23,6 +23,7 @@ public class UrlConstant {
         public static final String UPDATE_USER = BASE + "/{userId}";
         public static final String DELETE_USER = BASE + "/{userId}";
         public static final String GET_USERS = BASE;
+        public static final String GET_USERS_BY_FILTER = BASE + "/filter";
         public static final String GET_CURRENT_USER = BASE + "/profile";
         public static final String PASSWORD_CHANGE = BASE + "/password/change";
         public static final String PASSWORD_CHANGE_FIRST_TIME = BASE + "/change-password-first-time";
@@ -65,4 +66,13 @@ public class UrlConstant {
         public static final String DOWNLOAD_FILE = BASE + "/download/**";
         public static final String DELETE_FILE = BASE + "/delete";
     }
+
+    public static class Contest {
+        public static final String BASE = "/contests";
+        public static final String GET_CONTEST = BASE + "/{contestId}";
+        public static final String CREATE_CONTEST = BASE;
+        public static final String UPDATE_CONTEST = BASE + "/{contestId}";
+        public static final String DELETE_CONTEST = BASE + "/{contestId}";
+    }
+
 }

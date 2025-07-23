@@ -32,4 +32,6 @@ public interface UserService {
   String changePassword(ChangePassRequest changePassRequest, UserPrincipal userPrincipal);
 
   Boolean checkFirstLogin(UserPrincipal userPrincipal);
+
+  ListUserResponseDto getUsersByFilter(Pageable pageable, String keyword);
 }

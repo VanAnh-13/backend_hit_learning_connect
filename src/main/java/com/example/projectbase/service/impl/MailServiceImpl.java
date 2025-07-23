@@ -13,6 +13,7 @@ import com.example.projectbase.util.SendMailUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import org.apache.coyote.BadRequestException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -48,6 +49,9 @@ public class MailServiceImpl implements MailService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Value("${front.end.url}")
+    private String frontEndUrl;
 
     public String sendMail(GetEmailDto email) throws Exception {
         //get IP
@@ -93,8 +97,10 @@ public class MailServiceImpl implements MailService {
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID, new String[]{email.getEmail()}));
 
         //set data to send to html
+        String resetLink = frontEndUrl + "/ChangePassword?" + code;
+
         Map<String, Object> props = new HashMap<>();
-        props.put("code", code);
+        props.put("resetLink", resetLink);
         props.put("email", email.getEmail());
         props.put("username", user.getUsername());
         props.put("appName", "Hit-LC");
