@@ -133,6 +133,13 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(ForbiddenException.class)
+  public ResponseEntity<RestData<?>> handleForbiddenException(ForbiddenException ex) {
+    String message = messageSource.getMessage(ex.getMessage(), ex.getParams(), LocaleContextHolder.getLocale());
+    log.error(message, ex);
+    return VsResponseUtil.error(ex.getStatus(), message);
+  }
+
+  @ExceptionHandler(AccessDeniedException.class)
   public ResponseEntity<RestData<?>> handleAccessDeniedException(ForbiddenException ex) {
     String message = messageSource.getMessage(ex.getMessage(), ex.getParams(), LocaleContextHolder.getLocale());
     log.error(message, ex);
