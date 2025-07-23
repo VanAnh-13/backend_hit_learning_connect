@@ -49,6 +49,7 @@ public class UrlConstant {
         public static final String FILTER_REGISTRATION = BASE + "/filter";
         public static final String DEL_REGISTRATION = BASE + "/{id}";
         public static final String CANCEL_REGISTRATION = BASE + "/cancel/{classId}";
+        public static final String ACCEPTED_REGISTRATION = BASE + "/accept";
 
     }
 
