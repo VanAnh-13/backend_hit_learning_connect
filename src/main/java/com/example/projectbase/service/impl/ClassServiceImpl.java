@@ -28,7 +28,7 @@ public class ClassServiceImpl implements ClassService {
     public ClassResponseDto getClassById(Long id) {
         return classRepository.findById(id)
                 .map(classMapper::toDTO)
-                .orElseThrow(() -> new NotFoundException(ErrorMessage.Class.CLASS_NOT_FOUND, new String[]{id.toString()}));
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.ClassRoom.CLASS_NOT_FOUND, new String[]{id.toString()}));
     }
 
     @Override
@@ -42,13 +42,13 @@ public class ClassServiceImpl implements ClassService {
     @Override
     public ClassResponseDto editClass(Long idClass, ClassRequestDto classRequestDto) {
         ClassRoom classExist = classRepository.findById(idClass)
-                .orElseThrow(() -> new NotFoundException(ErrorMessage.Class.CLASS_NOT_FOUND, new String[]{idClass.toString()}));
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.ClassRoom.CLASS_NOT_FOUND, new String[]{idClass.toString()}));
 
         classExist.setDescription(classRequestDto.description());
         classExist.setTitle(classRequestDto.title());
 
         User teacher = userRepository.findById(classRequestDto.teacherId())
-                .orElseThrow(() -> new NotFoundException(ErrorMessage.Class.CLASS_NOT_FOUND, new String[]{classRequestDto.teacherId().toString()}));
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.ClassRoom.CLASS_NOT_FOUND, new String[]{classRequestDto.teacherId().toString()}));
 
         classExist.setTeacher(teacher);
         classExist.setStartDate(classRequestDto.startDate());
@@ -59,7 +59,7 @@ public class ClassServiceImpl implements ClassService {
     @Override
     public void deleteClass(Long idClass) {
         ClassRoom cls = classRepository.findById(idClass).orElseThrow(
-                () -> new NotFoundException(ErrorMessage.Class.CLASS_NOT_FOUND, new String[]{idClass.toString()})
+                () -> new NotFoundException(ErrorMessage.ClassRoom.CLASS_NOT_FOUND, new String[]{idClass.toString()})
         );
         classRepository.delete(cls);
     }
