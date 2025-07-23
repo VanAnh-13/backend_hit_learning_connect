@@ -12,6 +12,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.api.annotations.ParameterObject;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -63,5 +67,16 @@ public class ClassController {
     public ResponseEntity<?> getAllClasses() {
         return VsResponseUtil.success(classService.getALlClass());
     }
+
+    @Tag(name = "class-controller")
+    @Operation(summary = "API get all classes by filter", description = "Authenticated")
+    @GetMapping(UrlConstant.Class.FILTER_CLASS)
+    public ResponseEntity<?> getAllClassesBỳilter(@ParameterObject @PageableDefault(page = 0, size = 100, sort = "classId", direction = Sort.Direction.ASC)
+                                                  Pageable pageable,
+                                                  @RequestParam(value = "keyword", required = false) String keyword
+    ) {
+        return VsResponseUtil.success(classService.getALlClassByFilter(pageable, keyword));
+    }
+
 
 }
