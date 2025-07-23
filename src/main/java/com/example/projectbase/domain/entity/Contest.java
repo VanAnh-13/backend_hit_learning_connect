@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -40,25 +39,9 @@ public class Contest {
     @Column(name = "file_url", nullable = false)
     private String fileUrl;
 
-    @Column(name="highestScore")
-    private double highestScore;
-
-    @Column(name="result_Summary", length = 1000)
-    private String resultSummary;
-
-    @Column(name = "ranking")
-    private String ranking;
-
-    @OneToMany(mappedBy = "contest", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ContestProblem> contestProblems = new ArrayList<>();
-
     @ManyToOne
     @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;
-
-    @OneToMany(mappedBy = "contest",fetch = FetchType.LAZY)
-    private List<ContestSubmission> submissions;
-
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
@@ -67,4 +50,8 @@ public class Contest {
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     private Set<User> participants = new HashSet<>();
+
+    @OneToMany(mappedBy = "contest",fetch = FetchType.LAZY)
+    private List<ContestSubmission> submissions;
+
 }

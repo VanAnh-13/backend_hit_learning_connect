@@ -12,7 +12,10 @@ import java.util.Optional;
 @Repository
 public interface ContestSubmissionRepository extends JpaRepository<ContestSubmission, Long> {
 
+    Optional<ContestSubmission> findByContest_ContestIdAndCreatedBy_Username(Long contestId, String username);
+
     boolean existsByContest_ContestIdAndCreatedBy_Username(Long contestId, String username);
+
     @Query("SELECT c FROM Contest c LEFT JOIN FETCH c.submissions WHERE c.contestId = :id")
     Optional<Contest> findByIdWithSubmissions(@Param("id") Long id);
 

@@ -30,8 +30,8 @@ public class ContestSubmission {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @Column(name = "code", nullable = false)
-    private String code;
+//    @Column(name = "code", nullable = false)
+//    private String code;
 
     @Column(name="highestScore")
     private double highestScore;
@@ -41,6 +41,13 @@ public class ContestSubmission {
 
     @Column(name = "ranking")
     private String ranking;
+
+    @Column(name = "file_name")
+    private String fileName;
+
+    @Lob
+    @Column(name = "file_Url")
+    private String fileUrl;
 
     @ManyToOne
     @JoinColumn(name = "contest_id")

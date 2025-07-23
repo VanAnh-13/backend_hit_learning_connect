@@ -1,6 +1,7 @@
 package com.example.projectbase.domain.dto.request.contest;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Lob;
 import lombok.*;
 
 @Getter
@@ -11,12 +12,16 @@ import lombok.*;
 
 public class ContestSubmissionDto {
 
-    private String code;
+//    private String code;
 
     private double highestScore;
 
     private String resultSummary;
 
     private String ranking;
+
+    private String fileName;
+
+    private String fileUrl;
 
 }

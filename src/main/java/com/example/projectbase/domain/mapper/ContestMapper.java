@@ -27,5 +27,5 @@ public interface ContestMapper {
 
    void updateEntity(@MappingTarget Contest contest, ContestUpdateDto request);
 
-   ContestUserResponseDto toUserResponse(Contest contest);
+//   ContestUserResponseDto toUserResponse(Contest contest);
 }
