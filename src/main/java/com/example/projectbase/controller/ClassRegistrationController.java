@@ -99,6 +99,7 @@ public class ClassRegistrationController {
         return VsResponseUtil.success(ResponseMessage.DELETE_SUCCESS);
     }
 
+    @Tag(name = "class-registration-MEMBER-controller")
     @Operation(summary = "Cancel the class registration", description = "Member")
     @PreAuthorize("hasRole('USER')")
     @DeleteMapping(UrlConstant.ClassRegistration.CANCEL_REGISTRATION)
