@@ -3,6 +3,7 @@ package com.example.projectbase.repository;
 import com.example.projectbase.domain.entity.ClassRegistration;
 import com.example.projectbase.domain.entity.ClassRoom;
 import com.example.projectbase.domain.entity.User;
+import com.example.projectbase.domain.model.RegistrationStatus;
 import io.lettuce.core.dynamic.annotation.Param;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,4 +28,11 @@ public interface ClassRegistrationRepository extends JpaRepository<ClassRegistra
     Page<ClassRegistration> filterRegistrations(@Param("classId") Long classId,
                                            Pageable pageable);
 
+    @Query("SELECT r FROM ClassRegistration r " +
+            "WHERE r.student.id = :userId " +
+            "  AND r.status = :status")
+    Page<ClassRegistration> findByStudentIdAndStatus(
+            @Param("userId") Long userId,
+            @Param("status") RegistrationStatus status,
+            Pageable pageable);
 }

@@ -124,6 +124,12 @@ public class ClassRegistrationImpl implements ClassRegistrationService {
                 .map(this::toReponse);
     }
 
+    @Override
+    public Page<ClassRegistrationResponse> acceptedList(UserPrincipal currentUser, Pageable pageable) {
+        return classRegistrationRepository.findByStudentIdAndStatus(currentUser.getId(), RegistrationStatus.ACCEPTED, pageable)
+                .map(this::toReponse);
+    }
+
     public ClassRegistrationResponse toReponse(ClassRegistration reg) {
         return ClassRegistrationResponse.builder()
                 .registrationId(reg.getRegistrationId())
