@@ -11,6 +11,7 @@ import com.example.projectbase.repository.ClassRepository;
 import com.example.projectbase.repository.UserRepository;
 import com.example.projectbase.service.ClassService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,5 +68,10 @@ public class ClassServiceImpl implements ClassService {
     @Override
     public List<ClassResponseDto> getALlClass() {
         return classMapper.toDTOList(classRepository.findAll());
+    }
+
+    @Override
+    public List<ClassResponseDto> getALlClassByFilter(Pageable pageable, String keyword) {
+        return classMapper.toDTOList(classRepository.searchByKeyword(keyword, pageable).getContent());
     }
 }
