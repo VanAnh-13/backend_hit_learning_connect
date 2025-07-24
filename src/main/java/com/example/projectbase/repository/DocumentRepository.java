@@ -20,14 +20,20 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
     Page<Document> findAll(Pageable pageable);
 
     @Query("""
-        SELECT d
-        FROM Document d
-        JOIN d.uploader c
-        WHERE LOWER(d.title)    LIKE LOWER(CONCAT('%', :keyword, '%'))
-           OR LOWER(c.fullName) LIKE LOWER(CONCAT('%', :keyword, '%'))
-    """)
-    Page<Document> searchByKeyword(
-            String keyword,
-            Pageable pageable
-    );
+                SELECT d
+                FROM Document d
+                JOIN d.uploader c
+                WHERE LOWER(d.title)    LIKE LOWER(CONCAT('%', :keyword, '%'))
+                   OR LOWER(c.fullName) LIKE LOWER(CONCAT('%', :keyword, '%'))
+            """)
+    Page<Document> searchByKeyword(String keyword, Pageable pageable);
+
+    @Query("""
+                SELECT d
+                FROM Document d
+                JOIN d.classRoom c
+                WHERE c.classId = :classId
+            """)
+    Page<Document> searchByClassRoom(@Param("classId") Long classId, Pageable pageable);
+
 }

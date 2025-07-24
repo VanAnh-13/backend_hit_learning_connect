@@ -75,4 +75,8 @@ public class ErrorMessage {
     public static class ClassRoom {
       public static final String CLASS_NOT_FOUND = "exception.class.registration.not.found";
     }
+
+    public static class Document {
+      public static final String DOCUMENT_NOT_FOUND = "exception.document.not.found";
+    }
 }

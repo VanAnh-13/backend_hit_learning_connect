@@ -143,9 +143,9 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(AccessDeniedException.class)
   public ResponseEntity<RestData<?>> handleAccessDeniedException(AccessDeniedException ex) {
     String message = messageSource.getMessage(
-            "exception.auth.access.denied",      // key bạn định nghĩa dưới messages.properties
+            "exception.auth.access.denied",
             null,
-            "Access is denied",       // default nếu không tìm được key
+            "Access is denied",
             LocaleContextHolder.getLocale()
     );
     log.error(message, ex);

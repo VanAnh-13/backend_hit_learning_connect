@@ -12,4 +12,5 @@ public class DocumentRequestDto {
     private String title;
     private String description;
     private String fileUrl;
+    private Long classId;
 }
