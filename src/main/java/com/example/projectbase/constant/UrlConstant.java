@@ -38,7 +38,7 @@ public class UrlConstant {
         public static final String CREATE_CLASS = BASE;
         public static final String UPDATE_CLASS = BASE + "/{classId}";
         public static final String DELETE_CLASS = BASE + "/{classId}";
-        public static final String FILTER_CLASS = BASE + "/{classId}/filter";
+        public static final String FILTER_CLASS = BASE + "/filter";
     }
 
     public static class ClassRegistration {
