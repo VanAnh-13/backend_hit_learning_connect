@@ -90,7 +90,6 @@
             <optional>true</optional>
         </dependency>
 
-
         <!--        Oauth2-->
         <dependency>
             <groupId>org.springframework.security</groupId>

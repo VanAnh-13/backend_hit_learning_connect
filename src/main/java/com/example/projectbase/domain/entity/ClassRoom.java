@@ -8,7 +8,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -43,13 +45,7 @@ public class ClassRoom {
     @JsonIgnore
     private Set<User> users = new HashSet<>();
 
-    @OneToMany(mappedBy = "classEntity", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "classEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private Set<ClassRegistration> registrations = new HashSet<>();
-
-    @PrePersist
-    protected void onCreate() {
-        startDate = LocalDate.now();
-        endDate = LocalDate.now().plusMonths(6);
-    }
+    private List<ClassRegistration> registrations = new ArrayList<>();
 }

@@ -102,6 +102,8 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserResponseDto(
                 userRepository.findById(id).map(user -> {
 
+                    System.out.println(user.getPassword());
+
                     if (userRepository.findByEmail(updatedUser.getEmail()).isPresent() && !user.getEmail().equals(updatedUser.getEmail())) {
                         throw new InvalidException(ErrorMessage.User.ERR_EMAIL_EXISTED, new String[]{updatedUser.getEmail()});
                     }
@@ -209,6 +211,14 @@ public class UserServiceImpl implements UserService {
         User user = getUser(userPrincipal);
 
         return (user.getLastLogin().equals(user.getCreatedDate()));
+    }
+
+    @Override
+    public ListUserResponseDto getUsersByFilter(Pageable pageable, String keyword) {
+        return ListUserResponseDto.builder()
+                .data(userMapper.toUserResponseDtos(userRepository.searchByKeyword(keyword, pageable).getContent()))
+                .amountOfAllUsers(userRepository.count())
+                .build();
     }
 
 }

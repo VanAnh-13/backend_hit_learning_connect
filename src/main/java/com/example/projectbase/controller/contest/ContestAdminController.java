@@ -1,5 +1,6 @@
 package com.example.projectbase.controller.contest;
 
+import com.example.projectbase.base.VsResponseUtil;
 import com.example.projectbase.constant.ErrorMessage;
 import com.example.projectbase.domain.dto.request.contest.ContestCreatetDto;
 import com.example.projectbase.domain.dto.request.contest.ContestUpdateDto;
@@ -100,7 +101,7 @@ public class ContestAdminController {
     public ResponseEntity<?> deleteContest(@PathVariable Long id){
         try{
             service.deleteContest(id);
-            return ResponseEntity.noContent().build();
+            return VsResponseUtil.success("Delete contest success");
         }catch (EntityNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorMessage.Contest.CONTEST_NOT_FOUND);
         }catch (Exception e){

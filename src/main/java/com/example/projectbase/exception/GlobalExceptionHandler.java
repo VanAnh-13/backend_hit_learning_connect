@@ -118,6 +118,13 @@ public class GlobalExceptionHandler {
     return VsResponseUtil.error(ex.getStatus(), message);
   }
 
+  @ExceptionHandler(BadRequestException.class)
+  public ResponseEntity<RestData<?>> handleBadRequestException(BadRequestException ex) {
+    String message = messageSource.getMessage(ex.getMessage(), ex.getParams(), LocaleContextHolder.getLocale());
+    log.error(message, ex);
+    return VsResponseUtil.error(ex.getStatus(), message);
+  }
+
   @ExceptionHandler(UnauthorizedException.class)
   public ResponseEntity<RestData<?>> handleUnauthorizedException(UnauthorizedException ex) {
     String message = messageSource.getMessage(ex.getMessage(), ex.getParams(), LocaleContextHolder.getLocale());

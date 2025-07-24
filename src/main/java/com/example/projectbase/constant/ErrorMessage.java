@@ -71,4 +71,8 @@ public class ErrorMessage {
         public static final String USER_CONTEST_NOT_FOUND = "exception.contest.user_contest_not_found";
         public static final String ALREADY_JOINED = "exception.contest.already_joined";
     }
+
+    public static class ClassRoom {
+      public static final String CLASS_NOT_FOUND = "exception.class.registration.not.found";
+    }
 }

@@ -1,5 +1,6 @@
 package com.example.projectbase.service.impl;
 
+import com.example.projectbase.constant.ErrorMessage;
 import com.example.projectbase.domain.dto.request.classes.ClassRequestDto;
 import com.example.projectbase.domain.dto.response.classes.ClassResponseDto;
 import com.example.projectbase.domain.entity.ClassRoom;
@@ -27,7 +28,7 @@ public class ClassServiceImpl implements ClassService {
     public ClassResponseDto getClassById(Long id) {
         return classRepository.findById(id)
                 .map(classMapper::toDTO)
-                .orElseThrow(() -> new NotFoundException("Class not found", new String[]{id.toString()}));
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.ClassRoom.CLASS_NOT_FOUND, new String[]{id.toString()}));
     }
 
     @Override
@@ -41,13 +42,13 @@ public class ClassServiceImpl implements ClassService {
     @Override
     public ClassResponseDto editClass(Long idClass, ClassRequestDto classRequestDto) {
         ClassRoom classExist = classRepository.findById(idClass)
-                .orElseThrow(() -> new NotFoundException("Class not found", new String[]{idClass.toString()}));
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.ClassRoom.CLASS_NOT_FOUND, new String[]{idClass.toString()}));
 
         classExist.setDescription(classRequestDto.description());
         classExist.setTitle(classRequestDto.title());
 
         User teacher = userRepository.findById(classRequestDto.teacherId())
-                .orElseThrow(() -> new NotFoundException("Class not found", new String[]{classRequestDto.teacherId().toString()}));
+                .orElseThrow(() -> new NotFoundException(ErrorMessage.ClassRoom.CLASS_NOT_FOUND, new String[]{classRequestDto.teacherId().toString()}));
 
         classExist.setTeacher(teacher);
         classExist.setStartDate(classRequestDto.startDate());
@@ -57,11 +58,10 @@ public class ClassServiceImpl implements ClassService {
 
     @Override
     public void deleteClass(Long idClass) {
-        if (classRepository.findById(idClass).isPresent()) {
-            classRepository.deleteById(idClass);
-        } else {
-            throw new NotFoundException("Class not found", new String[]{idClass.toString()});
-        }
+        ClassRoom cls = classRepository.findById(idClass).orElseThrow(
+                () -> new NotFoundException(ErrorMessage.ClassRoom.CLASS_NOT_FOUND, new String[]{idClass.toString()})
+        );
+        classRepository.delete(cls);
     }
 
     @Override

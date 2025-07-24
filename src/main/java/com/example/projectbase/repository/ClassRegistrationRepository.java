@@ -23,10 +23,8 @@ public interface ClassRegistrationRepository extends JpaRepository<ClassRegistra
     Page<ClassRegistration> findByStudent(User student, Pageable pageable);
 
     @Query("SELECT r FROM ClassRegistration r WHERE " +
-            "(:classId IS NULL OR r.classEntity.id = :classId) AND " +
-            "(:email IS NULL OR LOWER(r.student.email) LIKE LOWER(CONCAT('%', :email, '%')))")
+            "(:classId IS NULL OR r.classEntity.classId = :classId)")
     Page<ClassRegistration> filterRegistrations(@Param("classId") Long classId,
-                                           @Param("email") String email,
                                            Pageable pageable);
 
 }

@@ -14,6 +14,7 @@ import com.example.projectbase.service.ClassRegistrationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.springdoc.api.annotations.ParameterObject;
@@ -32,6 +33,7 @@ public class ClassRegistrationController {
 
     private final ClassRegistrationService classRegistrationService;
 
+    @Tag(name = "class-registration-MEMBER-controller")
     @Operation(summary=" Register class", description = "Member")
     @PostMapping(UrlConstant.ClassRegistration.CREATE_REGISTRATION)
     @PreAuthorize("hasRole('USER')")
@@ -41,6 +43,7 @@ public class ClassRegistrationController {
         return VsResponseUtil.success(ResponseMessage.REGISTER_SUCCESS);
     }
 
+    @Tag(name = "class-registration-ADMIN-controller")
     @Operation(summary = "Approve or deny the application", description = "Admin / Leader")
     @PostMapping(UrlConstant.ClassRegistration.APPROVE_REGISTRATION)
     @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
@@ -50,6 +53,7 @@ public class ClassRegistrationController {
         return VsResponseUtil.success(ResponseMessage.APPROVE_REJECT_SUCCESS);
     }
 
+    @Tag(name = "class-registration-MEMBER-controller")
     @Operation(summary = "View the registered classes", description = "Member")
     @GetMapping(UrlConstant.ClassRegistration.VIEW_REGISTRATION)
     @PreAuthorize("hasRole('USER')")
@@ -62,6 +66,7 @@ public class ClassRegistrationController {
         }
     }
 
+    @Tag(name = "class-registration-ADMIN-controller")
     @Operation(summary = "Get all registrations", description = "Admin")
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping(UrlConstant.ClassRegistration.BASE)
@@ -73,7 +78,8 @@ public class ClassRegistrationController {
         }
     }
 
-    @Operation(summary = "Filter registrations by class and email", description = "Admin")
+    @Tag(name = "class-registration-ADMIN-controller")
+    @Operation(summary = "Filter registrations by class ", description = "Admin")
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(UrlConstant.ClassRegistration.FILTER_REGISTRATION)
     public ResponseEntity<?> filterRegistrations(@RequestBody FilterRegistrationRequest request, @ParameterObject Pageable pageable){
@@ -84,6 +90,7 @@ public class ClassRegistrationController {
         }
    }
 
+    @Tag(name = "class-registration-ADMIN-controller")
    @Operation(summary = "delete registration", description = "Admin / Leader")
    @PreAuthorize("hasAnyRole('ADMIN','LEADER')")
    @DeleteMapping(UrlConstant.ClassRegistration.DEL_REGISTRATION)
@@ -92,9 +99,10 @@ public class ClassRegistrationController {
         return VsResponseUtil.success(ResponseMessage.DELETE_SUCCESS);
    }
 
-    @Operation(summary = "Cancel the class registration", description = "MEMBER")
-    @PreAuthorize("hasRole('MEMBER')")
-    @DeleteMapping("/cancel/{classId}")
+   @Tag(name = "class-registration-MEMBER-controller")
+  @Operation(summary = "Cancel the class registration", description = "Member")
+    @PreAuthorize("hasRole('USER')")
+    @DeleteMapping(UrlConstant.ClassRegistration.CANCEL_REGISTRATION)
     public ResponseEntity<?> cancel(@PathVariable Long classId, @Parameter(hidden = true) @CurrentUser UserPrincipal user){
         classRegistrationService.cancelRegistration(user.getId(), classId);
         return VsResponseUtil.success(ResponseMessage.CANCEL_SUCCESS);

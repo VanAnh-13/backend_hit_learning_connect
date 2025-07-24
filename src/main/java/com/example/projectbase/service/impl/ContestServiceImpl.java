@@ -6,7 +6,6 @@ import com.example.projectbase.domain.dto.request.contest.ContestSubmissionReque
 import com.example.projectbase.domain.dto.request.contest.ContestUpdateDto;
 import com.example.projectbase.domain.dto.response.contest.ContestReponseDto;
 import com.example.projectbase.domain.dto.response.contest.ContestResultResponse;
-import com.example.projectbase.domain.dto.response.contest.ContestUserResponseDto;
 import com.example.projectbase.domain.entity.Contest;
 import com.example.projectbase.domain.entity.ContestSubmission;
 import com.example.projectbase.domain.entity.User;

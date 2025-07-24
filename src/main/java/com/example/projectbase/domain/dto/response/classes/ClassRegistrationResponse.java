@@ -17,5 +17,6 @@ public class ClassRegistrationResponse {
     private String studentEmail;
     private boolean pending;
     private LocalDateTime registeredAt;
+    private String RegistrationStatus;
 
 }
