@@ -71,7 +71,7 @@ public class ClassController {
     @Tag(name = "class-controller")
     @Operation(summary = "API get all classes by filter", description = "Authenticated")
     @GetMapping(UrlConstant.Class.FILTER_CLASS)
-    public ResponseEntity<?> getAllClassesBỳilter(@ParameterObject @PageableDefault(page = 0, size = 100, sort = "classId", direction = Sort.Direction.ASC)
+    public ResponseEntity<?> getAllClassesByFilter(@ParameterObject @PageableDefault(page = 0, size = 1000, sort = "classId", direction = Sort.Direction.ASC)
                                                   Pageable pageable,
                                                   @RequestParam(value = "keyword", required = false) String keyword
     ) {
