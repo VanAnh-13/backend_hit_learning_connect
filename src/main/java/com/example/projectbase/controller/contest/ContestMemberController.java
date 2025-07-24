@@ -5,20 +5,29 @@ import com.example.projectbase.base.VsResponseUtil;
 import com.example.projectbase.constant.ErrorMessage;
 import com.example.projectbase.constant.ResponseMessage;
 import com.example.projectbase.domain.dto.request.contest.ContestSubmissionRequest;
+import com.example.projectbase.domain.dto.request.contest.ContestSubmissionRequestWrapper;
 import com.example.projectbase.domain.dto.response.contest.ContestReponseDto;
 import com.example.projectbase.domain.dto.response.contest.ContestResultResponse;
 import com.example.projectbase.security.CurrentUser;
 import com.example.projectbase.security.UserPrincipal;
 import com.example.projectbase.service.ContestService;
 import com.example.projectbase.service.impl.ContestServiceImpl;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.SchemaProperty;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -110,21 +119,26 @@ public class ContestMemberController {
         }
     }
 
-    @Operation(summary = "Api view submit contest")
-    @PostMapping("/submit")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> submitContest(@RequestPart("request") ContestSubmissionRequest request,
-                                           @RequestPart("file")MultipartFile file){
-        try{
-            contestService.submitContest(request,file);
-            return ResponseEntity.ok(ResponseMessage.Contest.SUCCESS);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorMessage.Contest.VALIDATION_FAILED);
-        }catch (EntityNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorMessage.Contest.CONTEST_NOT_FOUND);
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorMessage.Contest.INTERNAL_SERVER_ERROR);
-        }
+    @PostMapping(value = "/contest/submit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(
+            summary = "Submit contest file",
+            description = "submit the entry for the competition",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    required = true,
+                    content = @Content(
+                            mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+                            schema = @Schema(implementation = ContestSubmissionRequestWrapper.class)
+                    )
+            )
+    )
+    public ResponseEntity<?> submitContest(
+            @RequestPart("request") String requestJson,
+            @RequestPart("file") MultipartFile file,
+            @CurrentUser UserPrincipal user
+    ) throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+        ContestSubmissionRequest request = mapper.readValue(requestJson, ContestSubmissionRequest.class);
+        return ResponseEntity.ok(ResponseMessage.Contest.SUCCESS);
     }
 
     @Operation(summary = "Api result contest by id")
