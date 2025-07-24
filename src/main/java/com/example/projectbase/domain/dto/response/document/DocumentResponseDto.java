@@ -15,4 +15,5 @@ public class DocumentResponseDto {
     private String createdAt;
     private String fileUrl;
     private String description;
+    private Long classId;
 }

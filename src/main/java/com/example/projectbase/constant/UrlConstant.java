@@ -57,6 +57,7 @@ public class UrlConstant {
     public static class Document {
         public static final String BASE = "/documents";
         public static final String GET_DOCUMENT = BASE + "/{documentId}";
+        public static final String GET_DOCUMENT_BY_CLASSID = BASE + "/class/{classId}";
         public static final String CREATE_DOCUMENT = BASE;
         public static final String UPDATE_DOCUMENT = BASE + "/{documentId}";
         public static final String DELETE_DOCUMENT = BASE + "/{documentId}";

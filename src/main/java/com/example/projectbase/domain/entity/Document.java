@@ -25,6 +25,10 @@ public class Document {
     @JoinColumn(name = "uploader_id")
     private User uploader;
 
+    @ManyToOne
+    @JoinColumn(name = "class_id")
+    private ClassRoom classRoom;
+
     @Column(name = "title", length = 200, nullable = false)
     private String title;
 
