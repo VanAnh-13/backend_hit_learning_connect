@@ -1,0 +1,22 @@
+package com.example.projectbase.domain.dto.request.contest;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
+
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+
+public class ContestSubmissionRequestWrapper {
+
+    @Schema(description = "Request contest info", type = "string", example = "{\"contestId\": 13}")
+    private String request;
+
+    @Schema(description = "PDF file", type = "string", format = "binary")
+    private MultipartFile file;
+}

@@ -11,4 +11,5 @@ import java.lang.annotation.*;
 @RestController
 @RequestMapping("/api/v1")
 public @interface RestApiV1 {
+
 }
