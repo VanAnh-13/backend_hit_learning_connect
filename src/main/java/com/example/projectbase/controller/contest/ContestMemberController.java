@@ -120,6 +120,7 @@ public class ContestMemberController {
     }
 
     @PostMapping(value = "/contest/submit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('USER')")
     @Operation(
             summary = "Submit contest file",
             description = "submit the entry for the competition",
