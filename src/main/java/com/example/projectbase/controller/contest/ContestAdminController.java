@@ -2,20 +2,28 @@ package com.example.projectbase.controller.contest;
 
 import com.example.projectbase.base.VsResponseUtil;
 import com.example.projectbase.constant.ErrorMessage;
+import com.example.projectbase.constant.ResponseMessage;
 import com.example.projectbase.domain.dto.request.contest.ContestCreatetDto;
 import com.example.projectbase.domain.dto.request.contest.ContestUpdateDto;
 import com.example.projectbase.domain.dto.response.contest.ContestReponseDto;
 import com.example.projectbase.domain.dto.response.contest.ContestResultResponse;
 import com.example.projectbase.service.ContestService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("api/contests")
@@ -66,19 +74,21 @@ public class ContestAdminController {
         }
    }
 
-   @Operation(summary = "Api create contest")
-   @PostMapping
-   @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> createContest(@Valid @RequestBody ContestCreatetDto request){
-        try{
-            ContestReponseDto create= service.createContest(request);
-            return ResponseEntity.status(HttpStatus.CREATED).body(create);
-        } catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorMessage.Contest.INTERNAL_SERVER_ERROR);
-        }
-   }
+    @Operation(summary = "Create contest with file upload")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Created")
+    })
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ContestReponseDto> createContest(
+            @Parameter(description = "Contest data", required = true, content = @Content(schema = @Schema(implementation = ContestCreatetDto.class)))
+            @RequestPart("request") @Valid ContestCreatetDto request,
+
+            @Parameter(description = "PDF file", required = true, content = @Content(mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE))
+            @RequestPart("file") MultipartFile file) {
+
+        ContestReponseDto response = service.createContest(request, file);
+        return ResponseEntity.ok(response);
+    }
 
    @Operation(summary = "Api update contest by id")
    @PutMapping("/{id}")
@@ -101,7 +111,7 @@ public class ContestAdminController {
     public ResponseEntity<?> deleteContest(@PathVariable Long id){
         try{
             service.deleteContest(id);
-            return VsResponseUtil.success("Delete contest success");
+            return VsResponseUtil.success(ResponseMessage.DELETE_SUCCESS);
         }catch (EntityNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorMessage.Contest.CONTEST_NOT_FOUND);
         }catch (Exception e){

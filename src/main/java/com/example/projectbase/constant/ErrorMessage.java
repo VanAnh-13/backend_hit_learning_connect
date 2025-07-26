@@ -70,6 +70,11 @@ public class ErrorMessage {
         public static final String FILE_TYPE_NOT_SUPPORTED = "exception.contest.file_type_not_supported";
         public static final String USER_CONTEST_NOT_FOUND = "exception.contest.user_contest_not_found";
         public static final String ALREADY_JOINED = "exception.contest.already_joined";
+        public static final String FILE_NOT_FOUND="exception.file.not_found";
+        public static final String ORIGINAL_FILENAME="exception.original.not_found";
+        public static final String UPLOADING_FILE="exception.uploading_file";
+        public static final String INVALID_FILE="exception.invalid_file";
+
     }
 
     public static class ClassRoom {
