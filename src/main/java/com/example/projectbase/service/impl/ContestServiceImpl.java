@@ -19,6 +19,8 @@ import com.example.projectbase.service.ContestService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -32,14 +34,20 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
+
+import static com.example.projectbase.constant.ErrorMessage.User.ERR_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
 
 public class ContestServiceImpl implements ContestService {
 
+    private static final Logger log = LoggerFactory.getLogger(ContestServiceImpl.class);
     private final ContestRepository contestRepository;
     private final ContestMapper mapper;
     private final UserRepository userRepository;
@@ -58,7 +66,7 @@ public class ContestServiceImpl implements ContestService {
     @Override
     public Page<ContestReponseDto> search(String keyword, int page, int size) {
       Pageable pageable=PageRequest.of(page, size, Sort.by("startTime").descending());
-        return contestRepository.findByTitleContainingIgnoreCase(keyword, pageable).map(mapper::toReponse)
+        return contestRepository.findByTitleContainingIgnoreCase(keyword, pageable).map(mapper:: toReponse)
                 ;
     }
 
@@ -69,15 +77,43 @@ public class ContestServiceImpl implements ContestService {
     }
 
     @Override
-    public ContestReponseDto createContest(ContestCreatetDto request) {
-        Contest contest= mapper.toEntity(request);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
+    public ContestReponseDto createContest(ContestCreatetDto request, MultipartFile file) {
+        Contest contest = mapper.toEntity(request);
 
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException(ErrorMessage.User.ERR_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ERR_NOT_FOUND));
 
         contest.setCreatedBy(user);
+
+        try {
+            if (file == null || file.isEmpty()) {
+                throw new RuntimeException(ErrorMessage.Contest.CONTEST_NOT_FOUND);
+            }
+
+            String originalFileName = file.getOriginalFilename();
+            if (originalFileName == null || originalFileName.isBlank()) {
+                throw new RuntimeException(ErrorMessage.Contest.ORIGINAL_FILENAME);
+            }
+
+            Path uploadPath = Paths.get(System.getProperty("user.dir"), "uploads", "contest");
+            Files.createDirectories(uploadPath);
+
+            String fileName = System.currentTimeMillis() + "_" + originalFileName;
+            Path filePath = uploadPath.resolve(fileName);
+
+            file.transferTo(filePath.toFile());
+
+            contest.setFileName(originalFileName);
+            contest.setFileUrl(filePath.toAbsolutePath().toString());
+
+        } catch (IOException e) {
+            log.error(ErrorMessage.Contest.UPLOADING_FILE, e);
+            throw new RuntimeException(ErrorMessage.Contest.FILE_UPLOAD_FAILED, e);
+        } catch (RuntimeException e) {
+            log.error(ErrorMessage.Contest.VALIDATION_FAILED, e);
+            throw e;
+        }
 
         return mapper.toReponse(contestRepository.save(contest));
     }
@@ -128,7 +164,7 @@ public class ContestServiceImpl implements ContestService {
     @Transactional
     public void joinContest(Long contestId, UserPrincipal userPrincipal) {
         Contest contest = contestRepository.findById(contestId).orElseThrow(() -> new RuntimeException(ErrorMessage.Contest.CONTEST_NOT_FOUND));
-        User user = userRepository.findById(userPrincipal.getId()).orElseThrow(() -> new RuntimeException(ErrorMessage.User.ERR_NOT_FOUND));
+        User user = userRepository.findById(userPrincipal.getId()).orElseThrow(() -> new RuntimeException(ERR_NOT_FOUND));
 
 
         for (User participant : contest.getParticipants()) {
@@ -168,11 +204,11 @@ public class ContestServiceImpl implements ContestService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ERR_NOT_FOUND));
 
         ContestSubmission contestSubmission = submissionRepository
                 .findByContest_ContestIdAndCreatedBy_Username(request.getContestId(), username)
-                .orElseThrow(() -> new EntityNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
+                .orElseThrow(() -> new EntityNotFoundException(ERR_NOT_FOUND));
 
         String uploadDir = "uploads/contest/";
         String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();

@@ -39,6 +39,9 @@ public class Contest {
     @Column(name = "file_url", nullable = false)
     private String fileUrl;
 
+    @Column(name = "file_name")
+    private String fileName;
+
     @ManyToOne
     @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;

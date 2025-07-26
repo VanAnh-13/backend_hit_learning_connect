@@ -100,6 +100,11 @@ public class ContestMemberController {
         return VsResponseUtil.success(ResponseMessage.Contest.JOIN_CONTEST);
     }
 
+    /***
+     *
+     * @param
+     * @return
+     */
     @Operation(summary = "Api start contest")
     @GetMapping("/start/{contestId}")
     @PreAuthorize("hasRole('USER')")
