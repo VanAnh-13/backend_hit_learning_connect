@@ -110,7 +110,11 @@ public class StorageServiceImpl implements StorageService {
             String publicId = extractPublicIdFromUrl(url);
 
             Map<?, ?> deleteResult = cloudinary.uploader().destroy(publicId,
-                    ObjectUtils.asMap("resource_type", "raw"));
+                    ObjectUtils.asMap(
+                            "resource_type", "raw",
+                            "type", "upload",
+                            "invalidate", true
+                    ));
 
             String result = (String) deleteResult.get("result");
             if (!"ok".equals(result)) {
