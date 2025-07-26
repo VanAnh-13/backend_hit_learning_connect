@@ -8,6 +8,7 @@ import com.example.projectbase.domain.dto.response.classes.ClassRegistrationResp
 import com.example.projectbase.domain.entity.ClassRegistration;
 import com.example.projectbase.domain.entity.ClassRoom;
 import com.example.projectbase.domain.entity.User;
+import com.example.projectbase.domain.mapper.ClassMapper;
 import com.example.projectbase.domain.model.RegistrationStatus;
 import com.example.projectbase.domain.model.SubmissionStatus;
 import com.example.projectbase.exception.extended.BadRequestException;
@@ -37,6 +38,7 @@ public class ClassRegistrationImpl implements ClassRegistrationService {
     private final ClassRegistrationRepository classRegistrationRepository;
     private final UserRepository userRepository;
     private final ClassRepository classRepository;
+    private final ClassMapper classMapper;
 
     @Override
     public void register(Long userId, RegisterClassRequest request) throws BadRequestException {
@@ -138,6 +140,7 @@ public class ClassRegistrationImpl implements ClassRegistrationService {
                 .pending(reg.isPending())
                 .studentEmail(reg.getStudent().getEmail())
                 .RegistrationStatus(reg.getStatus().name())
+                .classRoom(classMapper.toDTO(reg.getClassEntity()))
                 .build();
     }
 }
