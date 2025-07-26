@@ -76,6 +76,12 @@ public class StorageServiceImpl implements StorageService {
 
             String publicId = folder + "/" + originalFilename;
 
+            publicId = publicId
+                    .replaceAll("[ &()]", "_");
+//                    .replaceAll("[^\\w\\-/]", "");
+
+            System.out.println(publicId);
+
             Map<?, ?> uploadResult = cloudinary.uploader().upload(
                     file.getBytes(),
                     ObjectUtils.asMap(
