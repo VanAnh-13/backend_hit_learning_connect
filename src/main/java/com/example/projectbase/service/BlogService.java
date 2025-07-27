@@ -1,6 +1,7 @@
 package com.example.projectbase.service;
 
 import com.example.projectbase.domain.dto.request.blog.BlogRequest;
+import com.example.projectbase.domain.dto.request.blog.BlogUpdateDto;
 import com.example.projectbase.domain.dto.request.comment.CommentRequest;
 import com.example.projectbase.domain.dto.request.reaction.ReactionRequest;
 import com.example.projectbase.domain.dto.response.blog.BlogResponse;
@@ -14,7 +15,7 @@ import java.io.IOException;
 public interface BlogService {
 
     BlogResponse create(BlogRequest request, MultipartFile file) throws IOException;
-    BlogResponse update(Long id, BlogRequest request);
+    BlogResponse update(Long id, BlogUpdateDto request);
     void delete(Long id);
     BlogResponse getById(Long id);
     Page<BlogResponse> getAll(Pageable pageable);

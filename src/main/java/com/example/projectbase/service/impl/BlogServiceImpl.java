@@ -2,6 +2,7 @@ package com.example.projectbase.service.impl;
 
 import com.example.projectbase.constant.ErrorMessage;
 import com.example.projectbase.domain.dto.request.blog.BlogRequest;
+import com.example.projectbase.domain.dto.request.blog.BlogUpdateDto;
 import com.example.projectbase.domain.dto.request.comment.CommentRequest;
 import com.example.projectbase.domain.dto.request.reaction.ReactionRequest;
 import com.example.projectbase.domain.dto.response.blog.BlogResponse;
@@ -76,23 +77,34 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public BlogResponse update(Long id, BlogRequest request) {
-        return null;
+    public BlogResponse update(Long id, BlogUpdateDto request) {
+
+        Blog blog= blogRepository.findById(id).orElseThrow(()->new RuntimeException(ErrorMessage.Blog.BLOG_NOT_FOUND));
+        blogMapper.updateEntity(blog, request);
+        return blogMapper.toResponse(blogRepository.save(blog));
     }
 
     @Override
     public void delete(Long id) {
 
+        if(!blogRepository.existsById(id)){
+            throw new RuntimeException(ErrorMessage.Blog.BLOG_NOT_FOUND);
+        }
+        blogRepository.deleteById(id);
     }
 
     @Override
     public BlogResponse getById(Long id) {
-        return null;
+
+        Blog blog= blogRepository.findById(id).orElseThrow(()-> new RuntimeException(ErrorMessage.Blog.BLOG_NOT_FOUND));
+
+        return blogMapper.toResponse(blog);
     }
 
     @Override
     public Page<BlogResponse> getAll(Pageable pageable) {
-        return null;
+
+        return blogRepository.findAll(pageable).map(this::toResponse);
     }
 
     @Override
@@ -108,5 +120,13 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public void react(ReactionRequest request) {
 
+    }
+
+    public BlogResponse toResponse(Blog blog){
+
+        return BlogResponse.builder()
+                .id(blog.getBlogId())
+                .title(blog.getTitle())
+                .
     }
 }

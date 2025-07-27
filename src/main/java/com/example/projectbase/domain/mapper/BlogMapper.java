@@ -1,12 +1,16 @@
 package com.example.projectbase.domain.mapper;
 
 import com.example.projectbase.domain.dto.request.blog.BlogRequest;
+import com.example.projectbase.domain.dto.request.blog.BlogUpdateDto;
+import com.example.projectbase.domain.dto.request.contest.ContestUpdateDto;
 import com.example.projectbase.domain.dto.response.blog.BlogResponse;
 import com.example.projectbase.domain.entity.Blog;
+import com.example.projectbase.domain.entity.Contest;
 import com.example.projectbase.domain.entity.Tag;
 import com.example.projectbase.domain.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
 import java.util.List;
@@ -26,6 +30,9 @@ public interface BlogMapper {
     List<BlogResponse> toResponseList(List<Blog> blogs);
 
     Blog toEntity(BlogRequest request);
+
+    void updateEntity(@MappingTarget Blog blog, BlogUpdateDto request);
+
 
     @Named("mapUserToString")
     default String mapUserToString(User user) {
