@@ -22,7 +22,7 @@ public class OpenApiConfig {
     return new OpenAPI()
             .servers(List.of(
                     new Server()
-                            .url("https://139.59.123.112")
+                            .url("https://whodev.top")
                             .description("HTTPS server")
             ))
 
