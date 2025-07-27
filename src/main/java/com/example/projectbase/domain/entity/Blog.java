@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Table(name = "blogs")
@@ -35,6 +36,18 @@ public class Blog {
 
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @ManyToMany
+    private List<Tag> tags;
+
+    @OneToMany(mappedBy = "blog", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Comment> comments;
+
+    @OneToMany(mappedBy = "blog",cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Reaction> reactions;
+
+    @Column(name = "img_Url")
+    private String imgUrl;
 
     @PrePersist
     protected void onCreate() {
