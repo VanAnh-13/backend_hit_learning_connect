@@ -7,9 +7,14 @@ import com.example.projectbase.domain.dto.request.comment.CommentRequest;
 import com.example.projectbase.domain.dto.request.reaction.ReactionRequest;
 import com.example.projectbase.domain.dto.response.blog.BlogResponse;
 import com.example.projectbase.domain.dto.response.comment.CommentResponse;
+import com.example.projectbase.domain.dto.response.reaction.ReactionReponseDto;
 import com.example.projectbase.domain.entity.Blog;
+import com.example.projectbase.domain.entity.Comment;
+import com.example.projectbase.domain.entity.Reaction;
 import com.example.projectbase.domain.entity.User;
 import com.example.projectbase.domain.mapper.BlogMapper;
+import com.example.projectbase.domain.mapper.CommentMapper;
+import com.example.projectbase.domain.model.ReactionType;
 import com.example.projectbase.repository.*;
 import com.example.projectbase.service.BlogService;
 import jakarta.persistence.EntityNotFoundException;
@@ -27,6 +32,11 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.util.EnumMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -40,6 +50,7 @@ public class BlogServiceImpl implements BlogService {
     private final ReactionRepository reactionRepository;
     private final BlogRepository blogRepository;
     private final BlogMapper blogMapper;
+    private final CommentMapper commentMapper;
 
     @Override
     public BlogResponse create(BlogRequest request, MultipartFile file) throws IOException {
@@ -109,17 +120,78 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public Page<BlogResponse> searchByTag(String tag, Pageable pageable) {
-        return null;
+        Page<Blog> blogs = blogRepository.searchByTag(tag, pageable);
+        return blogs.map(blogMapper::toResponse);
+
     }
 
     @Override
     public CommentResponse comment(CommentRequest request) {
-        return null;
+
+        String username= SecurityContextHolder.getContext().getAuthentication().getName();
+        User user= userRepository.findByUsername(username).orElseThrow(()->new RuntimeException(ErrorMessage.User.ERR_NOT_FOUND));
+
+        Blog blog= blogRepository.findById(request.getBlogId()).orElseThrow(()->new RuntimeException(ErrorMessage.Blog.BLOG_NOT_FOUND));
+
+        Comment comment= commentMapper.toEntity(request);
+        comment.setAuthor(user);
+        comment.setBlog(blog);
+        comment.setCreateAt(LocalDateTime.now());
+
+        Comment saveComment= commentRepository.save(comment);
+
+
+        return commentMapper.toResponse(saveComment);
     }
 
     @Override
     public void react(ReactionRequest request) {
 
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
+
+        Blog blog = blogRepository.findById(request.getBlogId())
+                .orElseThrow(() -> new EntityNotFoundException(ErrorMessage.Blog.BLOG_NOT_FOUND));
+
+        Optional<Reaction> existingOpt = reactionRepository.findByUserAndBlog(user, blog);
+
+        if (existingOpt.isPresent()) {
+            Reaction existing = existingOpt.get();
+            if (existing.getType() == request.getType()) {
+                reactionRepository.delete(existing);
+            } else {
+                existing.setType(request.getType());
+//                existing.setReactedAt(LocalDateTime.now());
+                reactionRepository.save(existing);
+            }
+        } else {
+            Reaction reaction = new Reaction();
+            reaction.setUser(user);
+            reaction.setBlog(blog);
+            reaction.setType(request.getType());
+//            reaction.setReactedAt(LocalDateTime.now());
+            reactionRepository.save(reaction);
+        }
+    }
+
+    @Override
+    public ReactionReponseDto getReactionStats(Long blogId) {
+        List<Object[]> result = reactionRepository.countReactionsByType(blogId);
+        Map<ReactionType, Long> map = new EnumMap<>(ReactionType.class);
+        for (Object[] row : result) {
+            ReactionType type = (ReactionType) row[0];
+            Long count = (Long) row[1];
+            map.put(type, count);
+        }
+        return new ReactionReponseDto(map);
+    }
+
+    @Override
+    public Optional<ReactionType> getUserReaction(Long blogId) {
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        return reactionRepository.findByUser_UsernameAndBlog_BlogId(username, blogId)
+                .map(Reaction::getType);
     }
 
     public BlogResponse toResponse(Blog blog){
@@ -127,6 +199,10 @@ public class BlogServiceImpl implements BlogService {
         return BlogResponse.builder()
                 .id(blog.getBlogId())
                 .title(blog.getTitle())
-                .
+                .content(blog.getContent())
+                .createdAt(blog.getCreatedAt())
+                .updatedAt(blog.getUpdatedAt())
+                .imageUrl(blog.getImgUrl())
+                .build();
     }
 }

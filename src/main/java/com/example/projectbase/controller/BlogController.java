@@ -1,7 +1,10 @@
 package com.example.projectbase.controller;
 
 import com.example.projectbase.domain.dto.request.blog.BlogRequest;
+import com.example.projectbase.domain.dto.request.reaction.ReactionRequest;
 import com.example.projectbase.domain.dto.response.blog.BlogResponse;
+import com.example.projectbase.domain.dto.response.reaction.ReactionReponseDto;
+import com.example.projectbase.domain.model.ReactionType;
 import com.example.projectbase.service.BlogService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -25,6 +28,7 @@ public class BlogController {
 
     private final BlogService blogService;
 
+
     @PreAuthorize("hasRole('USER')")
     @Operation(summary = "Create blog with file image")
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -35,6 +39,25 @@ public class BlogController {
         BlogResponse response = blogService.create(request, file);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
+
+    @PostMapping
+    public ResponseEntity<Void> react(@RequestBody ReactionRequest request) {
+        blogService.react(request);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/stats/{blogId}")
+    public ResponseEntity<ReactionReponseDto> getStats(@PathVariable Long blogId) {
+        return ResponseEntity.ok(blogService.getReactionStats(blogId));
+    }
+
+    @GetMapping("/my-reaction/{blogId}")
+    public ResponseEntity<ReactionType> getUserReaction(@PathVariable Long blogId) {
+        return blogService.getUserReaction(blogId)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.noContent().build());
+    }
+
 
 
 
