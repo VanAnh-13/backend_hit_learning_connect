@@ -23,6 +23,7 @@ public class ResponseMessage {
         public static final String DELETE_SUCCESS = "delete successfull";
         public static final String FETCH_SUCCESS = "Data retrieved successfully.";
         public static final String JOIN_CONTEST="Join contest successfully";
+        public static final String SUBMIT_FILE="Submit file successfull";
     }
 
 }

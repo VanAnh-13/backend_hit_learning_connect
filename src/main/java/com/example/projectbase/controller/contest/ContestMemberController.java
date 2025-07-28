@@ -144,7 +144,7 @@ public class ContestMemberController {
     ) throws JsonProcessingException {
         ObjectMapper mapper = new ObjectMapper();
         ContestSubmissionRequest request = mapper.readValue(requestJson, ContestSubmissionRequest.class);
-        return ResponseEntity.ok(ResponseMessage.Contest.SUCCESS);
+        return ResponseEntity.ok(ResponseMessage.Contest.SUBMIT_FILE);
     }
 
     @Operation(summary = "Api result contest by id")
