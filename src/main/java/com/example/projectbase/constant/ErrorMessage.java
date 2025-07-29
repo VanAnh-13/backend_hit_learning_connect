@@ -83,5 +83,7 @@ public class ErrorMessage {
 
     public static class Blog{
       public static final String BLOG_NOT_FOUND="exception.blog.not_found";
+      public static final String INTERNAL_SERVER_ERROR="exception.internal.server_error";
+
     }
 }

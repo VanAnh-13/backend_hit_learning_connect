@@ -1,12 +1,17 @@
 package com.example.projectbase.controller;
 
+import com.example.projectbase.base.VsResponseUtil;
+import com.example.projectbase.constant.ErrorMessage;
+import com.example.projectbase.constant.ResponseMessage;
 import com.example.projectbase.domain.dto.request.blog.BlogRequest;
+import com.example.projectbase.domain.dto.request.blog.BlogUpdateDto;
 import com.example.projectbase.domain.dto.request.reaction.ReactionRequest;
 import com.example.projectbase.domain.dto.response.blog.BlogResponse;
 import com.example.projectbase.domain.dto.response.reaction.ReactionReponseDto;
 import com.example.projectbase.domain.model.ReactionType;
 import com.example.projectbase.service.BlogService;
 import io.swagger.v3.oas.annotations.Operation;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -41,6 +46,35 @@ public class BlogController {
     }
 
 
+    @PreAuthorize("hasRole('USER')")
+    @Operation(summary = "Update blog by id ")
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateBlog(@PathVariable Long id, @Valid @RequestBody BlogUpdateDto request){
+
+        try{
+            return ResponseEntity.ok(blogService.update(id,request));
+        }catch (EntityNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorMessage.Blog.BLOG_NOT_FOUND);
+        }catch (IllegalArgumentException e){
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorMessage.Blog.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @PreAuthorize("hasRole('User')")
+    @Operation(summary = "Api delete blog by id")
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable Long id){
+        try{
+            blogService.delete(id);
+            return VsResponseUtil.success(ResponseMessage.DELETE_SUCCESS);
+        }catch (EntityNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorMessage.Blog.BLOG_NOT_FOUND);
+        }catch (Exception e){
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorMessage.Blog.INTERNAL_SERVER_ERROR);
+        }
+    }
 
     @PostMapping
     public ResponseEntity<Void> react(@RequestBody ReactionRequest request) {
@@ -59,10 +93,4 @@ public class BlogController {
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.noContent().build());
     }
-
-
-
-
-
-
 }
