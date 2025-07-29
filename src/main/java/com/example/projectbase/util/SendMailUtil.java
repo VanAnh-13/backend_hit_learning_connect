@@ -35,6 +35,7 @@ public class SendMailUtil {
     helper.setFrom("noreply@whodev.top");
     helper.setTo(mail.getTo());
     helper.setSubject(mail.getSubject());
+
     Context context = new Context();
     context.setVariables(mail.getProperties());
     String htmlMsg = templateEngine.process(template, context);
