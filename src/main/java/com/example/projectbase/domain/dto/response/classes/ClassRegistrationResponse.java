@@ -18,5 +18,6 @@ public class ClassRegistrationResponse {
     private boolean pending;
     private LocalDateTime registeredAt;
     private String RegistrationStatus;
+    private ClassResponseDto classRoom;
 
 }

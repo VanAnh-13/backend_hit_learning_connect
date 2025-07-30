@@ -13,4 +13,6 @@ public interface DocumentService {
     List<DocumentResponseDto> getAllDocuments(Pageable pageable, String keyword);
     DocumentResponseDto updateDocument(Long id, DocumentRequestDto documentRequestDto);
     String deleteDocument(Long id);
+
+    List<DocumentResponseDto> getAllDocumentsByClassId(Pageable pageable, Long classId);
 }

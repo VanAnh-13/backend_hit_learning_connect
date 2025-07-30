@@ -20,4 +20,5 @@ public interface ClassRegistrationService {
     Page<ClassRegistrationResponse> getRegistrationsByUser(Long userId, Pageable pageable, UserPrincipal principal);
     Page<ClassRegistrationResponse> getAllRegistrations(Pageable pageable);
     Page<ClassRegistrationResponse> filterRegistrations(FilterRegistrationRequest request, Pageable pageable);
+    Page<ClassRegistrationResponse> acceptedList(UserPrincipal user, Pageable pageable);
 }

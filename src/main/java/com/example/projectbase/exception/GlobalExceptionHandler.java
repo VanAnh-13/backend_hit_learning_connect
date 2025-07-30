@@ -11,6 +11,7 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -133,10 +134,22 @@ public class GlobalExceptionHandler {
   }
 
   @ExceptionHandler(ForbiddenException.class)
-  public ResponseEntity<RestData<?>> handleAccessDeniedException(ForbiddenException ex) {
+  public ResponseEntity<RestData<?>> handleForbiddenException(ForbiddenException ex) {
     String message = messageSource.getMessage(ex.getMessage(), ex.getParams(), LocaleContextHolder.getLocale());
     log.error(message, ex);
     return VsResponseUtil.error(ex.getStatus(), message);
+  }
+
+  @ExceptionHandler(AccessDeniedException.class)
+  public ResponseEntity<RestData<?>> handleAccessDeniedException(AccessDeniedException ex) {
+    String message = messageSource.getMessage(
+            "exception.auth.access.denied",
+            null,
+            "Access is denied",
+            LocaleContextHolder.getLocale()
+    );
+    log.error(message, ex);
+    return VsResponseUtil.error(HttpStatus.FORBIDDEN, message);
   }
 
 }

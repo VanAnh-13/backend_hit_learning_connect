@@ -22,7 +22,6 @@ public class MailConfig {
     JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
     mailSender.setHost("smtp.sendgrid.net");
     mailSender.setPort(2525);
-
     mailSender.setUsername(username);
     mailSender.setPassword(password);
 

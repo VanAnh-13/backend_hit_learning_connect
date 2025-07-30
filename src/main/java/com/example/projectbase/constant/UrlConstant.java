@@ -38,6 +38,7 @@ public class UrlConstant {
         public static final String CREATE_CLASS = BASE;
         public static final String UPDATE_CLASS = BASE + "/{classId}";
         public static final String DELETE_CLASS = BASE + "/{classId}";
+        public static final String FILTER_CLASS = BASE + "/filter";
     }
 
     public static class ClassRegistration {
@@ -49,12 +50,14 @@ public class UrlConstant {
         public static final String FILTER_REGISTRATION = BASE + "/filter";
         public static final String DEL_REGISTRATION = BASE + "/{id}";
         public static final String CANCEL_REGISTRATION = BASE + "/cancel/{classId}";
+        public static final String ACCEPTED_REGISTRATION = BASE + "/accept";
 
     }
 
     public static class Document {
         public static final String BASE = "/documents";
         public static final String GET_DOCUMENT = BASE + "/{documentId}";
+        public static final String GET_DOCUMENT_BY_CLASSID = BASE + "/class/{classId}";
         public static final String CREATE_DOCUMENT = BASE;
         public static final String UPDATE_DOCUMENT = BASE + "/{documentId}";
         public static final String DELETE_DOCUMENT = BASE + "/{documentId}";

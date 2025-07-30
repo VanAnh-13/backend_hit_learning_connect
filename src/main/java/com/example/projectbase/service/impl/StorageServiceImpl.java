@@ -76,6 +76,12 @@ public class StorageServiceImpl implements StorageService {
 
             String publicId = folder + "/" + originalFilename;
 
+            publicId = publicId
+                    .replaceAll("[ &()]", "_");
+//                    .replaceAll("[^\\w\\-/]", "");
+
+            System.out.println(publicId);
+
             Map<?, ?> uploadResult = cloudinary.uploader().upload(
                     file.getBytes(),
                     ObjectUtils.asMap(
@@ -110,7 +116,11 @@ public class StorageServiceImpl implements StorageService {
             String publicId = extractPublicIdFromUrl(url);
 
             Map<?, ?> deleteResult = cloudinary.uploader().destroy(publicId,
-                    ObjectUtils.asMap("resource_type", "raw"));
+                    ObjectUtils.asMap(
+                            "resource_type", "raw",
+                            "type", "upload",
+                            "invalidate", true
+                    ));
 
             String result = (String) deleteResult.get("result");
             if (!"ok".equals(result)) {
