@@ -86,4 +86,9 @@ public class ErrorMessage {
       public static final String INTERNAL_SERVER_ERROR="exception.internal.server_error";
 
     }
+
+    public static class Comment{
+      public static final String COMMENT_NOT_FOUND="exception.comment.not_found";
+      public static final String INTERNAL_SERVER_ERROR="exception.internal.server_error";
+    }
 }

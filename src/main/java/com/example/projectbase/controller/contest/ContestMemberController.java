@@ -6,7 +6,7 @@ import com.example.projectbase.constant.ErrorMessage;
 import com.example.projectbase.constant.ResponseMessage;
 import com.example.projectbase.domain.dto.request.contest.ContestSubmissionRequest;
 import com.example.projectbase.domain.dto.request.contest.ContestSubmissionRequestWrapper;
-import com.example.projectbase.domain.dto.response.contest.ContestReponseDto;
+import com.example.projectbase.domain.dto.response.contest.ContestResponseDto;
 import com.example.projectbase.domain.dto.response.contest.ContestResultResponse;
 import com.example.projectbase.security.CurrentUser;
 import com.example.projectbase.security.UserPrincipal;
@@ -66,7 +66,7 @@ public class ContestMemberController {
     public ResponseEntity<?> search(@RequestParam String keywork,@RequestParam (defaultValue = "0") int page,
                                     @RequestParam (defaultValue = "10")int size){
         try{
-            Page<ContestReponseDto> contestPage= contestService.search(keywork, page, size);
+            Page<ContestResponseDto> contestPage= contestService.search(keywork, page, size);
             return ResponseEntity.ok(contestPage);
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorMessage.Contest.INTERNAL_SERVER_ERROR);
@@ -78,7 +78,7 @@ public class ContestMemberController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getContestDetail(@PathVariable Long id){
         try{
-            ContestReponseDto reponse= contestService.getById(id);
+            ContestResponseDto reponse= contestService.getById(id);
             return ResponseEntity.ok(reponse);
         }catch (EntityNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorMessage.Contest.CONTEST_DETAIL_NOT_FOUND);

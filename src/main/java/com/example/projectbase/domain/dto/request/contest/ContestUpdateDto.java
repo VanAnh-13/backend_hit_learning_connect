@@ -29,6 +29,8 @@ public class ContestUpdateDto {
 
     private String ranking;
 
+    private String status;
+
     public String getTitle() {
         return title;
     }

@@ -2,6 +2,8 @@ package com.example.projectbase.domain.dto.request.comment;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -13,5 +15,7 @@ public class CommentRequest {
 
     private Long blogId;
     private String content;
+    private String username;
+    private LocalDateTime createdAt;
 
 }

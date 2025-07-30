@@ -5,7 +5,7 @@ import com.example.projectbase.constant.ErrorMessage;
 import com.example.projectbase.constant.ResponseMessage;
 import com.example.projectbase.domain.dto.request.contest.ContestCreatetDto;
 import com.example.projectbase.domain.dto.request.contest.ContestUpdateDto;
-import com.example.projectbase.domain.dto.response.contest.ContestReponseDto;
+import com.example.projectbase.domain.dto.response.contest.ContestResponseDto;
 import com.example.projectbase.domain.dto.response.contest.ContestResultResponse;
 import com.example.projectbase.service.ContestService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,7 +40,7 @@ public class ContestAdminController {
     public ResponseEntity<?> getAllPaged(@RequestParam(defaultValue = "0") int page,
                                          @RequestParam (defaultValue = "10") int size){
         try{
-            return ResponseEntity.ok(service.getAllPaged(page, size));
+            return VsResponseUtil.success(service.getAllPaged(page,size));
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorMessage.Contest.INTERNAL_SERVER_ERROR);
 
@@ -65,7 +65,7 @@ public class ContestAdminController {
    @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
    public ResponseEntity<?> getById(@PathVariable Long id){
         try{
-            ContestReponseDto reponse= service.getById(id);
+            ContestResponseDto reponse= service.getById(id);
             return ResponseEntity.ok(reponse);
         }catch (EntityNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorMessage.Contest.CONTEST_DETAIL_NOT_FOUND);
@@ -79,14 +79,14 @@ public class ContestAdminController {
             @ApiResponse(responseCode = "200", description = "Created")
     })
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<ContestReponseDto> createContest(
+    public ResponseEntity<ContestResponseDto> createContest(
             @Parameter(description = "Contest data", required = true, content = @Content(schema = @Schema(implementation = ContestCreatetDto.class)))
             @RequestPart("request") @Valid ContestCreatetDto request,
 
             @Parameter(description = "PDF file", required = true, content = @Content(mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE))
             @RequestPart("file") MultipartFile file) {
 
-        ContestReponseDto response = service.createContest(request, file);
+        ContestResponseDto response = service.createContest(request, file);
         return ResponseEntity.ok(response);
     }
 
