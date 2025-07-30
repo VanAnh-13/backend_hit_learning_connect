@@ -42,6 +42,15 @@ public class Contest {
     @Column(name = "file_name")
     private String fileName;
 
+    @Column(name = "result_summary")
+    private String resultSummary;
+
+    @Column(name = "ranking")
+    private String ranking;
+
+    @Column(name = "highest_score")
+    private Double highestScore;
+
     @ManyToOne
     @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;

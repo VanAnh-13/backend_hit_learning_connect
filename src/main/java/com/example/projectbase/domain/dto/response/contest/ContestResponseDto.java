@@ -11,9 +11,25 @@ import java.time.LocalDateTime;
 @Setter
 @Builder
 public class ContestResponseDto {
-    String title;
-    String description;
-    LocalDateTime startTime;
-    LocalDateTime endTime;
-    String creator;
+
+    private String contestId;
+
+    private String title;
+
+    private String description;
+
+    private LocalDateTime startTime;
+
+    private LocalDateTime endTime;
+
+    private String fileUrl;
+
+    private double highestScore;
+
+    private String resultSummary;
+
+    private String ranking;
+
+    private String status;
+
 }

@@ -78,10 +78,21 @@ public class ErrorMessage {
     }
 
     public static class ClassRoom {
-      public static final String CLASS_NOT_FOUND = "exception.class.registration.not.found";
+      public static final String CLASS_NOT_FOUND = "exception.class.registration.not.found"
+      }
+  
+    public static class Blog{
+      public static final String BLOG_NOT_FOUND="exception.blog.not_found";
+      public static final String INTERNAL_SERVER_ERROR="exception.internal.server_error";
+
     }
 
+    public static class Comment{
+      public static final String COMMENT_NOT_FOUND="exception.comment.not_found";
+      public static final String INTERNAL_SERVER_ERROR="exception.internal.server_error";
+      
     public static class Document {
       public static final String DOCUMENT_NOT_FOUND = "exception.document.not.found";
+
     }
 }

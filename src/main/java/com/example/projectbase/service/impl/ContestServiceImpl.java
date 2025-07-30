@@ -4,7 +4,8 @@ import com.example.projectbase.constant.ErrorMessage;
 import com.example.projectbase.domain.dto.request.contest.ContestCreatetDto;
 import com.example.projectbase.domain.dto.request.contest.ContestSubmissionRequest;
 import com.example.projectbase.domain.dto.request.contest.ContestUpdateDto;
-import com.example.projectbase.domain.dto.response.contest.ContestReponseDto;
+import com.example.projectbase.domain.dto.response.contest.ContestResponseDto;
+import com.example.projectbase.domain.dto.response.contest.ContestResponseDto;
 import com.example.projectbase.domain.dto.response.contest.ContestResultResponse;
 import com.example.projectbase.domain.entity.Contest;
 import com.example.projectbase.domain.entity.ContestSubmission;
@@ -57,27 +58,27 @@ public class ContestServiceImpl implements ContestService {
     private static final String CACHE_PREFIX="contest:";
 
     @Override
-    public Page<ContestReponseDto> getAllPaged(int page, int size) {
+    public Page<ContestResponseDto> getAllPaged(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("startTime").descending());
         return contestRepository.findAll(pageable).map(mapper::toReponse);
 
     }
 
     @Override
-    public Page<ContestReponseDto> search(String keyword, int page, int size) {
+    public Page<ContestResponseDto> search(String keyword, int page, int size) {
       Pageable pageable=PageRequest.of(page, size, Sort.by("startTime").descending());
         return contestRepository.findByTitleContainingIgnoreCase(keyword, pageable).map(mapper:: toReponse)
                 ;
     }
 
     @Override
-    public ContestReponseDto getById(Long id) {
+    public ContestResponseDto getById(Long id) {
         Contest contest= contestRepository.findById(id).orElseThrow(()->new RuntimeException(ErrorMessage.Contest.CONTEST_NOT_FOUND));
         return mapper.toReponse(contest);
     }
 
     @Override
-    public ContestReponseDto createContest(ContestCreatetDto request, MultipartFile file) {
+    public ContestResponseDto createContest(ContestCreatetDto request, MultipartFile file) {
         Contest contest = mapper.toEntity(request);
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -119,7 +120,7 @@ public class ContestServiceImpl implements ContestService {
     }
 
     @Override
-    public ContestReponseDto updateContest(Long id, ContestUpdateDto request) {
+    public ContestResponseDto updateContest(Long id, ContestUpdateDto request) {
      Contest contest= contestRepository.findById(id).orElseThrow(()->new RuntimeException(ErrorMessage.Contest.CONTEST_NOT_FOUND));
      mapper.updateEntity(contest, request);
         return mapper.toReponse(contestRepository.save(contest));
@@ -180,7 +181,7 @@ public class ContestServiceImpl implements ContestService {
     }
 
     @Override
-    public ContestReponseDto startContest(Long contestId) {
+    public ContestResponseDto startContest(Long contestId) {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         Contest contest = contestRepository.findById(contestId)
