@@ -118,5 +118,4 @@ public class DocumentServiceImpl implements DocumentService {
         return documentMapper.toDtoList(documentRepository.searchByClassRoom(classId, pageable).getContent());
     }
 
-
 }

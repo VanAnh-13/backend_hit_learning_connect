@@ -142,6 +142,7 @@ public class ContestMemberController {
             @RequestPart("file") MultipartFile file,
             @CurrentUser UserPrincipal user
     ) throws IOException {
+
         ObjectMapper mapper = new ObjectMapper();
         ContestSubmissionRequest request = mapper.readValue(requestJson, ContestSubmissionRequest.class);
         contestService.submitContest(request, file);

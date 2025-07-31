@@ -202,6 +202,7 @@ public class ContestServiceImpl implements ContestService {
 
     @Override
     public void submitContest(ContestSubmissionRequest request, MultipartFile file) throws IOException {
+
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
 
         User user = userRepository.findByUsername(username)
