@@ -141,9 +141,11 @@ public class ContestMemberController {
             @RequestPart("request") String requestJson,
             @RequestPart("file") MultipartFile file,
             @CurrentUser UserPrincipal user
-    ) throws JsonProcessingException {
+    ) throws IOException {
+
         ObjectMapper mapper = new ObjectMapper();
         ContestSubmissionRequest request = mapper.readValue(requestJson, ContestSubmissionRequest.class);
+        contestService.submitContest(request, file);
         return ResponseEntity.ok(ResponseMessage.Contest.SUBMIT_FILE);
     }
 

@@ -14,7 +14,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 public class ContestSubmissionRequestWrapper {
 
-    @Schema(description = "Request contest info", type = "string", example = "{\"contestId\": 13}")
+    @Schema(description = "Request contest info", type = "string")
     private String request;
 
     @Schema(description = "PDF file", type = "string", format = "binary")

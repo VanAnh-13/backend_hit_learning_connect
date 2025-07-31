@@ -2,6 +2,8 @@ package com.example.projectbase.domain.dto.request.contest;
 
 import jakarta.persistence.Column;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 
 import java.time.LocalDateTime;
 //
@@ -17,8 +19,10 @@ public class ContestUpdateDto {
 
     private String description;
 
+//    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime startTime;
 
+//    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime endTime;
 
     private String fileUrl;

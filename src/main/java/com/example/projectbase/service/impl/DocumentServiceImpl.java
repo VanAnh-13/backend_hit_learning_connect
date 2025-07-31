@@ -66,7 +66,7 @@ public class DocumentServiceImpl implements DocumentService {
 
     public DocumentResponseDto getDocumentById(Long id) {
         Document document = documentRepository.findById(id).orElseThrow(
-                () -> new NotFoundException(ErrorMessage.Document.DOCUMENT_NOT_FOUND)
+                () -> new NotFoundException("Document not found!")
         );
         return documentMapper.toDto(document);
     }
@@ -79,7 +79,7 @@ public class DocumentServiceImpl implements DocumentService {
     @Override
     public DocumentResponseDto updateDocument(Long id, DocumentRequestDto documentRequestDto) {
         Document document = documentRepository.findById(id).orElseThrow(
-                () -> new NotFoundException(ErrorMessage.Document.DOCUMENT_NOT_FOUND)
+                () -> new NotFoundException("Document not found")
         );
 
         if (!documentRequestDto.getTitle().equals("")) {
@@ -107,7 +107,7 @@ public class DocumentServiceImpl implements DocumentService {
     @Override
     public String deleteDocument(Long id) {
         if (documentRepository.findById(id) == null) {
-            throw new RuntimeException(ErrorMessage.Document.DOCUMENT_NOT_FOUND);
+            throw new RuntimeException("Document not found");
         }
         documentRepository.deleteById(id);
         return "Document deleted";
@@ -117,6 +117,5 @@ public class DocumentServiceImpl implements DocumentService {
     public List<DocumentResponseDto> getAllDocumentsByClassId(Pageable pageable, Long classId) {
         return documentMapper.toDtoList(documentRepository.searchByClassRoom(classId, pageable).getContent());
     }
-
 
 }

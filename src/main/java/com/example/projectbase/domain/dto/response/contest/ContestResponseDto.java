@@ -1,5 +1,6 @@
 package com.example.projectbase.domain.dto.response.contest;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
 
@@ -18,8 +19,10 @@ public class ContestResponseDto {
 
     private String description;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime startTime;
 
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime endTime;
 
     private String fileUrl;
