@@ -72,10 +72,16 @@ public class UrlConstant {
 
     public static class Contest {
         public static final String BASE = "/contests";
-        public static final String GET_CONTEST = BASE + "/{contestId}";
+        public static final String GET_CONTEST = BASE + "/{id}";
+        public static final String GET_RESULT_CONTEST = BASE + "/{id}/result";
+        public static final String JOIN_CONTEST = BASE + "/join/{contestId}";
+        public static final String START_CONTEST = BASE + "/start/{contestId}";
+        public static final String SUBMIT_CONTEST = BASE + "/contest/submit";
         public static final String CREATE_CONTEST = BASE;
         public static final String UPDATE_CONTEST = BASE + "/{contestId}";
         public static final String DELETE_CONTEST = BASE + "/{contestId}";
+        public static final String GET_ALL_CONTEST = BASE + "/paged";
+        public static final String SEARCH_CONTEST = BASE + "/search";
     }
 
 }

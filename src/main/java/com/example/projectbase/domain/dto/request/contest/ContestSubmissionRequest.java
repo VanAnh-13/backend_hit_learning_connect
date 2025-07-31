@@ -8,8 +8,6 @@ import lombok.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-
 public class ContestSubmissionRequest {
-
     private Long contestId;
 }
