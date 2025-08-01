@@ -21,5 +21,5 @@ public interface ClassRepository extends JpaRepository<ClassRoom,Long> {
             Pageable pageable
     );
 
-    void deleteClassRoomsByUserId(Long userId);
+    void deleteAllByUsers_Id(Long userId);
 }
