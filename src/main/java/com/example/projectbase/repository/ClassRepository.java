@@ -20,4 +20,6 @@ public interface ClassRepository extends JpaRepository<ClassRoom,Long> {
             String keyword,
             Pageable pageable
     );
+
+    void deleteClassRoomsByUserId(Long userId);
 }
