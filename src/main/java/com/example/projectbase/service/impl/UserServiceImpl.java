@@ -162,7 +162,7 @@ public class UserServiceImpl implements UserService {
         user.getContests().clear();
         userRepository.save(user);
 
-        classRepository.deleteClassRoomsByUserId(user.getId());
+        classRepository.deleteAllByUsers_Id(user.getId());
 
         userRepository.delete(user);
 
