@@ -62,7 +62,7 @@ public class User extends DateAuditing {
   @JoinColumn(name="class_id", foreignKey = @ForeignKey(name="FK_CLASS_ID"))
   private ClassRoom classRoom;
 
-  @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
   @JsonIgnore
   private Set<ClassRegistration> classRegistrations = new HashSet<>();
 
