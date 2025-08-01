@@ -12,4 +12,6 @@ public class UploadFileResponseDto {
     private String fileType;
     private String filePath;
     private Long fileSize;
+    private String fileUrl;
+
 }

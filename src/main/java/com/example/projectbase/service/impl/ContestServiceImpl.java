@@ -7,16 +7,19 @@ import com.example.projectbase.domain.dto.request.contest.ContestUpdateDto;
 import com.example.projectbase.domain.dto.response.contest.ContestResponseDto;
 import com.example.projectbase.domain.dto.response.contest.ContestResponseDto;
 import com.example.projectbase.domain.dto.response.contest.ContestResultResponse;
+import com.example.projectbase.domain.dto.response.storage.UploadFileResponseDto;
 import com.example.projectbase.domain.entity.Contest;
 import com.example.projectbase.domain.entity.ContestSubmission;
 import com.example.projectbase.domain.entity.User;
 import com.example.projectbase.domain.mapper.ContestMapper;
 import com.example.projectbase.exception.extended.InternalServerException;
+import com.example.projectbase.exception.extended.UploadFileException;
 import com.example.projectbase.repository.ContestRepository;
 import com.example.projectbase.repository.ContestSubmissionRepository;
 import com.example.projectbase.repository.UserRepository;
 import com.example.projectbase.security.UserPrincipal;
 import com.example.projectbase.service.ContestService;
+import com.example.projectbase.service.StorageService;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -54,6 +57,7 @@ public class ContestServiceImpl implements ContestService {
     private final UserRepository userRepository;
     private final ContestSubmissionRepository submissionRepository;
     private final RedisTemplate<String, Object> redisTemplate;
+    private final StorageService service;
 
     private static final String CACHE_PREFIX="contest:";
 
@@ -97,20 +101,10 @@ public class ContestServiceImpl implements ContestService {
                 throw new RuntimeException(ErrorMessage.Contest.ORIGINAL_FILENAME);
             }
 
-            Path uploadPath = Paths.get(System.getProperty("user.dir"), "uploads", "contest");
-            Files.createDirectories(uploadPath);
-
-            String fileName = System.currentTimeMillis() + "_" + originalFileName;
-            Path filePath = uploadPath.resolve(fileName);
-
-            file.transferTo(filePath.toFile());
-
+            UploadFileResponseDto responseDto=service.uploadFile(file,(UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
             contest.setFileName(originalFileName);
-            contest.setFileUrl(filePath.toAbsolutePath().toString());
+            contest.setFileUrl(responseDto.getFileUrl());
 
-        } catch (IOException e) {
-            log.error(ErrorMessage.Contest.UPLOADING_FILE, e);
-            throw new RuntimeException(ErrorMessage.Contest.FILE_UPLOAD_FAILED, e);
         } catch (RuntimeException e) {
             log.error(ErrorMessage.Contest.VALIDATION_FAILED, e);
             throw e;
@@ -212,16 +206,13 @@ public class ContestServiceImpl implements ContestService {
                 .findByContest_ContestIdAndCreatedBy_Username(request.getContestId(), username)
                 .orElseThrow(() -> new EntityNotFoundException(ERR_NOT_FOUND));
 
-        String uploadDir = "uploads/contest/";
-        String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-        File targetFile = new File(uploadDir + fileName);
 
-        targetFile.getParentFile().mkdirs();
+        service.deleteFileFromCloudinary(contestSubmission.getFileUrl());
 
-        file.transferTo(targetFile);
+        UploadFileResponseDto responseDto=service.uploadFile(file,(UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
 
         contestSubmission.setFileName(file.getOriginalFilename());
-        contestSubmission.setFileUrl(targetFile.getAbsolutePath());
+        contestSubmission.setFileUrl(responseDto.getFileUrl());
         contestSubmission.setSubmittedAt(LocalDateTime.now());
 
         submissionRepository.save(contestSubmission);
