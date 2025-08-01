@@ -7,6 +7,7 @@ import com.example.projectbase.domain.dto.request.user.UserCreateDto;
 import com.example.projectbase.domain.dto.request.user.UserUpdateDto;
 import com.example.projectbase.domain.dto.response.user.ListUserResponseDto;
 import com.example.projectbase.domain.dto.response.user.UserResponseDto;
+import com.example.projectbase.domain.entity.ClassRoom;
 import com.example.projectbase.domain.entity.Contest;
 import com.example.projectbase.domain.model.Role;
 import com.example.projectbase.domain.entity.User;
@@ -162,7 +163,16 @@ public class UserServiceImpl implements UserService {
         user.getContests().clear();
         userRepository.save(user);
 
-        classRepository.deleteAllByUsers_Id(user.getId());
+        List<ClassRoom> taughtClasses = classRepository.findByTeacher(user);
+        for (ClassRoom cls : taughtClasses) {
+            cls.setTeacher(null);
+        }
+
+        ClassRoom classRoom = user.getClassRoom();
+        if (classRoom != null) {
+            classRoom.getUsers().remove(user);
+            user.setClassRoom(null);
+        }
 
         userRepository.delete(user);
 

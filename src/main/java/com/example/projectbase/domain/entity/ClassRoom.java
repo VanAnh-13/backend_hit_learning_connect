@@ -32,7 +32,7 @@ public class ClassRoom {
     private String description;
 
     @ManyToOne
-    @JoinColumn(name = "teacher_id", nullable = false)
+    @JoinColumn(name = "teacher_id", nullable = true)
     private User teacher;
 
     @Column(name = "start_date", nullable = false)
