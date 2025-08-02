@@ -16,6 +16,7 @@ import com.example.projectbase.exception.extended.InvalidException;
 import com.example.projectbase.exception.extended.NotFoundException;
 import com.example.projectbase.exception.extended.UnauthorizedException;
 import com.example.projectbase.repository.ClassRepository;
+import com.example.projectbase.repository.ContestRepository;
 import com.example.projectbase.repository.RoleRepository;
 import com.example.projectbase.repository.UserRepository;
 import com.example.projectbase.security.UserPrincipal;
@@ -47,6 +48,8 @@ public class UserServiceImpl implements UserService {
     private final RoleRepository roleRepository;
 
     private final ClassRepository classRepository;
+
+    private final ContestRepository contestRepository;
 
     //------------------------CRUD User------------------------
     @Override
@@ -158,20 +161,25 @@ public class UserServiceImpl implements UserService {
 
         for (Contest contest : user.getContests()) {
             contest.getParticipants().remove(user);
+            contestRepository.save(contest);
         }
 
         user.getContests().clear();
         userRepository.save(user);
 
+//        Contest contest = contestRepository.findById(user.getContests())
+
         List<ClassRoom> taughtClasses = classRepository.findByTeacher(user);
         for (ClassRoom cls : taughtClasses) {
             cls.setTeacher(null);
+            classRepository.save(cls);
         }
 
         ClassRoom classRoom = user.getClassRoom();
         if (classRoom != null) {
             classRoom.getUsers().remove(user);
             user.setClassRoom(null);
+            classRepository.save(classRoom);
         }
 
         userRepository.delete(user);
