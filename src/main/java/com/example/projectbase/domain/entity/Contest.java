@@ -62,7 +62,6 @@ public class Contest {
             joinColumns = @JoinColumn(name = "contest_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
-    @JsonManagedReference
     private Set<User> participants = new HashSet<>();
 
     @OneToMany(mappedBy = "contest",fetch = FetchType.LAZY)

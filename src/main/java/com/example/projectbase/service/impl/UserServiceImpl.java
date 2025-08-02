@@ -156,31 +156,34 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @CacheEvict(cacheNames = {"userDto", "users"}, key = "#id")
+    @Transactional
     public void deleteUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException(ErrorMessage.User.ERR_USER_NOT_FOUND));
 
         for (Contest contest : user.getContests()) {
             contest.getParticipants().remove(user);
-            contestRepository.save(contest);
         }
-
-        user.getContests().clear();
-        userRepository.save(user);
-
-//        Contest contest = contestRepository.findById(user.getContests())
 
         List<ClassRoom> taughtClasses = classRepository.findByTeacher(user);
         for (ClassRoom cls : taughtClasses) {
             cls.setTeacher(null);
-            classRepository.save(cls);
         }
+
+
 
         ClassRoom classRoom = user.getClassRoom();
         if (classRoom != null) {
             classRoom.getUsers().remove(user);
             user.setClassRoom(null);
-            classRepository.save(classRoom);
         }
+        //        Contest contest = contestRepository.findById(user.getContests())
+
+        contestRepository.saveAll(user.getContests());
+        classRepository.saveAll(taughtClasses);
+        if (classRoom != null) classRepository.save(classRoom);
+
+//        user.getContests().clear();
+//        userRepository.save(user);
 
         userRepository.delete(user);
 
