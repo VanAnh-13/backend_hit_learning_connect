@@ -1,5 +1,6 @@
 package com.example.projectbase.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -61,6 +62,7 @@ public class Contest {
             joinColumns = @JoinColumn(name = "contest_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
+    @JsonManagedReference
     private Set<User> participants = new HashSet<>();
 
     @OneToMany(mappedBy = "contest",fetch = FetchType.LAZY)
