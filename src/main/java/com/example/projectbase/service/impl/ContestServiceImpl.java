@@ -86,7 +86,7 @@ public class ContestServiceImpl implements ContestService {
         Contest contest = mapper.toEntity(request);
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new EntityNotFoundException(ERR_NOT_FOUND));
 
         contest.setCreatedBy(user);
@@ -152,7 +152,7 @@ public class ContestServiceImpl implements ContestService {
                 throw new IllegalArgumentException(ErrorMessage.Contest.USER_CONTEST_NOT_FOUND);
             }
         }
-        return mapper.toResultResponse(contest);
+        return mapper.toResultResponse(contest,username);
     }
 
     @Override
@@ -197,10 +197,18 @@ public class ContestServiceImpl implements ContestService {
     @Override
     public void submitContest(ContestSubmissionRequest request, MultipartFile file) throws IOException {
 
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        String username = auth.getName();
+        log.info(">> Current authenticated username: {}", username);
 
-        User user = userRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(ERR_NOT_FOUND));
+        userRepository.findByUsernameIgnoreCase(username).ifPresentOrElse(
+                u -> log.info(">> User found: {}", u.getUsername()),
+                () -> log.warn(">> User NOT FOUND in DB!")
+        );
+
+        User user = userRepository.findByUsernameIgnoreCase(username)
+                .orElseThrow(() -> new EntityNotFoundException("user not found: " + username));
+
 
         ContestSubmission contestSubmission = submissionRepository
                 .findByContest_ContestIdAndCreatedBy_Username(request.getContestId(), username)

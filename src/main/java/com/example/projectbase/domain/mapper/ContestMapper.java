@@ -39,7 +39,8 @@ public interface ContestMapper {
       }
    }
 
-   ContestResultResponse toResultResponse(Contest contest);
+   @Mapping(source = "username", target = "username")
+   ContestResultResponse toResultResponse(Contest contest, String username);
 
    Contest toEntity(ContestCreatetDto request);
 

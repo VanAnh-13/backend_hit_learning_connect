@@ -61,7 +61,7 @@ public class BlogServiceImpl implements BlogService {
         Blog blog = blogMapper.toEntity(request);
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User author = userRepository.findByUsername(username)
+        User author = userRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
         blog.setAuthor(author);
 
@@ -133,7 +133,7 @@ public class BlogServiceImpl implements BlogService {
     public CommentResponse comment(CommentRequest request) {
 
         String username= SecurityContextHolder.getContext().getAuthentication().getName();
-        User user= userRepository.findByUsername(username).orElseThrow(()->new RuntimeException(ErrorMessage.User.ERR_NOT_FOUND));
+        User user= userRepository.findByUsernameIgnoreCase(username).orElseThrow(()->new RuntimeException(ErrorMessage.User.ERR_NOT_FOUND));
 
         Blog blog= blogRepository.findById(request.getBlogId()).orElseThrow(()->new RuntimeException(ErrorMessage.Blog.BLOG_NOT_FOUND));
 
@@ -152,7 +152,7 @@ public class BlogServiceImpl implements BlogService {
     public void react(ReactionRequest request) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
 
         Blog blog = blogRepository.findById(request.getBlogId())

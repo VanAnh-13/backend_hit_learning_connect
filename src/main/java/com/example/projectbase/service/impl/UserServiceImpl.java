@@ -68,7 +68,7 @@ public class UserServiceImpl implements UserService {
             throw new InvalidException(ErrorMessage.User.ERR_EMAIL_EXISTED, new String[]{userCreateDto.getEmail()});
         }
 
-        if (userRepository.findByUsername(userCreateDto.getUsername()).isPresent()) {
+        if (userRepository.findByUsernameIgnoreCase(userCreateDto.getUsername()).isPresent()) {
             throw new InvalidException(ErrorMessage.User.ERR_USER_NAME_EXISTED, new String[]{userCreateDto.getUsername()});
         }
 
@@ -108,7 +108,7 @@ public class UserServiceImpl implements UserService {
                         throw new InvalidException(ErrorMessage.User.ERR_EMAIL_EXISTED, new String[]{updatedUser.getEmail()});
                     }
 
-                    if (userRepository.findByUsername(updatedUser.getUsername()).isPresent() && !user.getUsername().equals(updatedUser.getUsername())) {
+                    if (userRepository.findByUsernameIgnoreCase(updatedUser.getUsername()).isPresent() && !user.getUsername().equals(updatedUser.getUsername())) {
                         throw new InvalidException(ErrorMessage.User.ERR_USER_NAME_EXISTED, new String[]{updatedUser.getUsername()});
                     }
 
@@ -160,7 +160,7 @@ public class UserServiceImpl implements UserService {
 
     //------------------------Common--------------------------
     User getUser(UserPrincipal currentUser) {
-        return userRepository.findByUsername(currentUser.getUsername())
+        return userRepository.findByUsernameIgnoreCase(currentUser.getUsername())
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME,
                         new String[]{currentUser.getUsername()}));
     }
