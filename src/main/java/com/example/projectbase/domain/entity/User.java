@@ -68,6 +68,5 @@ public class User extends DateAuditing {
   private Set<ClassRegistration> classRegistrations = new HashSet<>();
 
   @ManyToMany(mappedBy = "participants", fetch = FetchType.LAZY)
-  @JsonBackReference
   private Set<Contest> contests = new HashSet<>();
 }
