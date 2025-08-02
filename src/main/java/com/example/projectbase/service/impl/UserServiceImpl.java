@@ -7,12 +7,16 @@ import com.example.projectbase.domain.dto.request.user.UserCreateDto;
 import com.example.projectbase.domain.dto.request.user.UserUpdateDto;
 import com.example.projectbase.domain.dto.response.user.ListUserResponseDto;
 import com.example.projectbase.domain.dto.response.user.UserResponseDto;
+import com.example.projectbase.domain.entity.ClassRoom;
+import com.example.projectbase.domain.entity.Contest;
 import com.example.projectbase.domain.model.Role;
 import com.example.projectbase.domain.entity.User;
 import com.example.projectbase.domain.mapper.UserMapper;
 import com.example.projectbase.exception.extended.InvalidException;
 import com.example.projectbase.exception.extended.NotFoundException;
 import com.example.projectbase.exception.extended.UnauthorizedException;
+import com.example.projectbase.repository.ClassRepository;
+import com.example.projectbase.repository.ContestRepository;
 import com.example.projectbase.repository.RoleRepository;
 import com.example.projectbase.repository.UserRepository;
 import com.example.projectbase.security.UserPrincipal;
@@ -30,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +48,9 @@ public class UserServiceImpl implements UserService {
 
     private final RoleRepository roleRepository;
 
+    private final ClassRepository classRepository;
+
+    private final ContestRepository contestRepository;
 
     //------------------------CRUD User------------------------
     @Override
@@ -149,11 +157,31 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @CacheEvict(cacheNames = {"userDto", "users"}, key = "#id")
+    @Transactional
     public void deleteUser(Long id) {
-        if (!userRepository.existsById(id)) {
-            throw new RuntimeException(ErrorMessage.User.ERR_USER_NOT_FOUND);
+        User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException(ErrorMessage.User.ERR_USER_NOT_FOUND));
+
+        Set<Contest> contests = user.getContests();
+        for (Contest contest : contests) {
+            contest.getParticipants().remove(user);
         }
-        userRepository.deleteById(id);
+        contestRepository.saveAll(contests);
+
+        ClassRoom classRoom = user.getClassRoom();
+        if (classRoom != null) {
+            classRoom.getUsers().remove(user);
+            classRepository.save(classRoom);
+            user.setClassRoom(null);
+        }
+
+        List<ClassRoom> taughtClasses = classRepository.findByTeacher(user);
+        for (ClassRoom cls : taughtClasses) {
+            cls.setTeacher(null);
+        }
+        classRepository.saveAll(taughtClasses);
+
+        userRepository.delete(user);
+
     }
 
     //------------------------End CRUD------------------------

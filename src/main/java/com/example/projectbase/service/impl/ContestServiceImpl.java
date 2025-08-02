@@ -5,7 +5,6 @@ import com.example.projectbase.domain.dto.request.contest.ContestCreatetDto;
 import com.example.projectbase.domain.dto.request.contest.ContestSubmissionRequest;
 import com.example.projectbase.domain.dto.request.contest.ContestUpdateDto;
 import com.example.projectbase.domain.dto.response.contest.ContestResponseDto;
-import com.example.projectbase.domain.dto.response.contest.ContestResponseDto;
 import com.example.projectbase.domain.dto.response.contest.ContestResultResponse;
 import com.example.projectbase.domain.dto.response.storage.UploadFileResponseDto;
 import com.example.projectbase.domain.entity.Contest;
@@ -36,11 +35,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -48,10 +43,10 @@ import static com.example.projectbase.constant.ErrorMessage.User.ERR_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
-
 public class ContestServiceImpl implements ContestService {
 
     private static final Logger log = LoggerFactory.getLogger(ContestServiceImpl.class);
+
     private final ContestRepository contestRepository;
     private final ContestMapper mapper;
     private final UserRepository userRepository;
@@ -59,25 +54,24 @@ public class ContestServiceImpl implements ContestService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final StorageService service;
 
-    private static final String CACHE_PREFIX="contest:";
+    private static final String CACHE_PREFIX = "contest:";
 
     @Override
     public Page<ContestResponseDto> getAllPaged(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("startTime").descending());
         return contestRepository.findAll(pageable).map(mapper::toReponse);
-
     }
 
     @Override
     public Page<ContestResponseDto> search(String keyword, int page, int size) {
-      Pageable pageable=PageRequest.of(page, size, Sort.by("startTime").descending());
-        return contestRepository.findByTitleContainingIgnoreCase(keyword, pageable).map(mapper:: toReponse)
-                ;
+        Pageable pageable = PageRequest.of(page, size, Sort.by("startTime").descending());
+        return contestRepository.findByTitleContainingIgnoreCase(keyword, pageable).map(mapper::toReponse);
     }
 
     @Override
     public ContestResponseDto getById(Long id) {
-        Contest contest= contestRepository.findById(id).orElseThrow(()->new RuntimeException(ErrorMessage.Contest.CONTEST_NOT_FOUND));
+        Contest contest = contestRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException(ErrorMessage.Contest.CONTEST_NOT_FOUND));
         return mapper.toReponse(contest);
     }
 
@@ -101,7 +95,7 @@ public class ContestServiceImpl implements ContestService {
                 throw new RuntimeException(ErrorMessage.Contest.ORIGINAL_FILENAME);
             }
 
-            UploadFileResponseDto responseDto=service.uploadFile(file,(UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+            UploadFileResponseDto responseDto = service.uploadFile(file, (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
             contest.setFileName(originalFileName);
             contest.setFileUrl(responseDto.getFileUrl());
 
@@ -115,14 +109,15 @@ public class ContestServiceImpl implements ContestService {
 
     @Override
     public ContestResponseDto updateContest(Long id, ContestUpdateDto request) {
-     Contest contest= contestRepository.findById(id).orElseThrow(()->new RuntimeException(ErrorMessage.Contest.CONTEST_NOT_FOUND));
-     mapper.updateEntity(contest, request);
+        Contest contest = contestRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException(ErrorMessage.Contest.CONTEST_NOT_FOUND));
+        mapper.updateEntity(contest, request);
         return mapper.toReponse(contestRepository.save(contest));
     }
 
     @Override
     public void deleteContest(Long id) {
-        if(!contestRepository.existsById(id)){
+        if (!contestRepository.existsById(id)) {
             throw new RuntimeException(ErrorMessage.Contest.CONTEST_NOT_FOUND);
         }
         contestRepository.deleteById(id);
@@ -130,41 +125,42 @@ public class ContestServiceImpl implements ContestService {
 
     @Override
     public ContestResultResponse getResultByContestId(Long contestId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
 
-        Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
-        String username= authentication.getName();
+        boolean isAdminOrLeader = authentication.getAuthorities().stream()
+                .anyMatch(role -> role.getAuthority().equals("ROLE_ADMIN") || role.getAuthority().equals("ROLE_LEADER"));
 
-        boolean isAdminOrLeader = authentication.getAuthorities().stream().anyMatch(role-> role.getAuthority().equals("ROLE_ADMIN") || role.getAuthority().equals("ROLE_LEADER"));
+        Contest contest = contestRepository.findById(contestId)
+                .orElseThrow(() -> new EntityNotFoundException(ErrorMessage.Contest.CONTEST_NOT_FOUND));
 
-        Contest contest= contestRepository.findById(contestId).orElseThrow(()-> new EntityNotFoundException(ErrorMessage.Contest.CONTEST_NOT_FOUND));
-
-        if(contest.getStartTime() !=null && contest.getEndTime() != null && contest.getEndTime().isBefore(contest.getStartTime())){
+        if (contest.getStartTime() != null && contest.getEndTime() != null &&
+                contest.getEndTime().isBefore(contest.getStartTime())) {
             throw new IllegalStateException(ErrorMessage.Contest.CONTEST_TIME_INVALID);
         }
 
-        if(!isAdminOrLeader){
-            if(contest.getEndTime().isAfter(LocalDateTime.now())){
+        if (!isAdminOrLeader) {
+            if (contest.getEndTime().isAfter(LocalDateTime.now())) {
                 throw new IllegalArgumentException(ErrorMessage.Contest.CONTEST_RESULT_NOT_AVAILABLE);
             }
 
-            boolean hasContestSubmission= submissionRepository.existsByContest_ContestIdAndCreatedBy_Username(contestId,username);
-            if(!hasContestSubmission){
+            boolean hasSubmission = submissionRepository.existsByContest_ContestIdAndCreatedBy_Username(contestId, username);
+            if (!hasSubmission) {
                 throw new IllegalArgumentException(ErrorMessage.Contest.USER_CONTEST_NOT_FOUND);
             }
         }
-        return mapper.toResultResponse(contest,username);
+
+        return mapper.toResultResponse(contest, username);
     }
 
     @Override
     @Transactional
     public void joinContest(Long contestId, UserPrincipal userPrincipal) {
-        Contest contest = contestRepository.findById(contestId).orElseThrow(() -> new RuntimeException(ErrorMessage.Contest.CONTEST_NOT_FOUND));
-        User user = userRepository.findById(userPrincipal.getId()).orElseThrow(() -> new RuntimeException(ERR_NOT_FOUND));
+        Contest contest = contestRepository.findById(contestId)
+                .orElseThrow(() -> new RuntimeException(ErrorMessage.Contest.CONTEST_NOT_FOUND));
 
-
-        for (User participant : contest.getParticipants()) {
-            System.out.println(participant);
-        }
+        User user = userRepository.findById(userPrincipal.getId())
+                .orElseThrow(() -> new RuntimeException(ERR_NOT_FOUND));
 
         if (!contestRepository.existsParticipant(contestId, user.getUsername())) {
             contest.getParticipants().add(user);
@@ -193,31 +189,24 @@ public class ContestServiceImpl implements ContestService {
         return mapper.toReponse(contest);
     }
 
-
     @Override
     public void submitContest(ContestSubmissionRequest request, MultipartFile file) throws IOException {
-
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         String username = auth.getName();
         log.info(">> Current authenticated username: {}", username);
 
-        userRepository.findByUsernameIgnoreCase(username).ifPresentOrElse(
-                u -> log.info(">> User found: {}", u.getUsername()),
-                () -> log.warn(">> User NOT FOUND in DB!")
-        );
-
         User user = userRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new EntityNotFoundException("user not found: " + username));
-
 
         ContestSubmission contestSubmission = submissionRepository
                 .findByContest_ContestIdAndCreatedBy_Username(request.getContestId(), username)
                 .orElseThrow(() -> new EntityNotFoundException(ERR_NOT_FOUND));
 
-
+        // Xóa file cũ trên Cloudinary
         service.deleteFileFromCloudinary(contestSubmission.getFileUrl());
 
-        UploadFileResponseDto responseDto=service.uploadFile(file,(UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
+        // Upload file mới lên Cloudinary
+        UploadFileResponseDto responseDto = service.uploadFile(file, (UserPrincipal) auth.getPrincipal());
 
         contestSubmission.setFileName(file.getOriginalFilename());
         contestSubmission.setFileUrl(responseDto.getFileUrl());
@@ -229,7 +218,6 @@ public class ContestServiceImpl implements ContestService {
     @Scheduled(cron = "0 0 * * * *")
     @Override
     public void autoCloseExpiredContests() {
-
         List<Contest> contests = contestRepository.findAll();
         LocalDateTime now = LocalDateTime.now();
         for (Contest contest : contests) {
