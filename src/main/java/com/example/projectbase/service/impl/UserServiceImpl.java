@@ -34,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -160,33 +161,26 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException(ErrorMessage.User.ERR_USER_NOT_FOUND));
 
-        for (Contest contest : user.getContests()) {
+        Set<Contest> contests = user.getContests();
+        for (Contest contest : contests) {
             contest.getParticipants().remove(user);
+        }
+        contestRepository.saveAll(contests);
+
+        ClassRoom classRoom = user.getClassRoom();
+        if (classRoom != null) {
+            classRoom.getUsers().remove(user);
+            classRepository.save(classRoom);
+            user.setClassRoom(null);
         }
 
         List<ClassRoom> taughtClasses = classRepository.findByTeacher(user);
         for (ClassRoom cls : taughtClasses) {
             cls.setTeacher(null);
         }
-
-
-
-        ClassRoom classRoom = user.getClassRoom();
-        if (classRoom != null) {
-            classRoom.getUsers().remove(user);
-            user.setClassRoom(null);
-        }
-        //        Contest contest = contestRepository.findById(user.getContests())
-
-        contestRepository.saveAll(user.getContests());
         classRepository.saveAll(taughtClasses);
-        if (classRoom != null) classRepository.save(classRoom);
-
-//        user.getContests().clear();
-//        userRepository.save(user);
 
         userRepository.delete(user);
-
 
     }
 
