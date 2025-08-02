@@ -2,6 +2,7 @@ package com.example.projectbase.domain.entity;
 
 import com.example.projectbase.domain.entity.common.DateAuditing;
 import com.example.projectbase.domain.model.Role;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nimbusds.openid.connect.sdk.claims.Gender;
 import lombok.*;
@@ -67,5 +68,6 @@ public class User extends DateAuditing {
   private Set<ClassRegistration> classRegistrations = new HashSet<>();
 
   @ManyToMany(mappedBy = "participants", fetch = FetchType.LAZY)
+  @JsonBackReference
   private Set<Contest> contests = new HashSet<>();
 }
