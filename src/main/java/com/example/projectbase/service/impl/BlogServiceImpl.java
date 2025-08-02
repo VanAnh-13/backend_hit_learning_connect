@@ -8,6 +8,7 @@ import com.example.projectbase.domain.dto.request.reaction.ReactionRequest;
 import com.example.projectbase.domain.dto.response.blog.BlogResponse;
 import com.example.projectbase.domain.dto.response.comment.CommentResponse;
 import com.example.projectbase.domain.dto.response.reaction.ReactionReponseDto;
+import com.example.projectbase.domain.dto.response.storage.UploadFileResponseDto;
 import com.example.projectbase.domain.entity.Blog;
 import com.example.projectbase.domain.entity.Comment;
 import com.example.projectbase.domain.entity.Reaction;
@@ -16,7 +17,9 @@ import com.example.projectbase.domain.mapper.BlogMapper;
 import com.example.projectbase.domain.mapper.CommentMapper;
 import com.example.projectbase.domain.model.ReactionType;
 import com.example.projectbase.repository.*;
+import com.example.projectbase.security.UserPrincipal;
 import com.example.projectbase.service.BlogService;
+import com.example.projectbase.service.StorageService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -51,14 +54,14 @@ public class BlogServiceImpl implements BlogService {
     private final BlogRepository blogRepository;
     private final BlogMapper blogMapper;
     private final CommentMapper commentMapper;
+    private final StorageService storageService;
 
     @Override
     public BlogResponse create(BlogRequest request, MultipartFile file) throws IOException {
-
-        Blog blog= blogMapper.toEntity(request);
+        Blog blog = blogMapper.toEntity(request);
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User author = userRepository.findByUsername(username)
+        User author = userRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
         blog.setAuthor(author);
 
@@ -68,24 +71,25 @@ public class BlogServiceImpl implements BlogService {
             }
 
             String originalFileName = file.getOriginalFilename();
-
-            if (file!= null && !file.isEmpty()) {
-                String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-                Path uploadPath = Paths.get(System.getProperty("user.dir"), "uploads", "blog");
-                Files.createDirectories(uploadPath);
-                Path filePath = uploadPath.resolve(fileName);
-                file.transferTo(filePath.toFile());
-                blog.setImgUrl(filePath.toString());
+            if (originalFileName == null || originalFileName.isBlank()) {
+                throw new RuntimeException(ErrorMessage.Contest.ORIGINAL_FILENAME);
             }
-        }catch (IOException e) {
-            log.error(ErrorMessage.Contest.UPLOADING_FILE, e);
-            throw new RuntimeException(ErrorMessage.Contest.FILE_UPLOAD_FAILED, e);
+
+            UploadFileResponseDto responseDto = storageService.uploadFile(
+                    file,
+                    (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal()
+            );
+
+            blog.setImgUrl(responseDto.getFileUrl());
+
         } catch (RuntimeException e) {
             log.error(ErrorMessage.Contest.VALIDATION_FAILED, e);
             throw e;
         }
+
         return blogMapper.toResponse(blogRepository.save(blog));
     }
+
 
     @Override
     public BlogResponse update(Long id, BlogUpdateDto request) {
@@ -129,7 +133,7 @@ public class BlogServiceImpl implements BlogService {
     public CommentResponse comment(CommentRequest request) {
 
         String username= SecurityContextHolder.getContext().getAuthentication().getName();
-        User user= userRepository.findByUsername(username).orElseThrow(()->new RuntimeException(ErrorMessage.User.ERR_NOT_FOUND));
+        User user= userRepository.findByUsernameIgnoreCase(username).orElseThrow(()->new RuntimeException(ErrorMessage.User.ERR_NOT_FOUND));
 
         Blog blog= blogRepository.findById(request.getBlogId()).orElseThrow(()->new RuntimeException(ErrorMessage.Blog.BLOG_NOT_FOUND));
 
@@ -148,7 +152,7 @@ public class BlogServiceImpl implements BlogService {
     public void react(ReactionRequest request) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
 
         Blog blog = blogRepository.findById(request.getBlogId())
