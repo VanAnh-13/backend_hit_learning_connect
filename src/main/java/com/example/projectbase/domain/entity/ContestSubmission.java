@@ -2,6 +2,7 @@ package com.example.projectbase.domain.entity;
 
 
 import com.example.projectbase.domain.model.SubmissionStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,8 +31,9 @@ public class ContestSubmission {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-//    @Column(name = "code", nullable = false)
-//    private String code;
+    @Column(name = "code", nullable = true)
+    @JsonIgnore
+    private String code;
 
     @Column(name="highestScore")
     private double highestScore;

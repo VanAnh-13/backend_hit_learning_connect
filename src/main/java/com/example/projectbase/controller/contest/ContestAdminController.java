@@ -17,6 +17,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.api.annotations.ParameterObject;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,30 +38,26 @@ public class ContestAdminController {
 
     private final ContestService service;
 
-    @Operation(summary = "Api get all contest ")
-    @GetMapping("/page")
+    @Operation(summary = "Api get all contest")
+    @GetMapping("")
     @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
-    public ResponseEntity<?> getAllPaged(@RequestParam(defaultValue ="0" ) int page,
-                                         @RequestParam(defaultValue = "10") int size){
-        try{
-            return ResponseEntity.ok(service.getAllPaged(page, size));
-        }catch (Exception e){
+    public ResponseEntity<?> getAllPaged(@ParameterObject @PageableDefault(page = 0, size = 1000, sort = "contestId", direction = Sort.Direction.ASC) Pageable pageable) {
+        try {
+            return VsResponseUtil.success(service.getAll(pageable));
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorMessage.Contest.INTERNAL_SERVER_ERROR);
+
         }
     }
 
+
     @Operation(summary = "Api search contest")
-   @GetMapping("/search")
-   @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
-    public ResponseEntity<?> search(@RequestParam String keywork,
-                                    @RequestParam (defaultValue = "0") int page,
-                                    @RequestParam (defaultValue = "10") int size){
-        try{
-            return ResponseEntity.ok(service.search(keywork,page,size));
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorMessage.Contest.INTERNAL_SERVER_ERROR);
-        }
-   }
+    @GetMapping("/search")
+    @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
+    public ResponseEntity<?> search(@RequestParam String keyword,
+                                    @ParameterObject @PageableDefault(page = 0, size = 1000, sort = "contestId", direction = Sort.Direction.ASC) Pageable pageable){
+        return ResponseEntity.ok(service.search(keyword, pageable));
+    }
 
    @Operation(summary = "view details contest by id")
    @GetMapping("/{id}")

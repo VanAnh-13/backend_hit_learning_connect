@@ -2,6 +2,7 @@ package com.example.projectbase.domain.entity;
 
 import com.example.projectbase.domain.entity.common.DateAuditing;
 import com.example.projectbase.domain.model.Role;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.nimbusds.openid.connect.sdk.claims.Gender;
 import lombok.*;
@@ -62,7 +63,7 @@ public class User extends DateAuditing {
   @JoinColumn(name="class_id", foreignKey = @ForeignKey(name="FK_CLASS_ID"))
   private ClassRoom classRoom;
 
-  @OneToMany(mappedBy = "student", cascade = CascadeType.ALL)
+  @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
   @JsonIgnore
   private Set<ClassRegistration> classRegistrations = new HashSet<>();
 
