@@ -34,16 +34,15 @@ public class ContestAdminController {
 
     private final ContestService service;
 
-    @Operation(summary = "Api get all contest")
-    @GetMapping("/paged")
+    @Operation(summary = "Api get all contest ")
+    @GetMapping("/page")
     @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
-    public ResponseEntity<?> getAllPaged(@RequestParam(defaultValue = "0") int page,
-                                         @RequestParam (defaultValue = "10") int size){
+    public ResponseEntity<?> getAllPaged(@RequestParam(defaultValue ="0" ) int page,
+                                         @RequestParam(defaultValue = "10") int size){
         try{
-            return VsResponseUtil.success(service.getAllPaged(page,size));
+            return ResponseEntity.ok(service.getAllPaged(page, size));
         }catch (Exception e){
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorMessage.Contest.INTERNAL_SERVER_ERROR);
-
         }
     }
 
@@ -81,12 +80,10 @@ public class ContestAdminController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ContestResponseDto> createContest(
             @Parameter(description = "Contest data", required = true, content = @Content(schema = @Schema(implementation = ContestCreatetDto.class)))
-            @RequestPart("request") @Valid ContestCreatetDto request,
+            @RequestPart("request") @Valid ContestCreatetDto request
+            ) {
 
-            @Parameter(description = "PDF file", required = true, content = @Content(mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE))
-            @RequestPart("file") MultipartFile file) {
-
-        ContestResponseDto response = service.createContest(request, file);
+        ContestResponseDto response = service.createContest(request);
         return ResponseEntity.ok(response);
     }
 

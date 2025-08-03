@@ -43,6 +43,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static com.example.projectbase.constant.ErrorMessage.User.ERR_NOT_FOUND;
 
@@ -64,8 +65,21 @@ public class ContestServiceImpl implements ContestService {
     @Override
     public Page<ContestResponseDto> getAllPaged(int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("startTime").descending());
-        return contestRepository.findAll(pageable).map(mapper::toReponse);
+        Page<Contest> contests = contestRepository.findAll(pageable);
 
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+
+        List<Long> joinedContestIds = submissionRepository
+                .findAllByCreatedBy_Username(username)
+                .stream()
+                .map(sub -> sub.getContest().getContestId())
+                .collect(Collectors.toList());
+
+        return contests.map(contest -> {
+            ContestResponseDto dto = mapper.toReponse(contest);
+            dto.setHasJoined(joinedContestIds.contains(contest.getContestId()));
+            return dto;
+        });
     }
 
     @Override
@@ -82,7 +96,7 @@ public class ContestServiceImpl implements ContestService {
     }
 
     @Override
-    public ContestResponseDto createContest(ContestCreatetDto request, MultipartFile file) {
+    public ContestResponseDto createContest(ContestCreatetDto request) {
         Contest contest = mapper.toEntity(request);
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -91,45 +105,34 @@ public class ContestServiceImpl implements ContestService {
 
         contest.setCreatedBy(user);
 
-        try {
-            if (file == null || file.isEmpty()) {
+        if (request.getFileUrl() == null || request.getFileUrl().isBlank()) {
+            throw new RuntimeException(ErrorMessage.Contest.FILE_URL_REQUIRED);
+        }
+
+        contest.setFileName("UploadedViaOtherWay.pdf");
+        contest.setFileUrl(request.getFileUrl());
+
+        return mapper.toReponse(contestRepository.save(contest));
+    }
+
+
+        @Override
+        public ContestResponseDto updateContest(Long id, ContestUpdateDto request) {
+            Contest contest= contestRepository.findById(id).orElseThrow(()->new RuntimeException(ErrorMessage.Contest.CONTEST_NOT_FOUND));
+            mapper.updateEntity(contest, request);
+            return mapper.toReponse(contestRepository.save(contest));
+        }
+
+        @Override
+        public void deleteContest(Long id) {
+            if(!contestRepository.existsById(id)){
                 throw new RuntimeException(ErrorMessage.Contest.CONTEST_NOT_FOUND);
             }
-
-            String originalFileName = file.getOriginalFilename();
-            if (originalFileName == null || originalFileName.isBlank()) {
-                throw new RuntimeException(ErrorMessage.Contest.ORIGINAL_FILENAME);
-            }
-
-            UploadFileResponseDto responseDto=service.uploadFile(file,(UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-            contest.setFileName(originalFileName);
-            contest.setFileUrl(responseDto.getFileUrl());
-
-        } catch (RuntimeException e) {
-            log.error(ErrorMessage.Contest.VALIDATION_FAILED, e);
-            throw e;
+            contestRepository.deleteById(id);
         }
 
-        return mapper.toReponse(contestRepository.save(contest));
-    }
-
-    @Override
-    public ContestResponseDto updateContest(Long id, ContestUpdateDto request) {
-     Contest contest= contestRepository.findById(id).orElseThrow(()->new RuntimeException(ErrorMessage.Contest.CONTEST_NOT_FOUND));
-     mapper.updateEntity(contest, request);
-        return mapper.toReponse(contestRepository.save(contest));
-    }
-
-    @Override
-    public void deleteContest(Long id) {
-        if(!contestRepository.existsById(id)){
-            throw new RuntimeException(ErrorMessage.Contest.CONTEST_NOT_FOUND);
-        }
-        contestRepository.deleteById(id);
-    }
-
-    @Override
-    public ContestResultResponse getResultByContestId(Long contestId) {
+        @Override
+        public ContestResultResponse getResultByContestId(Long contestId) {
 
         Authentication authentication= SecurityContextHolder.getContext().getAuthentication();
         String username= authentication.getName();

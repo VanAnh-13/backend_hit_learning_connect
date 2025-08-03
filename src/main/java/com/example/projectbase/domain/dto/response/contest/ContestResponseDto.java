@@ -35,4 +35,6 @@ public class ContestResponseDto {
 
     private String status;
 
+    private Boolean hasJoined;
+
 }

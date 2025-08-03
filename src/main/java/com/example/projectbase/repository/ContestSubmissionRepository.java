@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -19,4 +20,5 @@ public interface ContestSubmissionRepository extends JpaRepository<ContestSubmis
     @Query("SELECT c FROM Contest c LEFT JOIN FETCH c.submissions WHERE c.contestId = :id")
     Optional<Contest> findByIdWithSubmissions(@Param("id") Long id);
 
+    List<ContestSubmission> findAllByCreatedBy_Username(String username);
 }
