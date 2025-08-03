@@ -5,16 +5,19 @@ import com.example.projectbase.domain.dto.request.contest.ContestSubmissionReque
 import com.example.projectbase.domain.dto.request.contest.ContestUpdateDto;
 import com.example.projectbase.domain.dto.response.contest.ContestResponseDto;
 import com.example.projectbase.domain.dto.response.contest.ContestResultResponse;
+import com.example.projectbase.domain.dto.response.contest.ContestSubmissionResponse;
 import com.example.projectbase.domain.dto.response.contest.ContestUserResponseDto;
 import com.example.projectbase.security.UserPrincipal;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 public interface ContestService {
-  Page<ContestResponseDto> getAllPaged(int page, int size);
-  Page<ContestResponseDto> search(String keyword, int  page, int size );
+  Page<ContestResponseDto> getAll(Pageable pageable);
+  Page<ContestResponseDto> search(String keyword, Pageable pageable);
   ContestResponseDto getById(Long id);
   ContestResponseDto createContest(ContestCreatetDto request, MultipartFile file);
   ContestResponseDto updateContest(Long id, ContestUpdateDto request);
@@ -22,7 +25,7 @@ public interface ContestService {
   ContestResultResponse  getResultByContestId(Long contestId);
   void joinContest(Long contestId, UserPrincipal userPrincipal);
   ContestResponseDto startContest(Long contestId);
-  void submitContest(ContestSubmissionRequest request, MultipartFile file) throws IOException;
+  ContestSubmissionResponse submitContest(String urlFile, Long contestId, UserPrincipal userPrincipal) throws IOException;
   void autoCloseExpiredContests();
-
+  Page<ContestSubmissionResponse> getAllSubmission(UserPrincipal user, Long contestId, Pageable pageable);
 }

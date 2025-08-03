@@ -6,12 +6,16 @@ import com.example.projectbase.domain.dto.request.contest.ContestSubmissionReque
 import com.example.projectbase.domain.dto.request.contest.ContestUpdateDto;
 import com.example.projectbase.domain.dto.response.contest.ContestResponseDto;
 import com.example.projectbase.domain.dto.response.contest.ContestResultResponse;
+import com.example.projectbase.domain.dto.response.contest.ContestSubmissionResponse;
 import com.example.projectbase.domain.dto.response.storage.UploadFileResponseDto;
 import com.example.projectbase.domain.entity.Contest;
+import com.example.projectbase.domain.entity.ContestProblem;
 import com.example.projectbase.domain.entity.ContestSubmission;
 import com.example.projectbase.domain.entity.User;
 import com.example.projectbase.domain.mapper.ContestMapper;
+import com.example.projectbase.domain.model.SubmissionStatus;
 import com.example.projectbase.exception.extended.InternalServerException;
+import com.example.projectbase.exception.extended.NotFoundException;
 import com.example.projectbase.exception.extended.UploadFileException;
 import com.example.projectbase.repository.ContestRepository;
 import com.example.projectbase.repository.ContestSubmissionRepository;
@@ -55,17 +59,16 @@ public class ContestServiceImpl implements ContestService {
     private final StorageService service;
 
     private static final String CACHE_PREFIX = "contest:";
+    private final ContestSubmissionRepository contestSubmissionRepository;
 
     @Override
-    public Page<ContestResponseDto> getAllPaged(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("startTime").descending());
-        return contestRepository.findAll(pageable).map(mapper::toReponse);
+    public Page<ContestResponseDto> getAll(Pageable pageable) {
+        return mapper.toResponseList(contestRepository.findAll(pageable));
     }
 
     @Override
-    public Page<ContestResponseDto> search(String keyword, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size, Sort.by("startTime").descending());
-        return contestRepository.findByTitleContainingIgnoreCase(keyword, pageable).map(mapper::toReponse);
+    public Page<ContestResponseDto> search(String keyword, Pageable pageable) {
+        return contestRepository.findByTitle(keyword, pageable).map(mapper::toReponse);
     }
 
     @Override
@@ -190,29 +193,52 @@ public class ContestServiceImpl implements ContestService {
     }
 
     @Override
-    public void submitContest(ContestSubmissionRequest request, MultipartFile file) throws IOException {
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        String username = auth.getName();
-        log.info(">> Current authenticated username: {}", username);
+    public ContestSubmissionResponse submitContest(String urlFile, Long contestId, UserPrincipal userPrincipal) throws IOException {
 
-        User user = userRepository.findByUsernameIgnoreCase(username)
-                .orElseThrow(() -> new EntityNotFoundException("user not found: " + username));
+        Contest contest = contestRepository.findById(contestId).orElseThrow(() -> new NotFoundException(ErrorMessage.Contest.CONTEST_NOT_FOUND));
 
-        ContestSubmission contestSubmission = submissionRepository
-                .findByContest_ContestIdAndCreatedBy_Username(request.getContestId(), username)
-                .orElseThrow(() -> new EntityNotFoundException(ERR_NOT_FOUND));
+        User user = userRepository.findById(userPrincipal.getId()).orElseThrow(() -> new RuntimeException(ERR_NOT_FOUND));
 
-        // Xóa file cũ trên Cloudinary
-        service.deleteFileFromCloudinary(contestSubmission.getFileUrl());
+        ContestSubmission contestSubmission = ContestSubmission.builder()
+                .contest(contest)
+                .createdBy(user)
+                .fileUrl(urlFile)
+                .fileName("none")
+                .status(SubmissionStatus.PENDING)
+                .ranking("none")
+                .highestScore(0)
+                .code("None")
+                .resultSummary("Wait for the scorer")
+                .build();
 
-        // Upload file mới lên Cloudinary
-        UploadFileResponseDto responseDto = service.uploadFile(file, (UserPrincipal) auth.getPrincipal());
+        ContestSubmission savedContestSubmisstion = contestSubmissionRepository.save(contestSubmission);
 
-        contestSubmission.setFileName(file.getOriginalFilename());
-        contestSubmission.setFileUrl(responseDto.getFileUrl());
-        contestSubmission.setSubmittedAt(LocalDateTime.now());
 
-        submissionRepository.save(contestSubmission);
+        return toContestSubmissionResponse(savedContestSubmisstion);
+
+
+//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+//        String username = auth.getName();
+//        System.out.println(username);
+//        log.info(">> Current authenticated username: {}", username);
+//
+//        User user = userRepository.findByUsernameIgnoreCase(username)
+//                .orElseThrow(() -> new EntityNotFoundException("user not found: " + username));
+//
+//        ContestSubmission contestSubmission = submissionRepository
+//                .findByContest_ContestIdAndCreatedBy_Username(request.getContestId(), username)
+//                .orElseThrow(() -> new EntityNotFoundException(ERR_NOT_FOUND));
+//
+//        // Xóa file cũ trên Cloudinary
+//        service.deleteFileFromCloudinary(contestSubmission.getFileUrl());
+//
+//        // Upload file mới lên Cloudinary
+//        UploadFileResponseDto responseDto = service.uploadFile(file, userPrincipal);
+//        contestSubmission.setFileName(file.getOriginalFilename());
+//        contestSubmission.setFileUrl(responseDto.getFileUrl());
+//        contestSubmission.setSubmittedAt(LocalDateTime.now());
+
+//        submissionRepository.save(contestSubmission);
     }
 
     @Scheduled(cron = "0 0 * * * *")
@@ -226,5 +252,22 @@ public class ContestServiceImpl implements ContestService {
                 contestRepository.save(contest);
             }
         }
+    }
+
+    @Override
+    public Page<ContestSubmissionResponse> getAllSubmission(UserPrincipal user, Long contestId, Pageable pageable) {
+        System.out.println(user.getId()  + "hrr");
+        System.out.println(contestId + "hi");
+        return contestSubmissionRepository.findAllSubmission(contestId, user.getId(), pageable).map(this::toContestSubmissionResponse);
+    }
+
+    public ContestSubmissionResponse toContestSubmissionResponse(ContestSubmission contestSubmission) {
+        return ContestSubmissionResponse.builder()
+                .contestId(contestSubmission.getSubmissionId())
+                .fileUrl(contestSubmission.getFileUrl())
+                .highestScore(contestSubmission.getHighestScore())
+                .ranking(contestSubmission.getRanking())
+                .resultSummary(contestSubmission.getResultSummary())
+                .build();
     }
 }

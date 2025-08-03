@@ -12,8 +12,10 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
+import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 
@@ -38,6 +40,10 @@ public interface ContestMapper {
          response.setStatus("Đang mở");
       }
    }
+
+   default Page<ContestResponseDto> toResponseList(Page<Contest> contests) {
+      return contests.map(contest -> toReponse(contest));
+   };
 
    @Mapping(source = "username", target = "username")
    ContestResultResponse toResultResponse(Contest contest, String username);
