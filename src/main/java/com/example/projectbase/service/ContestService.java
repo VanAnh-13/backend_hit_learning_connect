@@ -3,6 +3,7 @@ package com.example.projectbase.service;
 import com.example.projectbase.domain.dto.request.contest.ContestCreatetDto;
 import com.example.projectbase.domain.dto.request.contest.ContestSubmissionRequest;
 import com.example.projectbase.domain.dto.request.contest.ContestUpdateDto;
+//import com.example.projectbase.domain.dto.response.contest.ContestAdminResponseDto;
 import com.example.projectbase.domain.dto.response.contest.ContestResponseDto;
 import com.example.projectbase.domain.dto.response.contest.ContestResultResponse;
 import com.example.projectbase.domain.dto.response.contest.ContestSubmissionResponse;
@@ -19,7 +20,7 @@ public interface ContestService {
   Page<ContestResponseDto> getAll(Pageable pageable);
   Page<ContestResponseDto> search(String keyword, Pageable pageable);
   ContestResponseDto getById(Long id);
-  ContestResponseDto createContest(ContestCreatetDto request, MultipartFile file);
+  ContestResponseDto createContest(ContestCreatetDto request);
   ContestResponseDto updateContest(Long id, ContestUpdateDto request);
   void deleteContest(Long id);
   ContestResultResponse  getResultByContestId(Long contestId);
