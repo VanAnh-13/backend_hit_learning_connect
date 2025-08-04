@@ -77,9 +77,8 @@ public class ContestServiceImpl implements ContestService {
                 .orElseThrow(() -> new RuntimeException(ErrorMessage.Contest.CONTEST_NOT_FOUND));
         return mapper.toReponse(contest);
     }
-
     @Override
-    public ContestResponseDto createContest(ContestCreatetDto request, MultipartFile file) {
+    public ContestResponseDto createContest(ContestCreatetDto request) {
         Contest contest = mapper.toEntity(request);
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
@@ -88,27 +87,16 @@ public class ContestServiceImpl implements ContestService {
 
         contest.setCreatedBy(user);
 
-        try {
-            if (file == null || file.isEmpty()) {
-                throw new RuntimeException(ErrorMessage.Contest.CONTEST_NOT_FOUND);
-            }
-
-            String originalFileName = file.getOriginalFilename();
-            if (originalFileName == null || originalFileName.isBlank()) {
-                throw new RuntimeException(ErrorMessage.Contest.ORIGINAL_FILENAME);
-            }
-
-            UploadFileResponseDto responseDto = service.uploadFile(file, (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
-            contest.setFileName(originalFileName);
-            contest.setFileUrl(responseDto.getFileUrl());
-
-        } catch (RuntimeException e) {
-            log.error(ErrorMessage.Contest.VALIDATION_FAILED, e);
-            throw e;
+        if (request.getFileUrl() == null || request.getFileUrl().isBlank()) {
+            throw new RuntimeException(ErrorMessage.Contest.FILE_URL_REQUIRED);
         }
+
+        contest.setFileName("UploadedViaOtherWay.pdf");
+        contest.setFileUrl(request.getFileUrl());
 
         return mapper.toReponse(contestRepository.save(contest));
     }
+
 
     @Override
     public ContestResponseDto updateContest(Long id, ContestUpdateDto request) {
@@ -215,30 +203,6 @@ public class ContestServiceImpl implements ContestService {
 
 
         return toContestSubmissionResponse(savedContestSubmisstion);
-
-
-//        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-//        String username = auth.getName();
-//        System.out.println(username);
-//        log.info(">> Current authenticated username: {}", username);
-//
-//        User user = userRepository.findByUsernameIgnoreCase(username)
-//                .orElseThrow(() -> new EntityNotFoundException("user not found: " + username));
-//
-//        ContestSubmission contestSubmission = submissionRepository
-//                .findByContest_ContestIdAndCreatedBy_Username(request.getContestId(), username)
-//                .orElseThrow(() -> new EntityNotFoundException(ERR_NOT_FOUND));
-//
-//        // Xóa file cũ trên Cloudinary
-//        service.deleteFileFromCloudinary(contestSubmission.getFileUrl());
-//
-//        // Upload file mới lên Cloudinary
-//        UploadFileResponseDto responseDto = service.uploadFile(file, userPrincipal);
-//        contestSubmission.setFileName(file.getOriginalFilename());
-//        contestSubmission.setFileUrl(responseDto.getFileUrl());
-//        contestSubmission.setSubmittedAt(LocalDateTime.now());
-
-//        submissionRepository.save(contestSubmission);
     }
 
     @Scheduled(cron = "0 0 * * * *")

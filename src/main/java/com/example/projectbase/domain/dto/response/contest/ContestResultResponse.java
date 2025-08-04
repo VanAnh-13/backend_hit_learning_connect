@@ -27,4 +27,6 @@ public class ContestResultResponse {
     private String resultSummary;
 
     private String ranking;
+
+
 }

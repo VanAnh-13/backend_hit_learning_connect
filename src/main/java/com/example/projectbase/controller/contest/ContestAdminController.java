@@ -50,6 +50,7 @@ public class ContestAdminController {
         }
     }
 
+
     @Operation(summary = "Api search contest")
     @GetMapping("/search")
     @PreAuthorize("hasAnyRole('ADMIN', 'LEADER')")
@@ -79,12 +80,10 @@ public class ContestAdminController {
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<ContestResponseDto> createContest(
             @Parameter(description = "Contest data", required = true, content = @Content(schema = @Schema(implementation = ContestCreatetDto.class)))
-            @RequestPart("request") @Valid ContestCreatetDto request,
+            @RequestPart("request") @Valid ContestCreatetDto request
+            ) {
 
-            @Parameter(description = "PDF file", required = true, content = @Content(mediaType = MediaType.APPLICATION_OCTET_STREAM_VALUE))
-            @RequestPart("file") MultipartFile file) {
-
-        ContestResponseDto response = service.createContest(request, file);
+        ContestResponseDto response = service.createContest(request);
         return ResponseEntity.ok(response);
     }
 

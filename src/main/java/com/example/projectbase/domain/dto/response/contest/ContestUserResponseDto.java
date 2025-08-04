@@ -20,4 +20,5 @@ public class ContestUserResponseDto {
     private double highestScore;
     private String resultSummary;
     private String ranking;
+
 }

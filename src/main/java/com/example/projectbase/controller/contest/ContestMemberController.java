@@ -65,14 +65,16 @@ public class ContestMemberController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> search(@RequestParam String keyword,
                                     @ParameterObject @PageableDefault(page = 0, size = 1000, sort = "contestId", direction = Sort.Direction.ASC) Pageable pageable){
-            return ResponseEntity.ok(contestService.search(keyword, pageable));
+
+        return ResponseEntity.ok(contestService.search(keyword, pageable));
     }
 
     @Operation(summary = "Api View exam details")
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getContestDetail(@PathVariable Long id){
-            return ResponseEntity.ok(contestService.getById(id));
+        return ResponseEntity.ok(contestService.getById(id));
+
     }
 
 
@@ -85,25 +87,6 @@ public class ContestMemberController {
         contestService.joinContest(contestId, principal);
         return VsResponseUtil.success(ResponseMessage.Contest.JOIN_CONTEST);
     }
-
-//    @Operation(summary = "Api start contest")
-//    @GetMapping("/start/{contestId}")
-//    @PreAuthorize("hasRole('USER')")
-//    public ResponseEntity<?> startContest(@PathVariable Long contestId) {
-//        try {
-//            return ResponseEntity.ok(contestService.startContest(contestId));
-//        } catch (IllegalArgumentException e) {
-//            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorMessage.Contest.CONTEST_TIME_INVALID);
-//        } catch (EntityNotFoundException e) {
-//            String message = e.getMessage();
-//            if (ErrorMessage.Contest.USER_CONTEST_NOT_FOUND.equals(message)) {
-//                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorMessage.Contest.USER_CONTEST_NOT_FOUND);
-//            }
-//            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorMessage.Contest.CONTEST_NOT_FOUND);
-//        } catch (Exception e) {
-//            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorMessage.Contest.INTERNAL_SERVER_ERROR);
-//        }
-//    }
 
     @PreAuthorize("hasRole('USER')")
     @Operation(summary = "Api submit contest file")
