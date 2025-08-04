@@ -24,4 +24,6 @@ public interface ContestSubmissionRepository extends JpaRepository<ContestSubmis
 
     @Query("SELECT c FROM ContestSubmission c WHERE c.createdBy.id = :createdById AND c.contest.contestId = :contestContestId")
     Page<ContestSubmission> findAllSubmission(@Param("contestContestId") Long contestContestId, @Param("createdById") Long createdById, Pageable pageable);
+
+
 }

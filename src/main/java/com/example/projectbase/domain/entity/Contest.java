@@ -53,6 +53,9 @@ public class Contest {
     @Column(name = "highest_score")
     private Double highestScore;
 
+    @Column(name="status")
+    private String status;
+
     @ManyToOne
     @JoinColumn(name = "created_by", nullable = false)
     private User createdBy;
