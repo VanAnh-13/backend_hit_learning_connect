@@ -79,7 +79,7 @@ public class ContestServiceImpl implements ContestService {
         });
 
     }
-    
+
     @Override
     public Page<ContestResponseDto> search(String keyword, Pageable pageable) {
         return contestRepository.findByTitle(keyword, pageable).map(mapper::toReponse);
