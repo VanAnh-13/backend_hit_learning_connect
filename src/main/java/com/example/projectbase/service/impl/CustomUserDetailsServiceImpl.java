@@ -23,7 +23,6 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService, CustomU
   @Override
   @Transactional
   public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-
     User user = userRepository.findByUsernameIgnoreCase(username)
         .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME,
             new String[]{username}));

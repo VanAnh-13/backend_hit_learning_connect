@@ -24,6 +24,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
   Optional<User> findById(Long id);
 
   @Query("SELECT u FROM User u WHERE u.username = ?1")
+  @Cacheable(value = "users", key = "#username")
   Optional<User> findByUsernameIgnoreCase(String username);
 
   @Query("SELECT u FROM User u WHERE u.email = ?1")

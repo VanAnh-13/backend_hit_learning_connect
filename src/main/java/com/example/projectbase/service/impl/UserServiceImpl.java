@@ -24,6 +24,7 @@ import com.example.projectbase.service.UserService;
 import com.nimbusds.openid.connect.sdk.claims.Gender;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.sql.Update;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
@@ -51,6 +52,8 @@ public class UserServiceImpl implements UserService {
     private final ClassRepository classRepository;
 
     private final ContestRepository contestRepository;
+
+    private final CacheManager cacheManager;
 
     //------------------------CRUD User------------------------
     @Override
@@ -110,6 +113,8 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserResponseDto(
                 userRepository.findById(id).map(user -> {
 
+                    cacheManager.getCache("users").evict(user.getUsername());
+
                     System.out.println(user.getPassword());
 
                     if (userRepository.findByEmail(updatedUser.getEmail()).isPresent() && !user.getEmail().equals(updatedUser.getEmail())) {
@@ -160,6 +165,8 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void deleteUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException(ErrorMessage.User.ERR_USER_NOT_FOUND));
+
+        cacheManager.getCache("users").evict(user.getUsername());
 
         Set<Contest> contests = user.getContests();
         for (Contest contest : contests) {
