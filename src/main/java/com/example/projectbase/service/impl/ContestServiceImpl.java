@@ -63,7 +63,21 @@ public class ContestServiceImpl implements ContestService {
 
     @Override
     public Page<ContestResponseDto> getAll(Pageable pageable) {
-        return mapper.toResponseList(contestRepository.findAll(pageable));
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsernameIgnoreCase(username)
+                .orElseThrow(() -> new EntityNotFoundException(ERR_NOT_FOUND));
+
+        Page<Contest> contestPage = contestRepository.findAll(pageable);
+
+        return contestPage.map(contest -> {
+            boolean hasJoined = contestSubmissionRepository.existsByContest_ContestIdAndCreatedBy_Username(contest.getContestId(),username);
+
+            ContestResponseDto response= mapper.toReponse(contest);
+            response.setHasJoined(hasJoined);
+            return response;
+        });
+
     }
 
     @Override
