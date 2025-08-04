@@ -16,6 +16,7 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.data.domain.Page;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Mapper(componentModel = "spring")
 
@@ -51,6 +52,7 @@ public interface ContestMapper {
    default Page<ContestResponseDto> toResponseList(Page<Contest> contests) {
       return contests.map(contest -> toReponse(contest));
    };
+
    @Mapping(source = "username", target = "username")
    ContestResultResponse toResultResponse(Contest contest, String username);
 

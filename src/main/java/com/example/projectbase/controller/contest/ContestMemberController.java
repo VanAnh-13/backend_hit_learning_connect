@@ -57,7 +57,7 @@ public class ContestMemberController {
     @GetMapping("")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getAllPaged(@ParameterObject @PageableDefault(page = 0, size = 1000, sort = "contestId", direction = Sort.Direction.ASC) Pageable pageable) {
-        return ResponseEntity.ok(contestService.getAll(pageable));
+          return ResponseEntity.ok(contestService.getAll(pageable));
     }
 
     @Operation(summary = "Api search contest")
@@ -65,6 +65,7 @@ public class ContestMemberController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> search(@RequestParam String keyword,
                                     @ParameterObject @PageableDefault(page = 0, size = 1000, sort = "contestId", direction = Sort.Direction.ASC) Pageable pageable){
+
         return ResponseEntity.ok(contestService.search(keyword, pageable));
     }
 
@@ -73,6 +74,7 @@ public class ContestMemberController {
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getContestDetail(@PathVariable Long id){
         return ResponseEntity.ok(contestService.getById(id));
+
     }
 
 

@@ -152,4 +152,11 @@ public class GlobalExceptionHandler {
     return VsResponseUtil.error(HttpStatus.FORBIDDEN, message);
   }
 
+  @ExceptionHandler(NoResourceFoundException.class)
+  public ResponseEntity<RestData<?>> handleNoResourceFoundException(NoResourceFoundException ex) {
+    String message = messageSource.getMessage(ex.getMessage(), ex.getParams(), LocaleContextHolder.getLocale());
+    log.error(message, ex);
+    return VsResponseUtil.error(ex.getStatus(), message);
+  }
+
 }
