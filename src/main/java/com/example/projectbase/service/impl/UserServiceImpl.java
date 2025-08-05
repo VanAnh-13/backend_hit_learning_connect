@@ -104,6 +104,7 @@ public class UserServiceImpl implements UserService {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
+        cacheManager.getCache("users").evict(user.getUsername());
         return userCreateDto;
     }
 
