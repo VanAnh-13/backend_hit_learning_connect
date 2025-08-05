@@ -79,8 +79,7 @@ public class ContestAdminController {
     })
     @PostMapping("")
     public ResponseEntity<ContestResponseDto> createContest(
-            @Parameter(description = "Contest data", required = true, content = @Content(schema = @Schema(implementation = ContestCreatetDto.class)))
-            @RequestPart("request") @Valid ContestCreatetDto request
+            @RequestBody ContestCreatetDto request
             ) {
 
         ContestResponseDto response = service.createContest(request);
