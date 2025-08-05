@@ -71,14 +71,15 @@ public class ContestServiceImpl implements ContestService {
         Page<Contest> contestPage = contestRepository.findAll(pageable);
 
         return contestPage.map(contest -> {
-            boolean hasJoined = contestSubmissionRepository.existsByContest_ContestIdAndCreatedBy_Username(contest.getContestId(),username);
+            boolean hasJoined = contestRepository
+                    .hasUserJoinedContest(contest.getContestId(), user.getId());
 
-            ContestResponseDto response= mapper.toReponse(contest);
+            ContestResponseDto response = mapper.toReponse(contest);
             response.setHasJoined(hasJoined);
             return response;
         });
-
     }
+
 
     @Override
     public Page<ContestResponseDto> search(String keyword, Pageable pageable) {
