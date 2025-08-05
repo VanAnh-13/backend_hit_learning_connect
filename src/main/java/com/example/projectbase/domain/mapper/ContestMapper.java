@@ -28,6 +28,7 @@ public interface ContestMapper {
    @Mapping(source = "resultSummary", target = "resultSummary")
    @Mapping(source = "ranking", target = "ranking")
    @Mapping(source = "highestScore", target = "highestScore")
+   @Mapping(source = "fileUrl", target = "urlFile")
    ContestResponseDto toReponse(Contest contest);
 //
 //   @Mapping(source = "contestId", target = "contestId")
@@ -56,6 +57,7 @@ public interface ContestMapper {
    @Mapping(source = "username", target = "username")
    ContestResultResponse toResultResponse(Contest contest, String username);
 
+   @Mapping(source = "urlFile", target = "fileUrl")
    Contest toEntity(ContestCreatetDto request);
 
    void updateEntity(@MappingTarget Contest contest, ContestUpdateDto request);

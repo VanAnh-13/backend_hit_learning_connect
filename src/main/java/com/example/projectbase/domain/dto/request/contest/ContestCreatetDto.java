@@ -33,7 +33,7 @@ public class ContestCreatetDto {
     private LocalDateTime endTime;
 
     @NotBlank(message = ErrorMessage.NOT_BLANK_FIELD)
-    private String fileUrl;
+    private String urlFile;
 
 //    @Schema(type = "string", format = "binary")
 //    private MultipartFile file;

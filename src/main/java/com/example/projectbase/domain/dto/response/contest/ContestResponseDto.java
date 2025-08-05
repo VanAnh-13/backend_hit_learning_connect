@@ -25,7 +25,7 @@ public class ContestResponseDto {
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDateTime endTime;
 
-    private String fileUrl;
+    private String urlFile;
 
     private double highestScore;
 

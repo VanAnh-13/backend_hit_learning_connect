@@ -102,12 +102,12 @@ public class ContestServiceImpl implements ContestService {
 
         contest.setCreatedBy(user);
 
-        if (request.getFileUrl() == null || request.getFileUrl().isBlank()) {
+        if (request.getUrlFile() == null || request.getUrlFile().isBlank()) {
             throw new RuntimeException(ErrorMessage.Contest.FILE_URL_REQUIRED);
         }
 
         contest.setFileName("UploadedViaOtherWay.pdf");
-        contest.setFileUrl(request.getFileUrl());
+        contest.setFileUrl(request.getUrlFile());
 
         return mapper.toReponse(contestRepository.save(contest));
     }
