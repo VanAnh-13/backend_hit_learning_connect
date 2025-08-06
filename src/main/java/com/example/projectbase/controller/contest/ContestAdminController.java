@@ -77,7 +77,7 @@ public class ContestAdminController {
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Created")
     })
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping("")
     public ResponseEntity<ContestResponseDto> createContest(
             @Parameter(description = "Contest data", required = true, content = @Content(schema = @Schema(implementation = ContestCreatetDto.class)))
             @RequestPart("request") @Valid ContestCreatetDto request
