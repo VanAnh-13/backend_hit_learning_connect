@@ -60,6 +60,7 @@ public interface ContestMapper {
    @Mapping(source = "urlFile", target = "fileUrl")
    Contest toEntity(ContestCreatetDto request);
 
+   @Mapping(source = "urlFile", target = "fileUrl")
    void updateEntity(@MappingTarget Contest contest, ContestUpdateDto request);
 
 //   ContestUserResponseDto toUserResponse(Contest contest);
