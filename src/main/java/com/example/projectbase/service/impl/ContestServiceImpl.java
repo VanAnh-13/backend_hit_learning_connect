@@ -90,8 +90,19 @@ public class ContestServiceImpl implements ContestService {
     public ContestResponseDto getById(Long id) {
         Contest contest = contestRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException(ErrorMessage.Contest.CONTEST_NOT_FOUND));
-        return mapper.toReponse(contest);
+
+        String username = SecurityContextHolder.getContext().getAuthentication().getName();
+        User user = userRepository.findByUsernameIgnoreCase(username)
+                .orElseThrow(() -> new EntityNotFoundException(ERR_NOT_FOUND));
+
+        boolean hasJoined = contestRepository.hasUserJoinedContest(contest.getContestId(), user.getId());
+
+        ContestResponseDto dto = mapper.toReponse(contest);
+        dto.setHasJoined(hasJoined);
+
+        return dto;
     }
+
     @Override
     public ContestResponseDto createContest(ContestCreatetDto request) {
         Contest contest = mapper.toEntity(request);
