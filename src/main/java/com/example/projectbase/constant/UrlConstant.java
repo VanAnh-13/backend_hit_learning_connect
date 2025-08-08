@@ -78,4 +78,24 @@ public class UrlConstant {
         public static final String DELETE_CONTEST = BASE + "/{contestId}";
     }
 
+    public static class Blog {
+        public static final String BASE = "/blogs";
+        public static final String GET_BLOG = BASE + "/{blogId}";
+        public static final String CREATE_BLOG = BASE;
+        public static final String UPDATE_BLOG = BASE + "/{blogId}";
+        public static final String DELETE_BLOG = BASE + "/{blogId}";
+        public static final String SEARCH_BLOG = BASE + "/search/{tag}";
+
+        public static final String COMMENT_BLOG = BASE + "/comment/set/{blogId}";
+        public static final String GET_ALL_COMMENTS = BASE + "/comments/{blogId}";
+        public static final String DELETE_COMMENTS = BASE + "/comment/{commentId}";
+        public static final String CREATE_REPLY = BASE +  "/comment/{commentId}/reply";
+        public static final String GET_REPLIES = BASE + "/comment/{commentId}/replies";
+        public static final String UPDATE_COMMENT = BASE + "/comment/{commentId}";
+        public static final String GET_COMMENT = BASE + "/comment/{commentId}";
+
+        public static final String DROP_REACT = BASE + "/react";
+        public static final String GET_REACT = BASE + "/react";
+    }
+
 }

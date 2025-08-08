@@ -13,10 +13,8 @@ import java.util.List;
 @Builder
 
 public class BlogRequest {
-
     private String title;
-    private String content;
-    private List<Long> tagIds;
-//    private MultipartFile image;
-
+    private String description;
+    private String tags;
+    private String urlFile;
 }

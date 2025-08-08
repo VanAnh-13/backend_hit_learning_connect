@@ -31,11 +31,11 @@ public class Comment {
     @Column(nullable = false, columnDefinition = "text")
     private String content;
 
-    @Column(name = "create_at", nullable = false)
-    private LocalDateTime createAt;
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 
     @PrePersist
     protected void onCreate() {
-        createAt = LocalDateTime.now();
+        createdAt = LocalDateTime.now();
     }
 }
