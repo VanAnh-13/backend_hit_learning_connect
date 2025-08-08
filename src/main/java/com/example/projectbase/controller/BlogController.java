@@ -110,7 +110,7 @@ public class BlogController {
 
     @Operation(summary = "Api get all comments")
     @GetMapping(UrlConstant.Blog.GET_ALL_COMMENTS)
-    public ResponseEntity<?> getAllComments(@RequestParam("blogId") Long blogId ,@ParameterObject @PageableDefault(page = 0, size = 1000, sort = "commentId", direction = Sort.Direction.ASC) Pageable pageable) {
+    public ResponseEntity<?> getAllComments(@PathVariable Long blogId ,@ParameterObject @PageableDefault(page = 0, size = 1000, sort = "commentId", direction = Sort.Direction.ASC) Pageable pageable) {
         return ResponseEntity.ok(blogService.getAllCommentsByBlogId(pageable ,blogId));
     }
 
