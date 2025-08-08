@@ -13,14 +13,12 @@ import java.util.List;
 
 public class BlogResponse {
 
-    private Long id;
-    private String title;
-    private String content;
+    private Long blogId;
     private String author;
+    private String title;
+    private String description;
+    private String urlFile;
     private List<String> tags;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    private int commentCount;
-    private int reactionCount;
-    private String imageUrl;
 }

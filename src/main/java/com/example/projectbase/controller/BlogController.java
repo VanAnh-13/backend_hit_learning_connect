@@ -1,8 +1,10 @@
 package com.example.projectbase.controller;
 
+import com.example.projectbase.base.RestApiV1;
 import com.example.projectbase.base.VsResponseUtil;
 import com.example.projectbase.constant.ErrorMessage;
 import com.example.projectbase.constant.ResponseMessage;
+import com.example.projectbase.constant.UrlConstant;
 import com.example.projectbase.domain.dto.request.blog.BlogRequest;
 import com.example.projectbase.domain.dto.request.blog.BlogUpdateDto;
 import com.example.projectbase.domain.dto.request.comment.CommentRequest;
@@ -11,8 +13,11 @@ import com.example.projectbase.domain.dto.response.blog.BlogResponse;
 import com.example.projectbase.domain.dto.response.comment.CommentResponse;
 import com.example.projectbase.domain.dto.response.reaction.ReactionReponseDto;
 import com.example.projectbase.domain.model.ReactionType;
+import com.example.projectbase.security.CurrentUser;
+import com.example.projectbase.security.UserPrincipal;
 import com.example.projectbase.service.BlogService;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
@@ -20,6 +25,8 @@ import lombok.RequiredArgsConstructor;
 import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -30,108 +37,61 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
-@RequestMapping("api/blog")
 @RestController
 @RequiredArgsConstructor
 @Validated
-
+@RestApiV1
 public class BlogController {
 
     private final BlogService blogService;
 
-
-    @Tag( name="Blog-USER-controller")
-    @PreAuthorize("hasRole('USER')")
-    @Operation(summary = "Create blog with file image")
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<BlogResponse> create(
-            @RequestPart("request") @Valid BlogRequest request,
-            @RequestPart(value = "file", required = false) MultipartFile file
-    ) throws IOException {
-        BlogResponse response = blogService.create(request, file);
-        return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    @Operation(summary = "Api create blog with url file")
+    @PostMapping(UrlConstant.Blog.CREATE_BLOG)
+    public ResponseEntity<?> create(@RequestBody @Valid BlogRequest request, @Parameter(name = "principal", hidden = true) @CurrentUser UserPrincipal user) throws IOException {
+        return VsResponseUtil.success(HttpStatus.CREATED, blogService.create(request, user));
     }
 
 
-    @Tag(name="Blog-USER-controller")
-    @PreAuthorize("hasRole('USER')")
-    @Operation(summary = "Update blog by id ")
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateBlog(@PathVariable Long id, @Valid @RequestBody BlogUpdateDto request){
-
-        try{
-            return ResponseEntity.ok(blogService.update(id,request));
-        }catch (EntityNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorMessage.Blog.BLOG_NOT_FOUND);
-        }catch (IllegalArgumentException e){
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorMessage.Blog.INTERNAL_SERVER_ERROR);
-        }
+    @Operation(summary = "Api update blog by id ")
+    @PutMapping(UrlConstant.Blog.UPDATE_BLOG)
+    public ResponseEntity<?> updateBlog(@PathVariable Long blogId, @Valid @RequestBody BlogUpdateDto request){
+            return VsResponseUtil.success(HttpStatus.OK, blogService.update(blogId, request));
     }
 
-    @Tag(name="Blog-USER-controller")
-    @PreAuthorize("hasRole('USER')")
     @Operation(summary = "Api delete blog by id")
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable Long id){
-        try{
-            blogService.delete(id);
+    @DeleteMapping(UrlConstant.Blog.DELETE_BLOG)
+    public ResponseEntity<?> delete(@PathVariable Long blogId){
+            blogService.delete(blogId);
             return VsResponseUtil.success(ResponseMessage.DELETE_SUCCESS);
-        }catch (EntityNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorMessage.Blog.BLOG_NOT_FOUND);
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorMessage.Blog.INTERNAL_SERVER_ERROR);
-        }
     }
 
-    @Tag(name="Blog-USER-controller")
-    @PreAuthorize("hasRole('USER')")
-    @GetMapping("/{id}")
-    @Operation(summary = "Api get by ID")
-    public ResponseEntity<?> getById(@PathVariable Long id){
-      try{
-          BlogResponse response=blogService.getById(id);
-          return ResponseEntity.ok(response);
-      }catch (EntityNotFoundException e){
-          return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorMessage.Blog.BLOG_NOT_FOUND);
-      }catch (Exception e ){
-          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorMessage.Blog.INTERNAL_SERVER_ERROR);
-      }
+    @GetMapping(UrlConstant.Blog.GET_BLOG)
+    @Operation(summary = "Api get blog by ID")
+    public ResponseEntity<?> getById(@PathVariable Long blogId){
+          return VsResponseUtil.success(HttpStatus.OK ,blogService.getById(blogId));
     }
 
-    @Tag(name="Blog-USER-controller")
-    @PreAuthorize("hasRole('USER')")
-    @GetMapping("/blog")
-    @Operation(summary = "Api get all blog ")
-    public ResponseEntity<?> getAllBlog(@ParameterObject Pageable pageable){
-        try{
-            return ResponseEntity.ok(blogService.getAll(pageable));
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorMessage.Blog.INTERNAL_SERVER_ERROR);
-        }
+    @GetMapping(UrlConstant.Blog.BASE)
+    @Operation(summary = "Api get all blogs")
+    public ResponseEntity<?> getAllBlog(@ParameterObject @PageableDefault(page = 0, size = 1000, sort = "blogId", direction = Sort.Direction.ASC) Pageable pageable){
+
+            return VsResponseUtil.success(HttpStatus.OK, blogService.getAll(pageable));
     }
 
-    @Tag(name="Blog-USER-controller")
-    @PreAuthorize("hasRole('USER')")
+    //--------------------------------tag--------------------------------------
+
     @Operation(summary = "Api search by Tag")
-    @GetMapping("/search")
-    public ResponseEntity<?> searchByTag(@RequestParam("tag") String tag, @ParameterObject Pageable pageable){
-        try{
-            Page<BlogResponse> responses= blogService.searchByTag(tag,pageable);
-            return ResponseEntity.ok(responses);
-        }catch (Exception e ){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorMessage.Blog.INTERNAL_SERVER_ERROR);
-        }
+    @GetMapping(UrlConstant.Blog.SEARCH_BLOG)
+    public ResponseEntity<?> searchByTag(@RequestParam("tag") String tag, @ParameterObject @PageableDefault(page = 0, size = 1000, sort = "blogId", direction = Sort.Direction.ASC) Pageable pageable){
+        return VsResponseUtil.success(HttpStatus.OK, blogService.searchByTag(tag,pageable));
     }
 
-    @Tag(name="Blog-USER-controller")
-    @PreAuthorize("hasRole('USER')")
-    @Operation(summary = "Api comment ")
-    @PostMapping("/comment")
-    public ResponseEntity<?> comment(@RequestBody CommentRequest request){
+    // ------------------------------------- Comment api --------------------------------------
+    @Operation(summary = "Api comment to blog")
+    @PostMapping(UrlConstant.Blog.COMMENT_BLOG)
+    public ResponseEntity<?> comment(@RequestBody CommentRequest request, @Parameter(name = "principal", hidden = true) @CurrentUser UserPrincipal user){
         try{
-            CommentResponse response= blogService.comment(request);
+            CommentResponse response= blogService.comment(request, user);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         }catch (EntityNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorMessage.Comment.COMMENT_NOT_FOUND);
@@ -142,24 +102,58 @@ public class BlogController {
         }
     }
 
-    @Tag(name="Blog-USER-controller")
-    @PostMapping
-    public ResponseEntity<Void> react(@RequestBody ReactionRequest request) {
+    @Operation(summary = "Api get comment by id")
+    @GetMapping(UrlConstant.Blog.GET_COMMENT)
+    public ResponseEntity<?> getComment(@PathVariable Long commentId){
+        return ResponseEntity.ok(blogService.getComment(commentId));
+    }
+
+    @Operation(summary = "Api get all comments")
+    @GetMapping(UrlConstant.Blog.GET_ALL_COMMENTS)
+    public ResponseEntity<?> getAllComments(@RequestParam("blogId") Long blogId ,@ParameterObject @PageableDefault(page = 0, size = 1000, sort = "commentId", direction = Sort.Direction.ASC) Pageable pageable) {
+        return ResponseEntity.ok(blogService.getAllCommentsByBlogId(pageable ,blogId));
+    }
+
+    @Operation(summary = "Api delete Comment by Blog Author and Comment Owner")
+    @DeleteMapping(UrlConstant.Blog.DELETE_COMMENTS)
+    public ResponseEntity<?> deleteComments(@Parameter(name = "principal", hidden = true) @CurrentUser UserPrincipal user, @PathVariable Long commentId) {
+        blogService.deleteComment(user, commentId);
+        return ResponseEntity.ok("Delete Success");
+    }
+
+    @Operation(summary = "Api update Comment by Comment Owner")
+    @PutMapping(UrlConstant.Blog.UPDATE_COMMENT)
+    public ResponseEntity<?>  updateComments(@Parameter(name = "principal", hidden = true) @CurrentUser UserPrincipal user, @PathVariable Long commentId, @RequestBody String content){
+        return ResponseEntity.ok(blogService.updateComment(user, commentId, content));
+    }
+
+//    @Operation(summary = "Api create reply in comment")
+//    @PostMapping(UrlConstant.Blog.CREATE_REPLY)
+//    public ResponseEntity<?> createCommentInComment() {
+//        return ResponseEntity.ok("WAIT for service");
+//    }
+//
+//    @Operation(summary = "Api get reply in comment")
+//    @PostMapping(UrlConstant.Blog.GET_REPLIES)
+//    public ResponseEntity<?> getCommentInComment() {
+//        return ResponseEntity.ok("WAIT for service");
+//    }
+
+
+
+    // ------------------------------------- React api --------------------------------------
+    @Operation(summary = "Api drop a react to a blog id or comment id by type in request")
+    @PostMapping(UrlConstant.Blog.DROP_REACT)
+    public ResponseEntity<?> dropReact(@RequestBody ReactionRequest request) {
         blogService.react(request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Drop react to blog successful");
     }
 
-    @Tag(name="Blog-USER-controller")
-    @GetMapping("/stats/{blogId}")
-    public ResponseEntity<ReactionReponseDto> getStats(@PathVariable Long blogId) {
-        return ResponseEntity.ok(blogService.getReactionStats(blogId));
+    @Operation(summary = "Api get react by id comment or blog")
+    @GetMapping(UrlConstant.Blog.GET_REACT)
+    public ResponseEntity<?> getReact(@RequestBody ReactionRequest request) {
+        blogService.react(request);
+        return ResponseEntity.ok("get react to blog successful");
     }
 
-    @Tag(name="Blog-USER-controller")
-    @GetMapping("/my-reaction/{blogId}")
-    public ResponseEntity<ReactionType> getUserReaction(@PathVariable Long blogId) {
-        return blogService.getUserReaction(blogId)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.noContent().build());
-    }
 }

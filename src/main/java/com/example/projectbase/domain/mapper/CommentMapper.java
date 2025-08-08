@@ -10,8 +10,8 @@ import org.mapstruct.Mapping;
 
 public interface CommentMapper {
 //
-//    @Mapping(source = "author.username", target = "username")
-//    @Mapping(source = "id", target = "id")
+    @Mapping(source = "author.username", target = "username")
+    @Mapping(source = "commentId", target = "id")
 //    @Mapping(source = "createdAt", target = "createdAt")
     CommentResponse toResponse(Comment comment);
     Comment toEntity(CommentRequest request);

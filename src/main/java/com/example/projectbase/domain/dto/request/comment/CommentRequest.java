@@ -12,10 +12,7 @@ import java.time.LocalDateTime;
 
 
 public class CommentRequest {
-
     private Long blogId;
     private String content;
-    private String username;
     private LocalDateTime createdAt;
-
 }

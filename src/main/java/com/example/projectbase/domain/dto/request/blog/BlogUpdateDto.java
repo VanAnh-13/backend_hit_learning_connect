@@ -12,14 +12,8 @@ import java.util.List;
 @Builder
 
 public class BlogUpdateDto {
-
     private String title;
-
-    private String content;
-
-    private LocalDateTime createdAt;
-
-    private LocalDateTime updatedAt;
-
-    private String imgUrl;
+    private String description;
+    private String tags;
+    private String urlFile;
 }
