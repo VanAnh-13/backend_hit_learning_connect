@@ -82,7 +82,7 @@ public class BlogController {
 
     @Operation(summary = "Api search by Tag")
     @GetMapping(UrlConstant.Blog.SEARCH_BLOG)
-    public ResponseEntity<?> searchByTag(@RequestParam("tag") String tag, @ParameterObject @PageableDefault(page = 0, size = 1000, sort = "blogId", direction = Sort.Direction.ASC) Pageable pageable){
+    public ResponseEntity<?> searchByTag(@PathVariable String tag, @ParameterObject @PageableDefault(page = 0, size = 1000, sort = "blogId", direction = Sort.Direction.ASC) Pageable pageable){
         return VsResponseUtil.success(HttpStatus.OK, blogService.searchByTag(tag,pageable));
     }
 
