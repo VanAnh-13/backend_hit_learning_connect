@@ -261,7 +261,7 @@ public class ContestServiceImpl implements ContestService {
                 .highestScore(contestSubmission.getHighestScore())
                 .ranking(contestSubmission.getRanking())
                 .resultSummary(contestSubmission.getResultSummary())
-                .userId(contestSubmission.getCreatedBy().getId())
+                .username(contestSubmission.getCreatedBy().getUsername())
                 .build();
     }
 }
