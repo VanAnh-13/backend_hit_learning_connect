@@ -80,7 +80,7 @@ public class UrlConstant {
 
     public static class Blog {
         public static final String BASE = "/blogs";
-        public static final String GET_BLOG = BASE + "/{blogId}";
+        public static final String GET_BLOG = BASE + "/{blogId:\\d+}";
         public static final String CREATE_BLOG = BASE;
         public static final String UPDATE_BLOG = BASE + "/{blogId}";
         public static final String DELETE_BLOG = BASE + "/{blogId}";
