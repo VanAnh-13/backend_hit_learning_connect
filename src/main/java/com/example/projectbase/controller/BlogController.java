@@ -127,19 +127,6 @@ public class BlogController {
         return ResponseEntity.ok(blogService.updateComment(user, commentId, content));
     }
 
-//    @Operation(summary = "Api create reply in comment")
-//    @PostMapping(UrlConstant.Blog.CREATE_REPLY)
-//    public ResponseEntity<?> createCommentInComment() {
-//        return ResponseEntity.ok("WAIT for service");
-//    }
-//
-//    @Operation(summary = "Api get reply in comment")
-//    @PostMapping(UrlConstant.Blog.GET_REPLIES)
-//    public ResponseEntity<?> getCommentInComment() {
-//        return ResponseEntity.ok("WAIT for service");
-//    }
-
-
 
     // ------------------------------------- React api --------------------------------------
     @Operation(summary = "Api drop a react to a blog id or comment id by type in request")
