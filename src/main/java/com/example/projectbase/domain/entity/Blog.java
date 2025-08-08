@@ -1,5 +1,6 @@
 package com.example.projectbase.domain.entity;
 
+import com.example.projectbase.domain.model.RegistrationStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -48,6 +49,10 @@ public class Blog {
 
     @Column(name = "img_Url")
     private String imgUrl;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private RegistrationStatus status= RegistrationStatus.PENDING;
 
     @PrePersist
     protected void onCreate() {

@@ -26,4 +26,8 @@ public class ResponseMessage {
         public static final String SUBMIT_FILE="Submit file successfull";
     }
 
+    public static class Blog{
+        public static final String UPDATE_STATUS="update status successfull";
+    }
+
 }

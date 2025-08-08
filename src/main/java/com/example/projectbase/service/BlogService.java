@@ -1,10 +1,12 @@
 package com.example.projectbase.service;
 
+import com.example.projectbase.domain.dto.request.blog.BlogApprovalRequestDto;
 import com.example.projectbase.domain.dto.request.blog.BlogRequest;
 import com.example.projectbase.domain.dto.request.blog.BlogUpdateDto;
 import com.example.projectbase.domain.dto.request.comment.CommentRequest;
 import com.example.projectbase.domain.dto.request.reaction.ReactionRequest;
 import com.example.projectbase.domain.dto.response.blog.BlogResponse;
+import com.example.projectbase.domain.dto.response.blog.BlogStatiticReponseDto;
 import com.example.projectbase.domain.dto.response.comment.CommentResponse;
 import com.example.projectbase.domain.dto.response.reaction.ReactionReponseDto;
 import com.example.projectbase.domain.model.ReactionType;
@@ -27,5 +29,8 @@ public interface BlogService {
     void react(ReactionRequest request);
     ReactionReponseDto getReactionStats(Long blogId);
     Optional<ReactionType> getUserReaction(Long blogId);
+    void approveOrRejectBlog(Long blogId, BlogApprovalRequestDto requestDto);
+    Page<BlogResponse> getPendingBlogs(Pageable pageable);
+    Page<BlogStatiticReponseDto> getBlogStatistics(String fromDate, String toDate, String author, String tag, Pageable pageable);
 
 }

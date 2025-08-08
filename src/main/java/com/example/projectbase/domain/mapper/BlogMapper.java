@@ -36,10 +36,10 @@ public interface BlogMapper {
 
     @Mapping(source = "author", target = "author", qualifiedByName = "mapUserToString")
     @Mapping(source = "title", target = "title")
-    @Mapping(source = "blogId", target = "id")
-    @Mapping(source = "viewCount", target = "viewCount")
-    @Mapping(source = "reactions",target = "likeCount",qualifiedByName = "mapReactionsToLikeCount")
-    @Mapping(source = "comments",target = "commentCount",qualifiedByName = "mapCommentsToCount")
+    @Mapping(source = "blogId", target = "blogId")
+    @Mapping(target = "viewCount", expression = "java(0L)")
+    @Mapping(source = "reactions", target = "viewLike", qualifiedByName = "mapReactionsToLikeCount")
+    @Mapping(source = "comments", target = "commentCount", qualifiedByName = "mapCommentsToCount")
     BlogStatiticReponseDto toBlogStatiticReponseDto(Blog blog);
 
     @Named("mapReactionsToLikeCount")

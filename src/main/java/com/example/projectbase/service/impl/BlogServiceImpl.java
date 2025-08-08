@@ -1,11 +1,13 @@
 package com.example.projectbase.service.impl;
 
 import com.example.projectbase.constant.ErrorMessage;
+import com.example.projectbase.domain.dto.request.blog.BlogApprovalRequestDto;
 import com.example.projectbase.domain.dto.request.blog.BlogRequest;
 import com.example.projectbase.domain.dto.request.blog.BlogUpdateDto;
 import com.example.projectbase.domain.dto.request.comment.CommentRequest;
 import com.example.projectbase.domain.dto.request.reaction.ReactionRequest;
 import com.example.projectbase.domain.dto.response.blog.BlogResponse;
+import com.example.projectbase.domain.dto.response.blog.BlogStatiticReponseDto;
 import com.example.projectbase.domain.dto.response.comment.CommentResponse;
 import com.example.projectbase.domain.dto.response.reaction.ReactionReponseDto;
 import com.example.projectbase.domain.dto.response.storage.UploadFileResponseDto;
@@ -16,6 +18,7 @@ import com.example.projectbase.domain.entity.User;
 import com.example.projectbase.domain.mapper.BlogMapper;
 import com.example.projectbase.domain.mapper.CommentMapper;
 import com.example.projectbase.domain.model.ReactionType;
+import com.example.projectbase.domain.model.RegistrationStatus;
 import com.example.projectbase.repository.*;
 import com.example.projectbase.security.UserPrincipal;
 import com.example.projectbase.service.BlogService;
@@ -35,6 +38,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.EnumMap;
 import java.util.List;
@@ -196,6 +200,29 @@ public class BlogServiceImpl implements BlogService {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return reactionRepository.findByUser_UsernameAndBlog_BlogId(username, blogId)
                 .map(Reaction::getType);
+    }
+
+    @Override
+    public void approveOrRejectBlog(Long blogId, BlogApprovalRequestDto requestDto) {
+
+        Blog blog = blogRepository.findById(blogId)
+                .orElseThrow(() -> new RuntimeException(ErrorMessage.Blog.BLOG_NOT_FOUND));
+        blog.setStatus(RegistrationStatus.valueOf(requestDto.getStatus()));
+        blogRepository.save(blog);
+    }
+
+    @Override
+    public Page<BlogResponse> getPendingBlogs(Pageable pageable) {
+        Page<Blog> page = blogRepository.findByStatus(String.valueOf(RegistrationStatus.PENDING), pageable);
+        return page.map(blogMapper::toResponse);
+    }
+
+    @Override
+    public Page<BlogStatiticReponseDto> getBlogStatistics(String fromDate, String toDate, String author, String tag, Pageable pageable) {
+        LocalDate from = fromDate != null ? LocalDate.parse(fromDate) : null;
+        LocalDate to = toDate != null ? LocalDate.parse(toDate) : null;
+        Page<Blog> page = blogRepository.findStatistics(from, to, author, tag, pageable);
+        return page.map(blogMapper::toBlogStatiticReponseDto);
     }
 
     public BlogResponse toResponse(Blog blog){
