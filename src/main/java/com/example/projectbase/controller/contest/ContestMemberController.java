@@ -99,7 +99,6 @@ public class ContestMemberController {
         return ResponseEntity.ok(contestService.submitContest(urlFile.getUrlFile(), contestId, user));
     }
 
-    @PreAuthorize("hasRole('USER')")
     @Operation(summary = "Api get all submission by contest id")
     @PostMapping(value = "/submission/{contestId}")
     public ResponseEntity<?> getSubmissions(
