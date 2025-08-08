@@ -246,9 +246,12 @@ public class ContestServiceImpl implements ContestService {
 
     @Override
     public Page<ContestSubmissionResponse> getAllSubmission(UserPrincipal user, Long contestId, Pageable pageable) {
-        System.out.println(user.getId()  + "hrr");
-        System.out.println(contestId + "hi");
         return contestSubmissionRepository.findAllSubmission(contestId, user.getId(), pageable).map(this::toContestSubmissionResponse);
+    }
+
+    @Override
+    public Page<ContestSubmissionResponse> getAllSubmissionNoUser(Long contestId, Pageable pageable) {
+        return contestSubmissionRepository.findAllSubmissionNoUser(contestId, pageable).map(this::toContestSubmissionResponse);
     }
 
     public ContestSubmissionResponse toContestSubmissionResponse(ContestSubmission contestSubmission) {
