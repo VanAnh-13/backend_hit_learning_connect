@@ -71,7 +71,7 @@ public class BlogController {
     }
 
     @Tag(name="Blog-USER-controller")
-    @PreAuthorize("hasRole('USER')")
+    @PreAuthorize("hasRole('USER', 'ADMIN', 'LEADER')")
     @Operation(summary = "Api delete blog by id")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> delete(@PathVariable Long id){
