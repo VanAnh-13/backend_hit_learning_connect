@@ -29,4 +29,6 @@ public interface ContestService {
   ContestSubmissionResponse submitContest(String urlFile, Long contestId, UserPrincipal userPrincipal) throws IOException;
   void autoCloseExpiredContests();
   Page<ContestSubmissionResponse> getAllSubmission(UserPrincipal user, Long contestId, Pageable pageable);
+
+  Page<ContestSubmissionResponse> getAllSubmissionNoUser(Long contestId, Pageable pageable);
 }

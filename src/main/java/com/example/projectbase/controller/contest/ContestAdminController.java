@@ -7,6 +7,8 @@ import com.example.projectbase.domain.dto.request.contest.ContestCreatetDto;
 import com.example.projectbase.domain.dto.request.contest.ContestUpdateDto;
 import com.example.projectbase.domain.dto.response.contest.ContestResponseDto;
 import com.example.projectbase.domain.dto.response.contest.ContestResultResponse;
+import com.example.projectbase.security.CurrentUser;
+import com.example.projectbase.security.UserPrincipal;
 import com.example.projectbase.service.ContestService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -134,6 +136,14 @@ public class ContestAdminController {
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorMessage.Contest.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @Operation(summary = "Api get all submission by contest id")
+    @PostMapping(value = "/submission/{contestId}")
+    public ResponseEntity<?> getSubmissions(
+            @PathVariable Long contestId,
+            @ParameterObject @PageableDefault(page = 0, size = 1000) Pageable pageable) {
+        return ResponseEntity.ok(service.getAllSubmissionNoUser(contestId, pageable));
     }
 
 }
