@@ -22,4 +22,5 @@ public class ContestSubmissionResponse {
     private String fileUrl;
     private Long contestId;
     private LocalDateTime submittedAt;
+    private Long userId;
 }
