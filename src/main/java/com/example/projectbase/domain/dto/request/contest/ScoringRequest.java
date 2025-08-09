@@ -9,4 +9,5 @@ import lombok.*;
 @Builder
 public class ScoringRequest {
     private Long score;
+    private String resultSummary;
 }

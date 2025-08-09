@@ -262,6 +262,7 @@ public class ContestServiceImpl implements ContestService {
         );
 
         contestSubmission.setHighestScore(scoringRequest.getScore());
+        contestSubmission.setResultSummary(scoringRequest.getResultSummary());
 
         contestSubmissionRepository.save(contestSubmission);
 
