@@ -97,7 +97,7 @@ public class UrlConstant {
         public static final String GET_COMMENT = BASE + "/comment/{commentId}";
 
         public static final String DROP_REACT = BASE + "/react";
-        public static final String GET_REACT = BASE + "/react";
+        public static final String GET_REACT = BASE + "/react/{blogId}";
     }
 
 }

@@ -6,6 +6,7 @@ import com.example.projectbase.domain.dto.request.blog.SearchBlogRequest;
 import com.example.projectbase.domain.dto.request.comment.CommentRequest;
 import com.example.projectbase.domain.dto.request.reaction.ReactionRequest;
 import com.example.projectbase.domain.dto.response.blog.BlogResponse;
+import com.example.projectbase.domain.dto.response.blog.ReactionResponse;
 import com.example.projectbase.domain.dto.response.comment.CommentResponse;
 import com.example.projectbase.domain.dto.response.reaction.ReactionReponseDto;
 import com.example.projectbase.domain.model.ReactionType;
@@ -38,4 +39,6 @@ public interface BlogService {
     CommentResponse updateComment(UserPrincipal user, Long commentId, String content);
 
     Page<BlogResponse> findBlog(SearchBlogRequest search, Pageable pageable);
+
+    ReactionResponse getAllReact(Long blogId);
 }
