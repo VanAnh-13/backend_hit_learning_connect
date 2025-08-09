@@ -5,6 +5,7 @@ import com.example.projectbase.constant.ErrorMessage;
 import com.example.projectbase.constant.ResponseMessage;
 import com.example.projectbase.domain.dto.request.contest.ContestCreatetDto;
 import com.example.projectbase.domain.dto.request.contest.ContestUpdateDto;
+import com.example.projectbase.domain.dto.request.contest.ScoringRequest;
 import com.example.projectbase.domain.dto.response.contest.ContestResponseDto;
 import com.example.projectbase.domain.dto.response.contest.ContestResultResponse;
 import com.example.projectbase.security.CurrentUser;
@@ -145,5 +146,15 @@ public class ContestAdminController {
             @ParameterObject @PageableDefault(page = 0, size = 1000) Pageable pageable) {
         return ResponseEntity.ok(service.getAllSubmissionNoUser(contestId, pageable));
     }
+
+    @Operation(summary = "Api scoring for submissionId")
+    @PostMapping(value = "/scoring/{submissionId}")
+    public ResponseEntity<?> scoring(
+            @PathVariable Long submissionId,
+            @RequestBody ScoringRequest scoringRequest
+            ) {
+        return ResponseEntity.ok(service.scoringSubmission(submissionId, scoringRequest));
+    }
+
 
 }

@@ -4,6 +4,7 @@ import com.example.projectbase.domain.dto.request.contest.ContestCreatetDto;
 import com.example.projectbase.domain.dto.request.contest.ContestSubmissionRequest;
 import com.example.projectbase.domain.dto.request.contest.ContestUpdateDto;
 //import com.example.projectbase.domain.dto.response.contest.ContestAdminResponseDto;
+import com.example.projectbase.domain.dto.request.contest.ScoringRequest;
 import com.example.projectbase.domain.dto.response.contest.ContestResponseDto;
 import com.example.projectbase.domain.dto.response.contest.ContestResultResponse;
 import com.example.projectbase.domain.dto.response.contest.ContestSubmissionResponse;
@@ -31,4 +32,6 @@ public interface ContestService {
   Page<ContestSubmissionResponse> getAllSubmission(UserPrincipal user, Long contestId, Pageable pageable);
 
   Page<ContestSubmissionResponse> getAllSubmissionNoUser(Long contestId, Pageable pageable);
+
+  ContestSubmissionResponse scoringSubmission(Long submissionId, ScoringRequest scoringRequest);
 }
