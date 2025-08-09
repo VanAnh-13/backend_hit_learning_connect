@@ -24,14 +24,17 @@ public interface ReactionRepository extends JpaRepository<Reaction, Long> {
 
     Optional<Reaction> findByUser_UsernameAndBlog_BlogId(String username, Long blogId);
 
-
     @Query("""
-       SELECT COUNT(r)
-       FROM Reaction r
-       WHERE r.blog.blogId = :blogId
-         AND r.type = :type
-       """)
+            SELECT COUNT(r)
+            FROM Reaction r
+            WHERE r.blog.blogId = :blogId
+              AND r.type = :type
+            """)
     Long countByBlog_BlogIdAndType(@Param("blogId") Long blogId,
                                    @Param("type") ReactionType type);
 
+    @Query("DELETE FROM Reaction c WHERE c.blog.blogId = :blogId")
+    @Transactional
+    @Modifying(clearAutomatically = true, flushAutomatically = true)
+    void deleteAllByBlog_BlogId(@Param("blogId") Long blogId);
 }
