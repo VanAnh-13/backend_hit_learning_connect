@@ -6,8 +6,10 @@ import com.example.projectbase.domain.dto.request.auth.TokenRefreshRequestDto;
 import com.example.projectbase.domain.dto.response.CommonResponseDto;
 import com.example.projectbase.domain.dto.response.auth.LoginResponseDto;
 import com.example.projectbase.domain.dto.response.auth.TokenRefreshResponseDto;
+import com.example.projectbase.domain.dto.response.classes.TotalResponse;
 import com.example.projectbase.domain.entity.User;
 import com.example.projectbase.exception.extended.UnauthorizedException;
+import com.example.projectbase.repository.ClassRepository;
 import com.example.projectbase.repository.UserRepository;
 import com.example.projectbase.security.UserPrincipal;
 import com.example.projectbase.security.jwt.JwtTokenProvider;
@@ -29,6 +31,8 @@ public class AuthServiceImpl implements AuthService {
   private final JwtTokenProvider jwtTokenProvider;
 
   private final UserRepository userRepository;
+
+  private final ClassRepository classRepository;
 
   @Override
   public LoginResponseDto login(LoginRequestDto request) {
@@ -64,6 +68,18 @@ public class AuthServiceImpl implements AuthService {
   @Override
   public CommonResponseDto logout(HttpServletRequest request) {
     return null;
+  }
+
+  @Override
+  public TotalResponse getTotal() {
+    Long totalClassCount = classRepository.count();
+    Long totalAdminCount = userRepository.countAllByRole_Name("ROLE_ADMIN");
+    Long totalUserCount = userRepository.countAllByRole_Name("ROLE_USER");
+    return TotalResponse.builder()
+            .totalAdmin(totalAdminCount)
+            .totalClass(totalClassCount)
+            .totalUser(totalUserCount)
+            .build();
   }
 
 }

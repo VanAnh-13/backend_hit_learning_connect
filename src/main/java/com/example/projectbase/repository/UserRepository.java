@@ -59,5 +59,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
   );
 
 
-
+  Long countAllByRole_Name(String admin);
 }

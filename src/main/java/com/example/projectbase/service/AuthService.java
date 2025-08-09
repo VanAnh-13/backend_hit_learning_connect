@@ -6,6 +6,7 @@ import com.example.projectbase.domain.dto.response.CommonResponseDto;
 import com.example.projectbase.domain.dto.response.auth.LoginResponseDto;
 import com.example.projectbase.domain.dto.response.auth.TokenRefreshResponseDto;
 
+import com.example.projectbase.domain.dto.response.classes.TotalResponse;
 import jakarta.servlet.http.HttpServletRequest;
 
 public interface AuthService {
@@ -16,4 +17,5 @@ public interface AuthService {
 
   CommonResponseDto logout(HttpServletRequest request);
 
+  TotalResponse getTotal();
 }

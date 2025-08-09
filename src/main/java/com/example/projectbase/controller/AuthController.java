@@ -20,6 +20,7 @@ import lombok.RequiredArgsConstructor;
 import org.apache.coyote.BadRequestException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import jakarta.validation.Valid;
@@ -93,5 +94,10 @@ public class AuthController {
     return VsResponseUtil.success(userService.changePassword(changePassRequest, principal));
   }
 
+  @Operation(summary = "API get total class, user, admin")
+  @GetMapping(UrlConstant.Auth.TOTAL)
+  public ResponseEntity<?> getTotalClassUser() {
+    return VsResponseUtil.success(authService.getTotal());
+  }
 
 }
