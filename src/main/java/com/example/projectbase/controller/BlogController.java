@@ -146,9 +146,8 @@ public class BlogController {
 
     @Operation(summary = "Api get react by id comment or blog")
     @GetMapping(UrlConstant.Blog.GET_REACT)
-    public ResponseEntity<?> getReact(@RequestBody ReactionRequest request) {
-        blogService.react(request);
-        return ResponseEntity.ok("get react to blog successful");
+    public ResponseEntity<?> getReact(@PathVariable Long blogId) {
+        return VsResponseUtil.success(blogService.getAllReact(blogId));
     }
 
 }

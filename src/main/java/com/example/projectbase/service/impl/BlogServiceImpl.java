@@ -7,6 +7,7 @@ import com.example.projectbase.domain.dto.request.blog.SearchBlogRequest;
 import com.example.projectbase.domain.dto.request.comment.CommentRequest;
 import com.example.projectbase.domain.dto.request.reaction.ReactionRequest;
 import com.example.projectbase.domain.dto.response.blog.BlogResponse;
+import com.example.projectbase.domain.dto.response.blog.ReactionResponse;
 import com.example.projectbase.domain.dto.response.comment.CommentResponse;
 import com.example.projectbase.domain.dto.response.reaction.ReactionReponseDto;
 import com.example.projectbase.domain.dto.response.storage.UploadFileResponseDto;
@@ -254,6 +255,18 @@ public class BlogServiceImpl implements BlogService {
     public Page<BlogResponse> findBlog(SearchBlogRequest search, Pageable pageable) {
         Page<Blog> blogs = blogRepository.searchByKeyword(search.getKeyword(), pageable);
         return blogs.map(blogMapper::toResponse);
+    }
+
+    @Override
+    public ReactionResponse getAllReact(Long blogId) {
+        return ReactionResponse.builder()
+                .WOW(reactionRepository.countByBlog_BlogIdAndType(blogId, ReactionType.WOW))
+                .SAD(reactionRepository.countByBlog_BlogIdAndType(blogId, ReactionType.SAD))
+                .ANGRY(reactionRepository.countByBlog_BlogIdAndType(blogId, ReactionType.ANGRY))
+                .HAHA(reactionRepository.countByBlog_BlogIdAndType(blogId, ReactionType.HAHA))
+                .LIKE(reactionRepository.countByBlog_BlogIdAndType(blogId, ReactionType.LIKE))
+                .LOVE(reactionRepository.countByBlog_BlogIdAndType(blogId, ReactionType.LOVE))
+                .build();
     }
 
     @Override
