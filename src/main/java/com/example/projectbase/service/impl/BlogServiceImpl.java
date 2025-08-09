@@ -3,6 +3,7 @@ package com.example.projectbase.service.impl;
 import com.example.projectbase.constant.ErrorMessage;
 import com.example.projectbase.domain.dto.request.blog.BlogRequest;
 import com.example.projectbase.domain.dto.request.blog.BlogUpdateDto;
+import com.example.projectbase.domain.dto.request.blog.SearchBlogRequest;
 import com.example.projectbase.domain.dto.request.comment.CommentRequest;
 import com.example.projectbase.domain.dto.request.reaction.ReactionRequest;
 import com.example.projectbase.domain.dto.response.blog.BlogResponse;
@@ -221,6 +222,12 @@ public class BlogServiceImpl implements BlogService {
         }
 
         return commentMapper.toResponse(comment);
+    }
+
+    @Override
+    public Page<BlogResponse> findBlog(SearchBlogRequest search, Pageable pageable) {
+        Page<Blog> blogs = blogRepository.searchByKeyword(search.getKeyword(), pageable);
+        return blogs.map(blogMapper::toResponse);
     }
 
     @Override

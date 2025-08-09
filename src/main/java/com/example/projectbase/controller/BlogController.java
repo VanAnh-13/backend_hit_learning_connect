@@ -7,6 +7,7 @@ import com.example.projectbase.constant.ResponseMessage;
 import com.example.projectbase.constant.UrlConstant;
 import com.example.projectbase.domain.dto.request.blog.BlogRequest;
 import com.example.projectbase.domain.dto.request.blog.BlogUpdateDto;
+import com.example.projectbase.domain.dto.request.blog.SearchBlogRequest;
 import com.example.projectbase.domain.dto.request.comment.CommentRequest;
 import com.example.projectbase.domain.dto.request.reaction.ReactionRequest;
 import com.example.projectbase.domain.dto.response.blog.BlogResponse;
@@ -76,6 +77,13 @@ public class BlogController {
     public ResponseEntity<?> getAllBlog(@ParameterObject @PageableDefault(page = 0, size = 1000, sort = "blogId", direction = Sort.Direction.ASC) Pageable pageable){
 
             return VsResponseUtil.success(HttpStatus.OK, blogService.getAll(pageable));
+    }
+
+    @PostMapping(UrlConstant.Blog.SEARCH)
+    @Operation(summary = "Api get all blogs by keyword")
+    public ResponseEntity<?> findBlog(@RequestBody SearchBlogRequest search, @ParameterObject @PageableDefault(page = 0, size = 1000, sort = "blogId", direction = Sort.Direction.ASC) Pageable pageable){
+
+        return VsResponseUtil.success(HttpStatus.OK, blogService.findBlog(search ,pageable));
     }
 
     //--------------------------------tag--------------------------------------
