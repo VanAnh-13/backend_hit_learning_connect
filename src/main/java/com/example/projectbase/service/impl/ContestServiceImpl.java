@@ -4,6 +4,7 @@ import com.example.projectbase.constant.ErrorMessage;
 import com.example.projectbase.domain.dto.request.contest.ContestCreatetDto;
 import com.example.projectbase.domain.dto.request.contest.ContestSubmissionRequest;
 import com.example.projectbase.domain.dto.request.contest.ContestUpdateDto;
+import com.example.projectbase.domain.dto.request.contest.ScoringRequest;
 import com.example.projectbase.domain.dto.response.contest.ContestResponseDto;
 import com.example.projectbase.domain.dto.response.contest.ContestResultResponse;
 import com.example.projectbase.domain.dto.response.contest.ContestSubmissionResponse;
@@ -252,6 +253,20 @@ public class ContestServiceImpl implements ContestService {
     @Override
     public Page<ContestSubmissionResponse> getAllSubmissionNoUser(Long contestId, Pageable pageable) {
         return contestSubmissionRepository.findAllSubmissionNoUser(contestId, pageable).map(this::toContestSubmissionResponse);
+    }
+
+    @Override
+    public ContestSubmissionResponse scoringSubmission(Long submissionId, ScoringRequest scoringRequest) {
+        ContestSubmission contestSubmission = contestSubmissionRepository.findById(submissionId).orElseThrow(
+                () -> new RuntimeException(ErrorMessage.ContestSubmission.SUBMISSION_NOT_FOUND)
+        );
+
+        contestSubmission.setHighestScore(scoringRequest.getScore());
+        contestSubmission.setResultSummary(scoringRequest.getResultSummary());
+
+        contestSubmissionRepository.save(contestSubmission);
+
+        return toContestSubmissionResponse(contestSubmission);
     }
 
     public ContestSubmissionResponse toContestSubmissionResponse(ContestSubmission contestSubmission) {

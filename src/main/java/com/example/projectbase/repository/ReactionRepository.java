@@ -5,9 +5,11 @@ import com.example.projectbase.domain.entity.Reaction;
 import com.example.projectbase.domain.entity.User;
 import com.example.projectbase.domain.model.ReactionType;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -22,6 +24,7 @@ public interface ReactionRepository extends JpaRepository<Reaction, Long> {
 
     Optional<Reaction> findByUser_UsernameAndBlog_BlogId(String username, Long blogId);
 
+
     @Query("""
        SELECT COUNT(r)
        FROM Reaction r
@@ -30,4 +33,5 @@ public interface ReactionRepository extends JpaRepository<Reaction, Long> {
        """)
     Long countByBlog_BlogIdAndType(@Param("blogId") Long blogId,
                                    @Param("type") ReactionType type);
+
 }

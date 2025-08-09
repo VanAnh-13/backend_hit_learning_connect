@@ -55,14 +55,14 @@ public class BlogController {
 
     @Operation(summary = "Api update blog by id ")
     @PutMapping(UrlConstant.Blog.UPDATE_BLOG)
-    public ResponseEntity<?> updateBlog(@PathVariable Long blogId, @Valid @RequestBody BlogUpdateDto request){
-            return VsResponseUtil.success(HttpStatus.OK, blogService.update(blogId, request));
+    public ResponseEntity<?> updateBlog(@PathVariable Long blogId, @Valid @RequestBody BlogUpdateDto request, @Parameter(name = "principal", hidden = true) @CurrentUser UserPrincipal user){
+            return VsResponseUtil.success(HttpStatus.OK, blogService.update(blogId, request, user));
     }
 
     @Operation(summary = "Api delete blog by id")
     @DeleteMapping(UrlConstant.Blog.DELETE_BLOG)
-    public ResponseEntity<?> delete(@PathVariable Long blogId){
-            blogService.delete(blogId);
+    public ResponseEntity<?> delete(@PathVariable Long blogId, @Parameter(name = "principal", hidden = true) @CurrentUser UserPrincipal user){
+            blogService.delete(blogId, user);
             return VsResponseUtil.success(ResponseMessage.DELETE_SUCCESS);
     }
 
