@@ -75,6 +75,7 @@ public class ErrorMessage {
         public static final String ORIGINAL_FILENAME = "exception.original.not_found";
         public static final String UPLOADING_FILE = "exception.uploading_file";
         public static final String INVALID_FILE = "exception.invalid_file";
+        public static final String FILE_URL_REQUIRED="exception.file.url_required";
 
     }
 

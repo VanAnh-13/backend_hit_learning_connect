@@ -2,11 +2,13 @@ package com.example.projectbase.domain.entity;
 
 
 import com.example.projectbase.domain.model.SubmissionStatus;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
@@ -22,16 +24,19 @@ public class ContestSubmission {
     @Column(name = "submission_id")
     private Long submissionId;
 
-    @ManyToOne
-    @JoinColumn(name = "problem_id", nullable = false)
-    private ContestProblem problem;
+//    @ManyToOne
+//    @JoinColumn(name = "problem_id", nullable = true)
+//    @JsonIgnore
+//    private ContestProblem problem;
+//
+//    @ManyToOne
+//    @JoinColumn(name = "user_id", nullable = true)
+//    @JsonIgnore
+//    private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
-
-//    @Column(name = "code", nullable = false)
-//    private String code;
+    @Column(name = "code", nullable = true)
+    @JsonIgnore
+    private String code;
 
     @Column(name="highestScore")
     private double highestScore;
@@ -58,9 +63,11 @@ public class ContestSubmission {
     private User createdBy;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
+    @Column(name = "status", nullable = true)
+    @JsonIgnore
     private SubmissionStatus status = SubmissionStatus.PENDING;
 
+    @CreationTimestamp
     @Column(name = "submitted_at", nullable = false)
     private LocalDateTime submittedAt = LocalDateTime.now();
 }

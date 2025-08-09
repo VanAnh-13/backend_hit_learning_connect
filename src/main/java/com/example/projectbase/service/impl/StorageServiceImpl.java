@@ -97,6 +97,7 @@ public class StorageServiceImpl implements StorageService {
             return UploadFileResponseDto.builder()
                     .fileName(originalFilename)
                     .filePath(downloadUrl)
+                    .fileUrl(downloadUrl)
                     .fileSize(size)
                     .fileType(StringUtils.getFilenameExtension(originalFilename))
                     .build();

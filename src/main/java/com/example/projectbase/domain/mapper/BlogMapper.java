@@ -13,37 +13,27 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Named;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring")
 public interface BlogMapper {
 
-    @Mapping(source = "author", target = "author", qualifiedByName = "mapUserToString")
-    @Mapping(source = "tags", target = "tags", qualifiedByName = "mapTagsToStrings")
-    @Mapping(source = "blogId", target = "id")
-    @Mapping(source = "imgUrl", target = "imageUrl")
-    @Mapping(expression = "java(blog.getComments() != null ? blog.getComments().size() : 0)", target = "commentCount")
-    @Mapping(expression = "java(blog.getReactions() != null ? blog.getReactions().size() : 0)", target = "reactionCount")
+    @Mapping(source = "tags", target = "tags")
+    @Mapping(source = "author.fullName", target = "author")
+    @Mapping(source = "blogId", target = "blogId")
     BlogResponse toResponse(Blog blog);
 
-    List<BlogResponse> toResponseList(List<Blog> blogs);
-
-    Blog toEntity(BlogRequest request);
-
-    void updateEntity(@MappingTarget Blog blog, BlogUpdateDto request);
-
-
-    @Named("mapUserToString")
-    default String mapUserToString(User user) {
-        return user != null ? user.getUsername() : null;
+    default List<String> mapTagsToNames(List<Tag> tags) {
+        if (tags == null || tags.isEmpty()) {
+            return Collections.emptyList();
+        }
+        return tags.stream()
+                .filter(Objects::nonNull)
+                .map(Tag::getName)
+                .collect(Collectors.toList());
     }
 
-    @Named("mapTagsToStrings")
-    default List<String> mapTagsToStrings(List<Tag> tags) {
-        return tags == null ? null :
-                tags.stream()
-                        .map(Tag::getName)
-                        .collect(Collectors.toList());
-    }
 }

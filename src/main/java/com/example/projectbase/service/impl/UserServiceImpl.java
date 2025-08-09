@@ -24,6 +24,7 @@ import com.example.projectbase.service.UserService;
 import com.nimbusds.openid.connect.sdk.claims.Gender;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.sql.Update;
+import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Pageable;
@@ -52,6 +53,8 @@ public class UserServiceImpl implements UserService {
 
     private final ContestRepository contestRepository;
 
+    private final CacheManager cacheManager;
+
     //------------------------CRUD User------------------------
     @Override
     @Cacheable(value = "userDto", key = "#id")
@@ -76,7 +79,7 @@ public class UserServiceImpl implements UserService {
             throw new InvalidException(ErrorMessage.User.ERR_EMAIL_EXISTED, new String[]{userCreateDto.getEmail()});
         }
 
-        if (userRepository.findByUsername(userCreateDto.getUsername()).isPresent()) {
+        if (userRepository.findByUsernameIgnoreCase(userCreateDto.getUsername()).isPresent()) {
             throw new InvalidException(ErrorMessage.User.ERR_USER_NAME_EXISTED, new String[]{userCreateDto.getUsername()});
         }
 
@@ -101,6 +104,7 @@ public class UserServiceImpl implements UserService {
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
+        cacheManager.getCache("users").evict(user.getUsername());
         return userCreateDto;
     }
 
@@ -110,13 +114,15 @@ public class UserServiceImpl implements UserService {
         return userMapper.toUserResponseDto(
                 userRepository.findById(id).map(user -> {
 
+                    cacheManager.getCache("users").evict(user.getUsername());
+
                     System.out.println(user.getPassword());
 
                     if (userRepository.findByEmail(updatedUser.getEmail()).isPresent() && !user.getEmail().equals(updatedUser.getEmail())) {
                         throw new InvalidException(ErrorMessage.User.ERR_EMAIL_EXISTED, new String[]{updatedUser.getEmail()});
                     }
 
-                    if (userRepository.findByUsername(updatedUser.getUsername()).isPresent() && !user.getUsername().equals(updatedUser.getUsername())) {
+                    if (userRepository.findByUsernameIgnoreCase(updatedUser.getUsername()).isPresent() && !user.getUsername().equals(updatedUser.getUsername())) {
                         throw new InvalidException(ErrorMessage.User.ERR_USER_NAME_EXISTED, new String[]{updatedUser.getUsername()});
                     }
 
@@ -161,6 +167,8 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(Long id) {
         User user = userRepository.findById(id).orElseThrow(() -> new RuntimeException(ErrorMessage.User.ERR_USER_NOT_FOUND));
 
+        cacheManager.getCache("users").evict(user.getUsername());
+
         Set<Contest> contests = user.getContests();
         for (Contest contest : contests) {
             contest.getParticipants().remove(user);
@@ -188,7 +196,7 @@ public class UserServiceImpl implements UserService {
 
     //------------------------Common--------------------------
     User getUser(UserPrincipal currentUser) {
-        return userRepository.findByUsername(currentUser.getUsername())
+        return userRepository.findByUsernameIgnoreCase(currentUser.getUsername())
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME,
                         new String[]{currentUser.getUsername()}));
     }

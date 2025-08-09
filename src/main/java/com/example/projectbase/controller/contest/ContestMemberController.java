@@ -6,6 +6,7 @@ import com.example.projectbase.constant.ErrorMessage;
 import com.example.projectbase.constant.ResponseMessage;
 import com.example.projectbase.domain.dto.request.contest.ContestSubmissionRequest;
 import com.example.projectbase.domain.dto.request.contest.ContestSubmissionRequestWrapper;
+import com.example.projectbase.domain.dto.request.storage.UrlFileRequest;
 import com.example.projectbase.domain.dto.response.contest.ContestResponseDto;
 import com.example.projectbase.domain.dto.response.contest.ContestResultResponse;
 import com.example.projectbase.security.CurrentUser;
@@ -25,7 +26,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import io.swagger.v3.oas.annotations.tags.Tags;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springdoc.api.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +43,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 
 
-@RequestMapping("api/contest")
+@RequestMapping("api/v1/contest")
 @RestController
 @RequiredArgsConstructor
 @Validated
@@ -49,104 +54,58 @@ public class ContestMemberController {
 
 
     @Operation(summary = "Api get all contest ")
-    @GetMapping("/page")
+    @GetMapping("")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> getAllPaged(@RequestParam(defaultValue ="0" ) int page,
-                                         @RequestParam(defaultValue = "10") int size){
-      try{
-          return ResponseEntity.ok(contestService.getAllPaged(page, size));
-      }catch (Exception e){
-          return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorMessage.Contest.INTERNAL_SERVER_ERROR);
-      }
+    public ResponseEntity<?> getAllPaged(@ParameterObject @PageableDefault(page = 0, size = 1000, sort = "contestId", direction = Sort.Direction.ASC) Pageable pageable) {
+          return ResponseEntity.ok(contestService.getAll(pageable));
     }
 
     @Operation(summary = "Api search contest")
     @GetMapping("/search")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> search(@RequestParam String keywork,@RequestParam (defaultValue = "0") int page,
-                                    @RequestParam (defaultValue = "10")int size){
-        try{
-            Page<ContestResponseDto> contestPage= contestService.search(keywork, page, size);
-            return ResponseEntity.ok(contestPage);
-        }catch (Exception e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorMessage.Contest.INTERNAL_SERVER_ERROR);
-        }
+    public ResponseEntity<?> search(@RequestParam String keyword,
+                                    @ParameterObject @PageableDefault(page = 0, size = 1000, sort = "contestId", direction = Sort.Direction.ASC) Pageable pageable){
+
+        return ResponseEntity.ok(contestService.search(keyword, pageable));
     }
 
     @Operation(summary = "Api View exam details")
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> getContestDetail(@PathVariable Long id){
-        try{
-            ContestResponseDto reponse= contestService.getById(id);
-            return ResponseEntity.ok(reponse);
-        }catch (EntityNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorMessage.Contest.CONTEST_DETAIL_NOT_FOUND);
-        }catch (IllegalArgumentException e){
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorMessage.Contest.INTERNAL_SERVER_ERROR);
-        }
+        return ResponseEntity.ok(contestService.getById(id));
+
     }
 
-//    @Tags({
-//            @Tag(name = "contest-MEMBER-controller")
-//    })
+
     @PreAuthorize("hasRole('USER')")
     @Operation(summary = "API join contest by id")
     @PostMapping("/join/{contestId}")
     public ResponseEntity<?> joinContest(@PathVariable Long contestId, @Parameter(name = "principal", hidden = true)
     @CurrentUser UserPrincipal principal
     ){
-        contestService.joinContest(contestId,principal);
+        contestService.joinContest(contestId, principal);
         return VsResponseUtil.success(ResponseMessage.Contest.JOIN_CONTEST);
     }
 
-    /***
-     *
-     * @param
-     * @return
-     */
-    @Operation(summary = "Api start contest")
-    @GetMapping("/start/{contestId}")
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> startContest(@PathVariable Long contestId) {
-        try {
-            return ResponseEntity.ok(contestService.startContest(contestId));
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ErrorMessage.Contest.CONTEST_TIME_INVALID);
-        } catch (EntityNotFoundException e) {
-            String message = e.getMessage();
-            if (ErrorMessage.Contest.USER_CONTEST_NOT_FOUND.equals(message)) {
-                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorMessage.Contest.USER_CONTEST_NOT_FOUND);
-            }
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ErrorMessage.Contest.CONTEST_NOT_FOUND);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorMessage.Contest.INTERNAL_SERVER_ERROR);
-        }
+    @Operation(summary = "Api submit contest file")
+    @PostMapping(value = "/submit/{contestId}")
+    public ResponseEntity<?> submitContest(
+            @PathVariable Long contestId,
+            @RequestBody UrlFileRequest urlFile,
+            @Parameter(name = "principal", hidden = true) @CurrentUser UserPrincipal user
+    ) throws IOException {
+        return ResponseEntity.ok(contestService.submitContest(urlFile.getUrlFile(), contestId, user));
     }
 
-    @PostMapping(value = "/contest/submit", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasRole('USER')")
-    @Operation(
-            summary = "Submit contest file",
-            description = "submit the entry for the competition",
-            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
-                    required = true,
-                    content = @Content(
-                            mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
-                            schema = @Schema(implementation = ContestSubmissionRequestWrapper.class)
-                    )
-            )
-    )
-    public ResponseEntity<?> submitContest(
-            @RequestPart("request") String requestJson,
-            @RequestPart("file") MultipartFile file,
-            @CurrentUser UserPrincipal user
-    ) throws IOException {
-
-        ObjectMapper mapper = new ObjectMapper();
-        ContestSubmissionRequest request = mapper.readValue(requestJson, ContestSubmissionRequest.class);
-        contestService.submitContest(request, file);
-        return ResponseEntity.ok(ResponseMessage.Contest.SUBMIT_FILE);
+    @Operation(summary = "Api get all submission by contest id")
+    @PostMapping(value = "/submission/{contestId}")
+    public ResponseEntity<?> getSubmissions(
+            @PathVariable Long contestId,
+            @ParameterObject @PageableDefault(page = 0, size = 1000) Pageable pageable,
+            @Parameter(name = "principal", hidden = true) @CurrentUser UserPrincipal user) {
+        return ResponseEntity.ok(contestService.getAllSubmission(user, contestId, pageable));
     }
 
     @Operation(summary = "Api result contest by id")

@@ -3,6 +3,7 @@ package com.example.projectbase.repository;
 import com.example.projectbase.domain.entity.Blog;
 import com.example.projectbase.domain.entity.Reaction;
 import com.example.projectbase.domain.entity.User;
+import com.example.projectbase.domain.model.ReactionType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,4 +20,14 @@ public interface ReactionRepository extends JpaRepository<Reaction, Long> {
     @Query("SELECT r.type, COUNT(r) FROM Reaction r WHERE r.blog.blogId = :blogId GROUP BY r.type")
     List<Object[]> countReactionsByType(@Param("blogId") Long blogId);
 
-    Optional<Reaction> findByUser_UsernameAndBlog_BlogId(String username, Long blogId);}
+    Optional<Reaction> findByUser_UsernameAndBlog_BlogId(String username, Long blogId);
+
+    @Query("""
+       SELECT COUNT(r)
+       FROM Reaction r
+       WHERE r.blog.blogId = :blogId
+         AND r.type = :type
+       """)
+    Long countByBlog_BlogIdAndType(@Param("blogId") Long blogId,
+                                   @Param("type") ReactionType type);
+}

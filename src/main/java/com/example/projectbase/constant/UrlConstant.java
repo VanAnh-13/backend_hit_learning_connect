@@ -12,6 +12,7 @@ public class UrlConstant {
         public static final String PASSWORD_CHANGE = PRE_FIX + "/password/change";
         public static final String PASSWORD_CHANGE_FIRST_TIME = PRE_FIX + "/change-password-first-time";
         public static final String FIRST_TIME_LOGIN = PRE_FIX + "/first-time-login";
+        public static final String TOTAL = PRE_FIX + "/total";
         private Auth() {
         }
     }
@@ -76,6 +77,27 @@ public class UrlConstant {
         public static final String CREATE_CONTEST = BASE;
         public static final String UPDATE_CONTEST = BASE + "/{contestId}";
         public static final String DELETE_CONTEST = BASE + "/{contestId}";
+    }
+
+    public static class Blog {
+        public static final String BASE = "/blogs";
+        public static final String GET_BLOG = BASE + "/{blogId:\\d+}";
+        public static final String CREATE_BLOG = BASE;
+        public static final String UPDATE_BLOG = BASE + "/{blogId}";
+        public static final String DELETE_BLOG = BASE + "/{blogId}";
+        public static final String SEARCH_BLOG = BASE + "/search/{tag}";
+        public static final String SEARCH = BASE + "/find";
+
+        public static final String COMMENT_BLOG = BASE + "/comment/set";
+        public static final String GET_ALL_COMMENTS = BASE + "/comments/{blogId}";
+        public static final String DELETE_COMMENTS = BASE + "/comment/{commentId}";
+        public static final String CREATE_REPLY = BASE +  "/comment/{commentId}/reply";
+        public static final String GET_REPLIES = BASE + "/comment/{commentId}/replies";
+        public static final String UPDATE_COMMENT = BASE + "/comment/{commentId}";
+        public static final String GET_COMMENT = BASE + "/comment/{commentId}";
+
+        public static final String DROP_REACT = BASE + "/react";
+        public static final String GET_REACT = BASE + "/react/{blogId}";
     }
 
 }

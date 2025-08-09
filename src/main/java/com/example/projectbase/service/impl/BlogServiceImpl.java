@@ -3,20 +3,23 @@ package com.example.projectbase.service.impl;
 import com.example.projectbase.constant.ErrorMessage;
 import com.example.projectbase.domain.dto.request.blog.BlogRequest;
 import com.example.projectbase.domain.dto.request.blog.BlogUpdateDto;
+import com.example.projectbase.domain.dto.request.blog.SearchBlogRequest;
 import com.example.projectbase.domain.dto.request.comment.CommentRequest;
 import com.example.projectbase.domain.dto.request.reaction.ReactionRequest;
 import com.example.projectbase.domain.dto.response.blog.BlogResponse;
+import com.example.projectbase.domain.dto.response.blog.ReactionResponse;
 import com.example.projectbase.domain.dto.response.comment.CommentResponse;
 import com.example.projectbase.domain.dto.response.reaction.ReactionReponseDto;
-import com.example.projectbase.domain.entity.Blog;
-import com.example.projectbase.domain.entity.Comment;
-import com.example.projectbase.domain.entity.Reaction;
-import com.example.projectbase.domain.entity.User;
+import com.example.projectbase.domain.dto.response.storage.UploadFileResponseDto;
+import com.example.projectbase.domain.entity.*;
 import com.example.projectbase.domain.mapper.BlogMapper;
 import com.example.projectbase.domain.mapper.CommentMapper;
 import com.example.projectbase.domain.model.ReactionType;
+import com.example.projectbase.exception.extended.NotFoundException;
 import com.example.projectbase.repository.*;
+import com.example.projectbase.security.UserPrincipal;
 import com.example.projectbase.service.BlogService;
+import com.example.projectbase.service.StorageService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
@@ -33,10 +36,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.EnumMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -51,54 +51,88 @@ public class BlogServiceImpl implements BlogService {
     private final BlogRepository blogRepository;
     private final BlogMapper blogMapper;
     private final CommentMapper commentMapper;
+    private final StorageService storageService;
 
     @Override
-    public BlogResponse create(BlogRequest request, MultipartFile file) throws IOException {
+    public BlogResponse create(BlogRequest request, UserPrincipal user) throws IOException {
+        String tagString = request.getTags().trim();
 
-        Blog blog= blogMapper.toEntity(request);
+        String[] parts = tagString.split("\\s+");
+        ;
 
-        String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User author = userRepository.findByUsername(username)
-                .orElseThrow(() -> new EntityNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
-        blog.setAuthor(author);
+        String[] Stags = Arrays.stream(parts)
+                .map(s -> s.startsWith("#") ? s.substring(1) : s)
+                .toArray(String[]::new);
 
-        try {
-            if (file == null || file.isEmpty()) {
-                throw new RuntimeException(ErrorMessage.Blog.BLOG_NOT_FOUND);
+        List<Tag> tags = new ArrayList<>();
+
+        for (int i = 0; i < Stags.length; i++) {
+            Tag tag = tagRepository.findByName(Stags[i]);
+            if (tag == null) {
+                tags.add(tagRepository.save(Tag.builder().name(Stags[i]).build()));
+            } else {
+                tags.add(tag);
             }
 
-            String originalFileName = file.getOriginalFilename();
-
-            if (file!= null && !file.isEmpty()) {
-                String fileName = System.currentTimeMillis() + "_" + file.getOriginalFilename();
-                Path uploadPath = Paths.get(System.getProperty("user.dir"), "uploads", "blog");
-                Files.createDirectories(uploadPath);
-                Path filePath = uploadPath.resolve(fileName);
-                file.transferTo(filePath.toFile());
-                blog.setImgUrl(filePath.toString());
-            }
-        }catch (IOException e) {
-            log.error(ErrorMessage.Contest.UPLOADING_FILE, e);
-            throw new RuntimeException(ErrorMessage.Contest.FILE_UPLOAD_FAILED, e);
-        } catch (RuntimeException e) {
-            log.error(ErrorMessage.Contest.VALIDATION_FAILED, e);
-            throw e;
         }
+
+        Blog blog = Blog.builder()
+                .author(userRepository.findById(user.getId()).get())
+                .title(request.getTitle())
+                .urlFile(request.getUrlFile())
+                .description(request.getDescription())
+                .tags(tags)
+                .build();
+
+        for (Tag tag : blog.getTags()) {
+            System.out.println(tag.getName());
+        }
+
         return blogMapper.toResponse(blogRepository.save(blog));
     }
+
 
     @Override
     public BlogResponse update(Long id, BlogUpdateDto request) {
 
-        Blog blog= blogRepository.findById(id).orElseThrow(()->new RuntimeException(ErrorMessage.Blog.BLOG_NOT_FOUND));
-        blogMapper.updateEntity(blog, request);
+        Blog blog = blogRepository.findById(id).orElseThrow(() -> new NotFoundException(ErrorMessage.Blog.BLOG_NOT_FOUND));
+
+        String tagString = request.getTags().trim();
+
+        String[] parts = tagString.split("\\s+");
+        ;
+
+        String[] Stags = Arrays.stream(parts)
+                .map(s -> s.startsWith("#") ? s.substring(1) : s)
+                .toArray(String[]::new);
+
+        List<Tag> tags = new ArrayList<>();
+
+        for (int i = 0; i < Stags.length; i++) {
+            Tag tag = tagRepository.findByName(Stags[i]);
+            if (tag == null) {
+                tags.add(tagRepository.save(Tag.builder().name(Stags[i]).build()));
+            } else {
+                tags.add(tag);
+            }
+
+        }
+
+        blog.getTags().clear();
+        blog.setTags(tags);
+
+        blog.setTitle(request.getTitle());
+        blog.setUrlFile(request.getUrlFile());
+        blog.setDescription(request.getDescription());
+        blog.setUpdatedAt(LocalDateTime.now());
+
         return blogMapper.toResponse(blogRepository.save(blog));
     }
 
     @Override
     public void delete(Long id) {
 
-        if(!blogRepository.existsById(id)){
+        if (!blogRepository.existsById(id)) {
             throw new RuntimeException(ErrorMessage.Blog.BLOG_NOT_FOUND);
         }
         blogRepository.deleteById(id);
@@ -107,7 +141,7 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public BlogResponse getById(Long id) {
 
-        Blog blog= blogRepository.findById(id).orElseThrow(()-> new RuntimeException(ErrorMessage.Blog.BLOG_NOT_FOUND));
+        Blog blog = blogRepository.findById(id).orElseThrow(() -> new RuntimeException(ErrorMessage.Blog.BLOG_NOT_FOUND));
 
         return blogMapper.toResponse(blog);
     }
@@ -115,7 +149,7 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public Page<BlogResponse> getAll(Pageable pageable) {
 
-        return blogRepository.findAll(pageable).map(this::toResponse);
+        return blogRepository.findAll(pageable).map(blogMapper::toResponse);
     }
 
     @Override
@@ -126,29 +160,94 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public CommentResponse comment(CommentRequest request) {
+    public CommentResponse comment(CommentRequest request, UserPrincipal userPrincipal) throws IOException {
 
-        String username= SecurityContextHolder.getContext().getAuthentication().getName();
-        User user= userRepository.findByUsername(username).orElseThrow(()->new RuntimeException(ErrorMessage.User.ERR_NOT_FOUND));
+        User user = userRepository.findById(userPrincipal.getId()).orElseThrow(() -> new RuntimeException(ErrorMessage.User.ERR_NOT_FOUND));
 
-        Blog blog= blogRepository.findById(request.getBlogId()).orElseThrow(()->new RuntimeException(ErrorMessage.Blog.BLOG_NOT_FOUND));
+        Blog blog = blogRepository.findById(request.getBlogId()).orElseThrow(() -> new RuntimeException(ErrorMessage.Blog.BLOG_NOT_FOUND));
 
-        Comment comment= commentMapper.toEntity(request);
+        Comment comment = commentMapper.toEntity(request);
         comment.setAuthor(user);
         comment.setBlog(blog);
-        comment.setCreateAt(LocalDateTime.now());
+        comment.setCreatedAt(LocalDateTime.now());
 
-        Comment saveComment= commentRepository.save(comment);
+        Comment saveComment = commentRepository.save(comment);
 
 
         return commentMapper.toResponse(saveComment);
     }
 
     @Override
+    public Page<CommentResponse> getAllCommentsByBlogId(Pageable pageable, Long blogId) {
+        return commentRepository.getAllByBlog_BlogId(pageable, blogId)
+                .map(commentMapper::toResponse);
+    }
+
+    @Override
+    public void deleteComment(UserPrincipal user, Long commentId) {
+
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+                () -> new NotFoundException(ErrorMessage.Comment.COMMENT_NOT_FOUND)
+        );
+
+        Blog blog = comment.getBlog();
+
+        User author = blog.getAuthor();
+
+        User writer = comment.getAuthor();
+
+        if (author.getId().equals(user.getId()) || writer.getId().equals(user.getId())) {
+            commentRepository.delete(comment);
+        }
+
+    }
+
+    @Override
+    public CommentResponse getComment(Long commentId) {
+        return commentMapper.toResponse(commentRepository.findById(commentId).orElseThrow(
+                () -> new NotFoundException(ErrorMessage.Comment.COMMENT_NOT_FOUND)
+        ));
+    }
+
+    @Override
+    public CommentResponse updateComment(UserPrincipal user, Long commentId, String content) {
+
+        Comment comment = commentRepository.findById(commentId).orElseThrow(
+                () -> new NotFoundException(ErrorMessage.Comment.COMMENT_NOT_FOUND)
+        );
+        comment.setContent(content);
+        if (comment.getAuthor().getId().equals(user.getId())) {
+            commentRepository.save(comment);
+        } else {
+            throw new NotFoundException(ErrorMessage.Comment.COMMENT_NOT_FOUND);
+        }
+
+        return commentMapper.toResponse(comment);
+    }
+
+    @Override
+    public Page<BlogResponse> findBlog(SearchBlogRequest search, Pageable pageable) {
+        Page<Blog> blogs = blogRepository.searchByKeyword(search.getKeyword(), pageable);
+        return blogs.map(blogMapper::toResponse);
+    }
+
+    @Override
+    public ReactionResponse getAllReact(Long blogId) {
+        return ReactionResponse.builder()
+                .WOW(reactionRepository.countByBlog_BlogIdAndType(blogId, ReactionType.WOW))
+                .SAD(reactionRepository.countByBlog_BlogIdAndType(blogId, ReactionType.SAD))
+                .ANGRY(reactionRepository.countByBlog_BlogIdAndType(blogId, ReactionType.ANGRY))
+                .HAHA(reactionRepository.countByBlog_BlogIdAndType(blogId, ReactionType.HAHA))
+                .LIKE(reactionRepository.countByBlog_BlogIdAndType(blogId, ReactionType.LIKE))
+                .LOVE(reactionRepository.countByBlog_BlogIdAndType(blogId, ReactionType.LOVE))
+                .build();
+    }
+
+    @Override
     public void react(ReactionRequest request) {
 
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
-        User user = userRepository.findByUsername(username)
+        User user = userRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new EntityNotFoundException(ErrorMessage.User.ERR_NOT_FOUND));
 
         Blog blog = blogRepository.findById(request.getBlogId())
@@ -194,15 +293,14 @@ public class BlogServiceImpl implements BlogService {
                 .map(Reaction::getType);
     }
 
-    public BlogResponse toResponse(Blog blog){
+    public BlogResponse toResponse(Blog blog) {
 
         return BlogResponse.builder()
-                .id(blog.getBlogId())
                 .title(blog.getTitle())
-                .content(blog.getContent())
+//                .content(blog.getContent())
                 .createdAt(blog.getCreatedAt())
                 .updatedAt(blog.getUpdatedAt())
-                .imageUrl(blog.getImgUrl())
+//                .imageUrl(blog.getImgUrl())
                 .build();
     }
 }

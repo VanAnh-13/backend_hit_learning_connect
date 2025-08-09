@@ -34,7 +34,7 @@ public class FileStorageController {
     @Tag(name = "storage-controller")
     @Operation(summary = "API để upload tệp đính kèm", description = "Admin / Leader")
     @PostMapping(value = UrlConstant.Storage.UPLOAD_FILE, consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasAnyRole('ADMIN','LEADER')")
+    @PreAuthorize("hasAnyRole('ADMIN','LEADER','USER')")
     public ResponseEntity<?> uploadDocument(
             @Parameter(name = "principal", hidden = true)
             @CurrentUser UserPrincipal principal,
@@ -46,7 +46,7 @@ public class FileStorageController {
 
     @Tag(name = "storage-controller")
     @Operation(summary = "API để xóa tệp đính kèm", description = "Admin / Leader")
-    @PreAuthorize("hasAnyRole('ADMIN','LEADER')")
+    @PreAuthorize("hasAnyRole('ADMIN','LEADER','USER')")
     @PostMapping(value = UrlConstant.Storage.DELETE_FILE)
     public ResponseEntity<?> deleteFile(DeleteFileRequestDto deleteFileRequestDto) {
         return VsResponseUtil.success(storageService.deleteFileFromCloudinary(deleteFileRequestDto.getUrl()));

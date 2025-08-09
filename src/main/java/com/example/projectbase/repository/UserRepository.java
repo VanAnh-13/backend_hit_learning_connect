@@ -24,7 +24,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
   Optional<User> findById(Long id);
 
   @Query("SELECT u FROM User u WHERE u.username = ?1")
-  Optional<User> findByUsername(String username);
+  @Cacheable(value = "users", key = "#username")
+  Optional<User> findByUsernameIgnoreCase(String username);
 
   @Query("SELECT u FROM User u WHERE u.email = ?1")
   Optional<User> findByEmail(String email);
@@ -58,5 +59,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
   );
 
 
-
+  Long countAllByRole_Name(String admin);
 }
