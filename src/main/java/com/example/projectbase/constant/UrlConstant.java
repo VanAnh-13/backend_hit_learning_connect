@@ -86,6 +86,7 @@ public class UrlConstant {
         public static final String UPDATE_BLOG = BASE + "/{blogId}";
         public static final String DELETE_BLOG = BASE + "/{blogId}";
         public static final String SEARCH_BLOG = BASE + "/search/{tag}";
+        public static final String SEARCH = BASE + "/find";
 
         public static final String COMMENT_BLOG = BASE + "/comment/set";
         public static final String GET_ALL_COMMENTS = BASE + "/comments/{blogId}";
