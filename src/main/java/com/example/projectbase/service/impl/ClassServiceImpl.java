@@ -3,6 +3,7 @@ package com.example.projectbase.service.impl;
 import com.example.projectbase.constant.ErrorMessage;
 import com.example.projectbase.domain.dto.request.classes.ClassRequestDto;
 import com.example.projectbase.domain.dto.response.classes.ClassResponseDto;
+import com.example.projectbase.domain.dto.response.classes.TotalResponse;
 import com.example.projectbase.domain.entity.ClassRoom;
 import com.example.projectbase.domain.entity.User;
 import com.example.projectbase.domain.mapper.ClassMapper;
@@ -74,4 +75,6 @@ public class ClassServiceImpl implements ClassService {
     public List<ClassResponseDto> getALlClassByFilter(Pageable pageable, String keyword) {
         return classMapper.toDTOList(classRepository.searchByKeyword(keyword, pageable).getContent());
     }
+
+
 }

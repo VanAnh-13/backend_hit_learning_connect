@@ -12,6 +12,7 @@ public class UrlConstant {
         public static final String PASSWORD_CHANGE = PRE_FIX + "/password/change";
         public static final String PASSWORD_CHANGE_FIRST_TIME = PRE_FIX + "/change-password-first-time";
         public static final String FIRST_TIME_LOGIN = PRE_FIX + "/first-time-login";
+        public static final String TOTAL = PRE_FIX + "/total";
         private Auth() {
         }
     }
