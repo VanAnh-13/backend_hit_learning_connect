@@ -19,4 +19,8 @@ public interface ReactionRepository extends JpaRepository<Reaction, Long> {
     @Query("SELECT r.type, COUNT(r) FROM Reaction r WHERE r.blog.blogId = :blogId GROUP BY r.type")
     List<Object[]> countReactionsByType(@Param("blogId") Long blogId);
 
-    Optional<Reaction> findByUser_UsernameAndBlog_BlogId(String username, Long blogId);}
+    Optional<Reaction> findByUser_UsernameAndBlog_BlogId(String username, Long blogId);
+
+    @Query("DELETE FROM Reaction c WHERE c.blog.blogId = :blogId")
+    void deleteAllByBlog_BlogId(@io.lettuce.core.dynamic.annotation.Param("blogId") Long blogId);
+}

@@ -19,8 +19,8 @@ import java.util.Optional;
 public interface BlogService {
 
     BlogResponse create(BlogRequest request, UserPrincipal user) throws IOException;
-    BlogResponse update(Long id, BlogUpdateDto request);
-    void delete(Long id);
+    BlogResponse update(Long id, BlogUpdateDto request, UserPrincipal user);
+    void delete(Long id, UserPrincipal user);
     BlogResponse getById(Long id);
     Page<BlogResponse> getAll(Pageable pageable);
     Page<BlogResponse> searchByTag(String tag, Pageable pageable);

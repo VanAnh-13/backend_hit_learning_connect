@@ -13,6 +13,7 @@ import com.example.projectbase.domain.entity.*;
 import com.example.projectbase.domain.mapper.BlogMapper;
 import com.example.projectbase.domain.mapper.CommentMapper;
 import com.example.projectbase.domain.model.ReactionType;
+import com.example.projectbase.exception.extended.ForbiddenException;
 import com.example.projectbase.exception.extended.NotFoundException;
 import com.example.projectbase.repository.*;
 import com.example.projectbase.security.UserPrincipal;
@@ -25,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -91,9 +93,15 @@ public class BlogServiceImpl implements BlogService {
 
 
     @Override
-    public BlogResponse update(Long id, BlogUpdateDto request) {
+    public BlogResponse update(Long id, BlogUpdateDto request, UserPrincipal user) {
 
         Blog blog = blogRepository.findById(id).orElseThrow(() -> new NotFoundException(ErrorMessage.Blog.BLOG_NOT_FOUND));
+
+        if (blog.getAuthor().getId() != user.getId()) {
+            if (!user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
+                throw new ForbiddenException(ErrorMessage.Auth.YOU_DONT_HAVE_PERMIT);
+            }
+        }
 
         String tagString = request.getTags().trim();
 
@@ -128,13 +136,31 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
-    public void delete(Long id) {
+    public void delete(Long id, UserPrincipal user) {
 
-        if (!blogRepository.existsById(id)) {
-            throw new RuntimeException(ErrorMessage.Blog.BLOG_NOT_FOUND);
+        Blog blog = blogRepository.findById(id).orElseThrow(() -> new NotFoundException(ErrorMessage.Blog.BLOG_NOT_FOUND));
+
+        if (blog.getAuthor().getId() != user.getId()) {
+            if (!user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
+                throw new ForbiddenException(ErrorMessage.Auth.YOU_DONT_HAVE_PERMIT);
+            }
         }
+
+        deleteAllCommentInBlogId(id);
+
+        deleteAllReactInBlogId(id);
+
         blogRepository.deleteById(id);
     }
+
+    private void deleteAllReactInBlogId(Long id) {
+        reactionRepository.deleteAllByBlog_BlogId(id);
+    }
+
+    public void deleteAllCommentInBlogId(Long id) {
+        commentRepository.deleteAllByBlog_BlogId(id);
+    }
+
 
     @Override
     public BlogResponse getById(Long id) {
