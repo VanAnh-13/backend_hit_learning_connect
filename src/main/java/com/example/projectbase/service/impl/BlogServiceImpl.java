@@ -40,6 +40,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
@@ -219,11 +220,34 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public Page<BlogStatiticReponseDto> getBlogStatistics(String fromDate, String toDate, String author, String tag, Pageable pageable) {
-        LocalDate from = fromDate != null ? LocalDate.parse(fromDate) : null;
-        LocalDate to = toDate != null ? LocalDate.parse(toDate) : null;
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        LocalDateTime from = null;
+        LocalDateTime to = null;
+
+        if (fromDate != null && !fromDate.isBlank()) {
+            String trimmed = fromDate.trim();
+            if (trimmed.length() == 10) {
+                from = LocalDate.parse(trimmed, dateFormatter).atStartOfDay();
+            } else {
+                from = LocalDateTime.parse(trimmed, dateTimeFormatter);
+            }
+        }
+
+        if (toDate != null && !toDate.isBlank()) {
+            String trimmed = toDate.trim();
+            if (trimmed.length() == 10) {
+                to = LocalDate.parse(trimmed, dateFormatter).atStartOfDay();
+            } else {
+                to = LocalDateTime.parse(trimmed, dateTimeFormatter);
+            }
+        }
+
         Page<Blog> page = blogRepository.findStatistics(from, to, author, tag, pageable);
         return page.map(blogMapper::toBlogStatiticReponseDto);
     }
+
 
     public BlogResponse toResponse(Blog blog){
 

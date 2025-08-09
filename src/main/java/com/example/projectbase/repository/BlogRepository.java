@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,21 +26,23 @@ public interface BlogRepository extends JpaRepository<Blog, Long> {
     Page<Blog> findByStatus(String status, Pageable pageable);
 
     @Query("""
-        SELECT b FROM Blog b
-        WHERE (:fromDate IS NULL OR b.createdAt >= :fromDate)
-          AND (:toDate IS NULL OR b.createdAt <= :toDate)
-          AND (:author IS NULL OR b.author.username LIKE %:author%)
-          AND (:tag IS NULL OR EXISTS (
-                SELECT t FROM b.tags t
-                WHERE t.name LIKE %:tag%
-              ))
-        """)
+    SELECT b FROM Blog b
+    WHERE (:fromDate IS NULL OR b.createdAt >= :fromDate)
+      AND (:toDate IS NULL OR b.createdAt <= :toDate)
+      AND (:author IS NULL OR b.author.username LIKE %:author%)
+      AND (:tag IS NULL OR EXISTS (
+            SELECT t FROM b.tags t
+            WHERE t.name LIKE %:tag%
+          ))
+    ORDER BY b.createdAt DESC
+""")
     Page<Blog> findStatistics(
-            LocalDate fromDate,
-            LocalDate toDate,
+            LocalDateTime fromDate,
+            LocalDateTime toDate,
             String author,
             String tag,
             Pageable pageable
     );
+
 
 }
