@@ -27,6 +27,7 @@ public class ErrorMessage {
         public static final String ERR_ACCOUNT_LOCKED = "exception.auth.account.locked";
         public static final String INVALID_REFRESH_TOKEN = "exception.auth.invalid.refresh.token";
         public static final String EXPIRED_REFRESH_TOKEN = "exception.auth.expired.refresh.token";
+        public static final String YOU_DONT_HAVE_PERMIT = "exception.auth.access.denied";
     }
 
     public static class User {
