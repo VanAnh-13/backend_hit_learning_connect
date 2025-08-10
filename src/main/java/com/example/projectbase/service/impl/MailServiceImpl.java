@@ -93,7 +93,7 @@ public class MailServiceImpl implements MailService {
                 .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_ID, new String[]{email.getEmail()}));
 
         //set data to send to html
-        String resetLink = frontEndUrl + "/ChangePassword?=" + code;
+        String resetLink = frontEndUrl + "/ChangePassword?=" + email + "&?=" + code;
 
         Map<String, Object> props = new HashMap<>();
         props.put("resetLink", resetLink);
