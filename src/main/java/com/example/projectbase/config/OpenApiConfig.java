@@ -16,6 +16,7 @@ import java.util.List;
 @Configuration
 public class OpenApiConfig {
 
+
   private final String API_KEY = "Bearer Token";
 
   @Value("${env.url}")
