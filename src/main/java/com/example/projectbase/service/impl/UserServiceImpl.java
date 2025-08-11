@@ -110,6 +110,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @CacheEvict(cacheNames = {"userDto", "users"}, key = "#id")
+    @Transactional
     public UserResponseDto updateUser(Long id, UserUpdateDto updatedUser) {
         return userMapper.toUserResponseDto(
                 userRepository.findById(id).map(user -> {
