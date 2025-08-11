@@ -40,6 +40,7 @@ public class ErrorMessage {
         public static final String ERR_USER_NOT_FOUND = "exception.user.not.found";
         public static final String ERR_CREATE_FAIL = "Create user fail";
         public static final String ERR_NOT_FOUND = "user not found";
+        public static final String ERR_ID_NOT_EQUAL = "exception.user.id.not.equal";
     }
 
     public static class Role {

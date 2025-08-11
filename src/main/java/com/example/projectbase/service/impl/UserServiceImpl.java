@@ -12,6 +12,7 @@ import com.example.projectbase.domain.entity.Contest;
 import com.example.projectbase.domain.model.Role;
 import com.example.projectbase.domain.entity.User;
 import com.example.projectbase.domain.mapper.UserMapper;
+import com.example.projectbase.exception.extended.ForbiddenException;
 import com.example.projectbase.exception.extended.InvalidException;
 import com.example.projectbase.exception.extended.NotFoundException;
 import com.example.projectbase.exception.extended.UnauthorizedException;
@@ -114,6 +115,10 @@ public class UserServiceImpl implements UserService {
     public UserResponseDto updateUser(Long id, UserUpdateDto updatedUser) {
         return userMapper.toUserResponseDto(
                 userRepository.findById(id).map(user -> {
+
+                    if (!id.equals(user.getId())) {
+                        throw new ForbiddenException(ErrorMessage.User.ERR_ID_NOT_EQUAL);
+                    }
 
                     cacheManager.getCache("users").evict(user.getUsername());
 
