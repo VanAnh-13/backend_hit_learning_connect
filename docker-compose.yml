@@ -19,7 +19,6 @@ services:
       CLOUD_DINARY_NAME:
       CLOUD_DINARY_API_KEY:
       CLOUD_DINARY_API_SECRET:
-
       REDIS-HOST: redis
       REDIS-PORT: 6379
     depends_on:
