@@ -37,10 +37,13 @@ public class AuthServiceImpl implements AuthService {
   @Override
   public LoginResponseDto login(LoginRequestDto request) {
     try {
+      System.out.println(request.getUsername());
+      System.out.println(request.getPassword());
       Authentication authentication = authenticationManager.authenticate(
           new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
       SecurityContextHolder.getContext().setAuthentication(authentication);
       UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+
       User user = userRepository.findById(userPrincipal.getId()).orElseThrow(
               () -> new UnauthorizedException(ErrorMessage.User.ERR_NOT_FOUND_ID)
       );

@@ -1,0 +1,70 @@
+version: "3.9"
+
+services:
+  app:
+    build: .
+    container_name: hit-lc
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/hit-lc?createDatabaseIfNotExist=true
+      SPRING_DATASOURCE_USERNAME: app
+      SPRING_DATASOURCE_PASSWORD: secret
+
+      JWT_SECRET: 52344E62DC399D1A15AC51A65F1DEASasdasasdadssa
+
+      MAIL: apikey
+      APP_PASS_MAIL: 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
+
+      CLOUD_DINARY_NAME: dxoigc8qk
+      CLOUD_DINARY_API_KEY: 238494859958363
+      CLOUD_DINARY_API_SECRET: Jm8oupwEnX1clbE_iXTblBtG8J8
+
+      REDIS-HOST: redis
+      REDIS-PORT: 6379
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    networks:
+      - hitlc
+
+  mysql:
+    image: mysql:8.4
+    container_name: mysql
+    command: ["mysqld","--mysql-native-password=ON"]
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpw
+      MYSQL_DATABASE: hit-lc
+      MYSQL_USER: app
+      MYSQL_PASSWORD: secret
+    ports:
+      - "3306:3306"              # có thể bỏ map port nếu chỉ dùng nội bộ
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-prootpw" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    networks:
+        - hitlc
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    command: [ "redis-server","--save","60","1","--appendonly","yes" ]
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - hitlc
+
+networks:
+  hitlc:
+    driver: bridge
+
+volumes:
+  mysql_data:
+  redis_data:

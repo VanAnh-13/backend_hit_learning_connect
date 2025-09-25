@@ -26,6 +26,7 @@ public class CustomUserDetailsServiceImpl implements UserDetailsService, CustomU
     User user = userRepository.findByUsernameIgnoreCase(username)
         .orElseThrow(() -> new NotFoundException(ErrorMessage.User.ERR_NOT_FOUND_USERNAME,
             new String[]{username}));
+    System.out.println("hi");
     return UserPrincipal.create(user);
   }
 

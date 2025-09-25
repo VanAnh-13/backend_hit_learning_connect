@@ -52,6 +52,7 @@ public class SendMailUtil {
     MimeMessage message = mailSender.createMimeMessage();
     MimeMessageHelper helper = new MimeMessageHelper(message, true, "utf-8");
     helper.setTo(mail.getTo());
+    helper.setFrom("noreply@whodev.top");
     helper.setSubject(mail.getSubject());
     helper.setText(mail.getContent());
     if (files != null && files.length > 0) {
